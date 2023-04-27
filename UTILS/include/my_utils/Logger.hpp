@@ -17,12 +17,12 @@
 
 #include "Profiler.hpp"
 
-using std::cerr;
-using std::cout;
-using std::endl;
+// using std::cerr;
+// using std::cout;
+// using std::endl;
 using std::map;
 using std::ofstream;
-using std::shared_ptr;
+// using std::shared_ptr;
 using std::string;
 using std::chrono::system_clock;
 
@@ -198,7 +198,7 @@ public:
             return;
         }
         // Target::DISABLED takes precedence over other targets
-        if ((this->LoggerTarget == (short)Target::DISABLED))
+        if (this->LoggerTarget == (short)Target::DISABLED)
         {
             return;
         }
@@ -223,14 +223,14 @@ public:
         // Logger to stdout if it's one of our targets
         if ((this->LoggerTarget & (short)Target::STDOUT))
         {
-            fprintf(stdout, toLogger.c_str());
+            fprintf(stdout, "%s", toLogger.c_str());
         }
 
         // Logger to stderr if it's one of our targets
         if ((this->LoggerTarget & (short)Target::STDERR))
         {
             mxLog.lock();
-            fprintf(stderr, toLogger.c_str());
+            fprintf(stderr, "%s", toLogger.c_str());
             mxLog.unlock();
         }
 

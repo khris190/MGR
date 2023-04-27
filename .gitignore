@@ -12,5 +12,6 @@ CTestTestfile.cmake
 _deps
 build
 */build
-.*
-*/.*
+.cache
+*/.cache
+bin/*

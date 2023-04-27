@@ -3,10 +3,10 @@
         {
             "name": "Linux",
             "defines": [],
-            "compilerPath": "/usr/bin/gcc",
+            "compilerPath": "/usr/bin/clang",
             "cStandard": "c17",
             "cppStandard": "c++17",
-            "intelliSenseMode": "linux-gcc-x64",
+            "intelliSenseMode": "linux-clang-x64",
             "compileCommands": "${workspaceFolder}/build/compile_commands.json",
             "configurationProvider": "ms-vscode.cmake-tools",
             "mergeConfigurations": true,
