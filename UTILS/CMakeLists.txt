@@ -32,7 +32,6 @@ include(CPack)
 
 set(MY_UTILS_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/include )
 set(MY_UTILS_INCLUDE ${MY_UTILS_INCLUDE} PARENT_SCOPE)
-include_directories(${MY_UTILS_INCLUDE}/my_utils)
+include_directories(${MY_UTILS_INCLUDE})
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${MY_UTILS_INCLUDE})
-target_link_libraries(CUDA_FITNESS)

@@ -29,7 +29,7 @@ SET(LIBS ${LIBS} CUDA_FITNESS MY_UTILS)
 
 include_directories(${CUDA_FITNESS_INCLUDE} ${MY_UTILS_INCLUDE} include)
 target_link_libraries(GenerativeArt ${LIBS})
-
+add_dependencies(GenerativeArt CUDA_FITNESS MY_UTILS)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 

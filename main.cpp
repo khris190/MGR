@@ -1,12 +1,10 @@
 // #include "fitness.h"
 #include "fitness.h"
 #include "include/Config.cpp"
-
 int main(int argc, char const *argv[])
 {
-
+    Config::parse(argc, argv);
     calculateFitness(nullptr, nullptr, 10, 100);
-
     // ArgsParser parser(argc, argv);
     // Log.setTarget(Target::DISABLED);
     // Log.setLevel((Level)Config::verbose_level.value);

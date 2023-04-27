@@ -1,6 +1,9 @@
 #include "../include/fitness.h"
 #include "my_utils/Profiler.hpp"
 
+static unsigned char *x = nullptr;
+static std::mutex mxX;
+
 __global__ void fitness_v1_RGBA2(int n, unsigned char *pA, unsigned char *pB)
 {   
     int i  = threadIdx.x + blockIdx.x * blockDim.x;
