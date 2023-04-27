@@ -1,4 +1,6 @@
 {
-    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
-    "search.useGlobalIgnoreFiles": true
+  "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+  "search.useGlobalIgnoreFiles": true,
+  "editor.codeActionsOnSave": { "source.fixAll": true },
+  "editor.formatOnSave": true
 }

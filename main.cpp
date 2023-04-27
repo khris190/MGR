@@ -1,7 +1,8 @@
 // #include "fitness.h"
+
 #include "fitness.h"
 #include "include/Config.cpp"
-int main(int argc, char const *argv[])
+int main(int argc, char const* argv[])
 {
     Config::parse(argc, argv);
     calculateFitness(nullptr, nullptr, 10, 100);

@@ -10,6 +10,10 @@ if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
   set(CMAKE_CUDA_ARCHITECTURES 61)
 endif(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
 
+# set(CMAKE_CXX_STANDARD 17)
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 ")
+
+
 include(CTest)
 enable_testing()
 
@@ -23,6 +27,7 @@ file(GLOB SOURCES
     src/*.c
     src/**/*.cpp
     src/**/*.c
+    include/external_utils/*
 )
 
 add_library(${PROJECT_NAME} SHARED ${SOURCES})
@@ -34,4 +39,5 @@ set(MY_UTILS_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/include )
 set(MY_UTILS_INCLUDE ${MY_UTILS_INCLUDE} PARENT_SCOPE)
 include_directories(${MY_UTILS_INCLUDE})
 
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 target_include_directories(${PROJECT_NAME} PUBLIC ${MY_UTILS_INCLUDE})

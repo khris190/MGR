@@ -11,52 +11,64 @@ namespace Config {
 static argparse::ArgumentParser parser("main", VERSION,
                                        argparse::default_arguments::help);
 
-bool parse(int argc, char const *argv[]) {
-  parser.add_argument("-v", "--verbose")
-      .nargs(argparse::nargs_pattern::optional)
-      .scan<'i', int>()
-      .default_value(0);
+bool parse(int argc, char const* argv[])
+{
+    parser.add_argument("-v", "--verbose")
+        .nargs(argparse::nargs_pattern::optional)
+        .scan<'i', int>()
+        .default_value(0);
 
-  parser.parse_args(argc, argv);
-  if (parser.is_used("-v")) {
-    auto test = parser.at("-v");
-  }
+    parser.add_argument("-P", "--printvals")
+        .help(std::string { "Print configurated values" })
+        .default_value(false)
+        .implicit_value(true);
+
+    parser.add_argument("-i", "--input")
+        .nargs(1)
+        .default_value(std::string { "input.png" })
+        .help("Input image fileName");
+
+    parser.add_argument("-o", "--output")
+        .nargs(1)
+        .default_value(std::string { "output.png" })
+        .help("Output image fileName");
+
+    parser.add_argument("-t", "--threads")
+        .nargs(1)
+        .default_value(4)
+        .help("Number of threads that the program will use for calculations.")
+        .scan<'i', int>();
+
+    parser.add_argument("-p", "--population")
+        .nargs(1)
+        .default_value(4)
+        .help("Number of threads that the program will use for calculations.")
+        .scan<'i', int>();
+
+    parser.add_argument("-s", "--shapes-amount")
+        .nargs(1)
+        .default_value(4)
+        .help("Amount of generated shapes per speciman.")
+        .scan<'i', int>();
+
+    parser.add_argument("-S", "--shapes-types")
+        .nargs(1)
+        .default_value(0b100)
+        .help("Types of generated types in binary 100 - triangles 10 - ellipses 1 - squares.")
+        .scan<'b', unsigned int>();
+
+    parser.parse_args(argc, argv);
+    if (parser.is_used("-v")) {
+        auto test = parser.at("-v");
+    }
     std::cout << std::to_string(parser.get<int>("-v")) << std::endl;
-  if (auto test = parser.is_used(std::string{"-v"})) {
+    if (auto test = parser.is_used(std::string { "-v" })) {
+        std::cout << "/* message */" << std::endl;
+    }
     std::cout << "/* message */" << std::endl;
-  }
 
-  parser.add_argument("-P", "--printvals")
-      .help(std::string{"Print configurated values"})
-      .default_value(false)
-      .implicit_value(true);
-
-  parser.add_argument("-i", "--input")
-      .nargs(1)
-      .default_value(std::string{"input.png"})
-      .help("Input image fileName");
-
-  parser.add_argument("-o", "--output")
-      .nargs(1)
-      .default_value(std::string{"output.png"})
-      .help("Output image fileName");
-
-  parser.add_argument("-t", "--threads")
-      .nargs(1)
-      .default_value(4)
-      .help("Number of threads that the program will use for calculations.")
-      .scan<'d', int>();
-
-  parser.add_argument("-p", "--population")
-      .nargs(1)
-      .default_value(4)
-      .help("Number of threads that the program will use for calculations.")
-      .scan<'d', int>();
-
-  std::cout << "/* message */" << std::endl;
-
-  throw std::runtime_error("not implemented parse");
-  return false;
+    throw std::runtime_error("not implemented parse");
+    return false;
 }
 } // namespace Config
 

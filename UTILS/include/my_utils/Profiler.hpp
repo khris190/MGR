@@ -1,19 +1,17 @@
 #ifndef PROFILER_HPP
 #define PROFILER_HPP
 
-#include <vector>
-#include <string>
 #include <chrono>
-#include <sys/time.h>
 #include <ctime>
 #include <iostream>
 #include <mutex>
-
-struct Sample
-{
+#include <string>
+#include <sys/time.h>
+#include <vector>
+struct Sample {
     long nsTime;
     std::string name;
-    Sample() {}
+    Sample() { }
     Sample(std::string name)
     {
         this->name = name;
@@ -25,22 +23,21 @@ struct Sample
     }
 };
 
-class Profiler
-{
+class Profiler {
 private:
     std::mutex mxSamples;
     std::vector<Sample> samples;
-    static Profiler *profiler;
+    static Profiler* profiler;
 
 protected:
     Profiler();
     ~Profiler();
 
 public:
-    Profiler(Profiler &other) = delete;
-    void operator=(const Profiler &) = delete;
+    Profiler(Profiler& other) = delete;
+    void operator=(const Profiler&) = delete;
 
-    static Profiler *getInstance();
+    static Profiler* getInstance();
     void AddSample(Sample sample);
     std::string getTimingsAsString(bool doClearSamples = true);
 
@@ -55,8 +52,7 @@ public:
 // use for acurate creation to block end timing
 #define newTimer(name) PTimer TOKENPASTE2(Timer_, __LINE__) = PTimer(name)
 // use by throwing newTimer({string name}) into code block that has to be measured
-class PTimer
-{
+class PTimer {
 private:
     Sample sample;
     std::chrono::_V2::system_clock::time_point startTime;

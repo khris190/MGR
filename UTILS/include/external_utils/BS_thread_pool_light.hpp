@@ -26,8 +26,7 @@
 #include <type_traits>        // std::common_type_t, std::decay_t, std::invoke_result_t, std::is_void_v
 #include <utility>            // std::forward, std::move, std::swap
 
-namespace BS
-{
+namespace BS {
 /**
  * @brief A convenient shorthand for the type of std::thread::hardware_concurrency(). Should evaluate to unsigned int.
  */
@@ -36,8 +35,7 @@ using concurrency_t = std::invoke_result_t<decltype(std::thread::hardware_concur
 /**
  * @brief A fast, lightweight, and easy-to-use C++17 thread pool class. This is a lighter version of the main thread pool class.
  */
-class [[nodiscard]] thread_pool_light
-{
+class [[nodiscard]] thread_pool_light {
 public:
     // ============================
     // Constructors and destructors
@@ -48,7 +46,9 @@ public:
      *
      * @param thread_count_ The number of threads to use. The default value is the total number of hardware threads available, as reported by the implementation. This is usually determined by the number of cores in the CPU. If a core is hyperthreaded, it will count as two threads.
      */
-    thread_pool_light(const concurrency_t thread_count_ = 0) : thread_count(determine_thread_count(thread_count_)), threads(std::make_unique<std::thread[]>(determine_thread_count(thread_count_)))
+    thread_pool_light(const concurrency_t thread_count_ = 0)
+        : thread_count(determine_thread_count(thread_count_))
+        , threads(std::make_unique<std::thread[]>(determine_thread_count(thread_count_)))
     {
         create_threads();
     }
@@ -99,13 +99,11 @@ public:
             std::swap(index_after_last, first_index);
         size_t total_size = static_cast<size_t>(index_after_last - first_index);
         size_t block_size = static_cast<size_t>(total_size / num_blocks);
-        if (block_size == 0)
-        {
+        if (block_size == 0) {
             block_size = 1;
             num_blocks = (total_size > 1) ? total_size : 1;
         }
-        if (total_size > 0)
-        {
+        if (total_size > 0) {
             for (size_t i = 0; i < num_blocks; ++i)
                 push_task(std::forward<F>(loop), static_cast<T>(i * block_size) + first_index, (i == num_blocks - 1) ? index_after_last : (static_cast<T>((i + 1) * block_size) + first_index));
         }
@@ -162,28 +160,18 @@ public:
         std::function<R()> task_function = std::bind(std::forward<F>(task), std::forward<A>(args)...);
         std::shared_ptr<std::promise<R>> task_promise = std::make_shared<std::promise<R>>();
         push_task(
-            [task_function, task_promise]
-            {
-                try
-                {
-                    if constexpr (std::is_void_v<R>)
-                    {
+            [task_function, task_promise] {
+                try {
+                    if constexpr (std::is_void_v<R>) {
                         std::invoke(task_function);
                         task_promise->set_value();
-                    }
-                    else
-                    {
+                    } else {
                         task_promise->set_value(std::invoke(task_function));
                     }
-                }
-                catch (...)
-                {
-                    try
-                    {
+                } catch (...) {
+                    try {
                         task_promise->set_exception(std::current_exception());
-                    }
-                    catch (...)
-                    {
+                    } catch (...) {
                     }
                 }
             });
@@ -212,8 +200,7 @@ private:
     void create_threads()
     {
         running = true;
-        for (concurrency_t i = 0; i < thread_count; ++i)
-        {
+        for (concurrency_t i = 0; i < thread_count; ++i) {
             threads[i] = std::thread(&thread_pool_light::worker, this);
         }
     }
@@ -225,8 +212,7 @@ private:
     {
         running = false;
         task_available_cv.notify_all();
-        for (concurrency_t i = 0; i < thread_count; ++i)
-        {
+        for (concurrency_t i = 0; i < thread_count; ++i) {
             threads[i].join();
         }
     }
@@ -241,8 +227,7 @@ private:
     {
         if (thread_count_ > 0)
             return thread_count_;
-        else
-        {
+        else {
             if (std::thread::hardware_concurrency() > 0)
                 return std::thread::hardware_concurrency();
             else
@@ -255,13 +240,11 @@ private:
      */
     void worker()
     {
-        while (running)
-        {
+        while (running) {
             std::function<void()> task;
             std::unique_lock<std::mutex> tasks_lock(tasks_mutex);
             task_available_cv.wait(tasks_lock, [this] { return !tasks.empty() || !running; });
-            if (running)
-            {
+            if (running) {
                 task = std::move(tasks.front());
                 tasks.pop();
                 tasks_lock.unlock();

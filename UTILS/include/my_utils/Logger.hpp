@@ -1,19 +1,19 @@
 #ifndef LOGGER_HPP
 #define LOGGER_HPP
 
-#include <string>
-#include <cstring>
-#include <iostream>
-#include <fstream>
-#include <stdio.h>
-#include <map>
-#include <mutex>
-#include <ctime>
 #include <chrono>
-#include <iomanip>
-#include <memory>
-#include <source_location>
+#include <cstring>
+#include <ctime>
 #include <experimental/source_location>
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <map>
+#include <memory>
+#include <mutex>
+#include <source_location>
+#include <stdio.h>
+#include <string>
 
 #include "Profiler.hpp"
 
@@ -26,22 +26,19 @@ using std::ofstream;
 using std::string;
 using std::chrono::system_clock;
 
-size_t cpyChar(char *dest, const char *src);
-size_t cpyChar(char *dest, unsigned int src);
-
+size_t cpyChar(char* dest, const char* src);
+size_t cpyChar(char* dest, unsigned int src);
 
 extern std::mutex mxLog;
 
-enum class Target : short
-{
+enum class Target : short {
     DISABLED = 0,
     STDOUT = 1,
     STDERR = 2,
     LOG_FILE = 4
 };
 
-enum class Level : short
-{
+enum class Level : short {
     DEB = 1,
     INFO = 2,
     NOTICE = 3,
@@ -54,17 +51,17 @@ enum class Level : short
 
 // String representations of Logger levels
 static map<Level, string> levelMap = {
-    {Level::DEB, "DEBUG"},
-    {Level::INFO, "INFO"},
-    {Level::NOTICE, "NOTICE"},
-    {Level::WARNING, "WARNING"},
-    {Level::ERR, "ERROR"},
-    {Level::CRIT, "CRITICAL"},
-    {Level::ALERT, "ALERT"},
-    {Level::EMERG, "EMERGENCY"}};
+    { Level::DEB, "DEBUG" },
+    { Level::INFO, "INFO" },
+    { Level::NOTICE, "NOTICE" },
+    { Level::WARNING, "WARNING" },
+    { Level::ERR, "ERROR" },
+    { Level::CRIT, "CRITICAL" },
+    { Level::ALERT, "ALERT" },
+    { Level::EMERG, "EMERGENCY" }
+};
 
-class Logger
-{
+class Logger {
 public:
 // write() uses these variables to determine which messages should be written where.
 #ifdef DEBUG
@@ -144,18 +141,15 @@ public:
      */
     short setFile(string fileName, bool deleteFile = false, const std::experimental::source_location location = std::experimental::source_location::current())
     {
-        if (this->LoggingStream.is_open())
-        {
+        if (this->LoggingStream.is_open()) {
             this->LoggingStream.close();
         }
         // Make sure we can open the file for writing
-        if (deleteFile)
-        {
+        if (deleteFile) {
             remove(fileName.c_str());
         }
         this->LoggingStream.open(fileName, ofstream::app);
-        if (!this->LoggingStream.is_open())
-        {
+        if (!this->LoggingStream.is_open()) {
             // Logger the failure and return an error code
             this->write(Level::ERR, "Failed to open Logger file '" + fileName + "'", location);
             return 1;
@@ -165,17 +159,14 @@ public:
     }
     short setFile(string fileName, ofstream::openmode mode, bool deleteFile = false, const std::experimental::source_location location = std::experimental::source_location::current())
     {
-        if (this->LoggingStream.is_open())
-        {
+        if (this->LoggingStream.is_open()) {
             this->LoggingStream.close();
         }
-        if (deleteFile)
-        {
+        if (deleteFile) {
             remove(fileName.c_str());
         }
         this->LoggingStream.open(fileName, ofstream::app);
-        if (!this->LoggingStream.is_open())
-        {
+        if (!this->LoggingStream.is_open()) {
             // Logger the failure and return an error code
             this->write(Level::ERR, "Failed to open Logger file '" + fileName + "'", location);
             return 1;
@@ -193,50 +184,41 @@ public:
     void write(Level level, string message, const std::experimental::source_location location)
     {
         // Only log if we're at or above the pre-defined severity
-        if (level < this->LoggerLevel)
-        {
+        if (level < this->LoggerLevel) {
             return;
         }
         // Target::DISABLED takes precedence over other targets
-        if (this->LoggerTarget == (short)Target::DISABLED)
-        {
+        if (this->LoggerTarget == (short)Target::DISABLED) {
             return;
         }
 
         string toLogger;
 
-        if (!this->LoggingStream.is_open())
-        {
+        if (!this->LoggingStream.is_open()) {
             setFile(this->LoggerFile);
         }
 
         // Append the message to our Logger statement
-        if (this->fileEnabled || this->timestampEnabled || this->levelEnabled)
-        {
+        if (this->fileEnabled || this->timestampEnabled || this->levelEnabled) {
             toLogger = getLoggerfunctionInfo(level, location) + ":\n" + message + "\n";
-        }
-        else
-        {
+        } else {
             toLogger = message + "\n";
         }
         // printf makes printing a bit faster
         // Logger to stdout if it's one of our targets
-        if ((this->LoggerTarget & (short)Target::STDOUT))
-        {
+        if ((this->LoggerTarget & (short)Target::STDOUT)) {
             fprintf(stdout, "%s", toLogger.c_str());
         }
 
         // Logger to stderr if it's one of our targets
-        if ((this->LoggerTarget & (short)Target::STDERR))
-        {
+        if ((this->LoggerTarget & (short)Target::STDERR)) {
             mxLog.lock();
             fprintf(stderr, "%s", toLogger.c_str());
             mxLog.unlock();
         }
 
         // Logger to a file if it's one of our targets and we've set a LoggerFile
-        if ((this->LoggerTarget & (short)Target::LOG_FILE) && this->LoggerFile != "")
-        {
+        if ((this->LoggerTarget & (short)Target::LOG_FILE) && this->LoggerFile != "") {
             mxLog.lock();
             this->LoggingStream << toLogger;
             mxLog.unlock();
@@ -248,16 +230,14 @@ public:
         string toLogger;
 
         // Append the current date and time if enabled
-        if (this->timestampEnabled)
-        {
+        if (this->timestampEnabled) {
             std::time_t time = system_clock::to_time_t(system_clock::now());
-            if (this->lastTime < time)
-            {
+            if (this->lastTime < time) {
                 this->lastTime = time;
-                struct tm *timeStruct = std::localtime(&time);
+                struct tm* timeStruct = std::localtime(&time);
                 strftime(this->timeStr, 120, "%d/%b/%Y %H:%M:%S", timeStruct);
             }
-            char *cstring = (char *)malloc(sizeof(char) * 128);
+            char* cstring = (char*)malloc(sizeof(char) * 128);
             size_t offset = cpyChar(cstring, "[");
             offset += cpyChar(cstring + offset, this->timeStr);
             offset += cpyChar(cstring + offset, "] ");
@@ -265,18 +245,16 @@ public:
             free(cstring);
         }
 
-        if (this->levelEnabled)
-        {
+        if (this->levelEnabled) {
             toLogger += levelMap[level] + " ";
         }
 
-        if (this->fileEnabled)
-        {
+        if (this->fileEnabled) {
             size_t fileNameSize = strlen(location.file_name());
             size_t funcNameSize = strlen(location.function_name());
             size_t stringSize = fileNameSize + funcNameSize + 20 + 5;
 
-            char *cstring = (char *)malloc(sizeof(char) * (stringSize));
+            char* cstring = (char*)malloc(sizeof(char) * (stringSize));
 
             size_t test = cpyChar(cstring, location.file_name());
             test += cpyChar(cstring + test, ":");
@@ -420,11 +398,10 @@ inline Target operator|(Target a, Target b)
 }
 #pragma endregion Bit - wise operators
 // __attribute__ ((warning("unsafe memory management")))
-inline size_t cpyChar(char *dest, const char *src) 
+inline size_t cpyChar(char* dest, const char* src)
 {
     size_t i = 0;
-    while (src[i] != '\0')
-    {
+    while (src[i] != '\0') {
         dest[i] = src[i];
         i++;
     }
@@ -432,13 +409,12 @@ inline size_t cpyChar(char *dest, const char *src)
     return i;
 }
 // __attribute__ ((warning("unsafe memory management")))
-inline size_t cpyChar(char *dest, unsigned int src)
+inline size_t cpyChar(char* dest, unsigned int src)
 {
     size_t y = 0;
-    char *numbers = (char *)malloc(sizeof(char) * 10);
+    char* numbers = (char*)malloc(sizeof(char) * 10);
 
-    while (src >= 10)
-    {
+    while (src >= 10) {
         numbers[y] = '0' + src % 10;
         src /= 10;
         y++;
@@ -446,8 +422,7 @@ inline size_t cpyChar(char *dest, unsigned int src)
     numbers[y] = '0' + src;
     y++;
     size_t i = 0;
-    for (i = 0; i < y; i++)
-    {
+    for (i = 0; i < y; i++) {
         dest[i] = numbers[y - i - 1];
     }
     dest[i] = '\0';
