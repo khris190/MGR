@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.11.0)
 
 set(VERSION "1.1.5")
 project(GenerativeArt LANGUAGES CXX CUDA VERSION ${VERSION})
-set(BINARY_DIR ../bin)
+set(BINARY_DIR bin)
 set(INCLUDE_DIR include)
 
 add_executable(${PROJECT_NAME} main.cpp)
@@ -36,13 +36,20 @@ add_dependencies(GenerativeArt CUDA_FITNESS MY_UTILS)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
-SET (EXECUTABLE_OUTPUT_PATH ${BINARY_DIR})
-SET (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BINARY_DIR})
+SET (EXECUTABLE_OUTPUT_PATH ../${BINARY_DIR})
+SET (CMAKE_RUNTIME_OUTPUT_DIRECTORY ../${BINARY_DIR})
 
 enable_testing()
-# add_executable(tester ${SOURCES})
-# target_include_directories(tester PUBLIC ${INCLUDES})
-# target_link_libraries(tester PRIVATE  ${LIBS}) # I actually have other libraries to use here
-# target_link_libraries(tester PUBLIC cmake_test)
-# set_target_properties(tester PROPERTIES COMPILE_DEFINITIONS "TEST")
-add_test(Tester ../bin/cmake_test)
+
+file(GLOB TEST_EXECS
+${PROJECT_SOURCE_DIR}/${BINARY_DIR}/${TESTS_DIR}/*
+)
+message(TEST_EXECS: ${TEST_EXECS})
+message(TEST_EXECS: ${PROJECT_SOURCE_DIR}/${BINARY_DIR}/${TESTS_DIR}/*)
+
+foreach(TEST_EXEC ${TEST_EXECS})
+    string(REGEX REPLACE "^.*/" "" TEST_NAME ${TEST_EXEC} )
+    
+    add_test(${TEST_NAME} ${TEST_EXEC})
+
+endforeach(TEST_EXEC ${TEST_EXECS})
