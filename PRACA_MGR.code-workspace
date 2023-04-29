@@ -87,6 +87,7 @@
       "variant": "cpp",
       "*.ipp": "cpp",
       "*.inc": "cpp"
-    }
+    },
+    "editor.rulers": [80, 120]
   }
 }

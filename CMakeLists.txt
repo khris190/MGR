@@ -5,7 +5,6 @@ project(GenerativeArt LANGUAGES CXX CUDA VERSION ${VERSION})
 set(BINARY_DIR bin)
 set(INCLUDE_DIR include)
 
-add_executable(${PROJECT_NAME} main.cpp)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
@@ -28,11 +27,15 @@ add_subdirectory(tests)
 
 
 SET(LIBS ${LIBS} CUDA_FITNESS MY_UTILS)
-SET(INCLUDES ${CUDA_FITNESS_INCLUDE} ${MY_UTILS_INCLUDE} ${DOCTEST_INCLUDE_DIR} include)
 
-include_directories(${INCLUDES})
-target_link_libraries(GenerativeArt ${LIBS})
+# include_directories(${CUDA_FITNESS_INCLUDE} ${MY_UTILS_INCLUDE} ${DOCTEST_INCLUDE_DIR} ${INCLUDE_DIR})
+add_executable(${PROJECT_NAME} main.cpp ${SOURCES})
+
 add_dependencies(GenerativeArt CUDA_FITNESS MY_UTILS)
+target_link_libraries(GenerativeArt ${LIBS})
+target_include_directories(GenerativeArt PRIVATE ${CUDA_FITNESS_INCLUDE} ${MY_UTILS_INCLUDE} ${DOCTEST_INCLUDE_DIR} ${INCLUDE_DIR})
+
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 

@@ -1,11 +1,14 @@
-// #include "fitness.h"
-
+#include "Config.hpp"
 #include "fitness.h"
-#include "include/Config.cpp"
+#include <optional>
+
 int main(int argc, char const* argv[])
 {
     Config::parse(argc, argv);
     calculateFitness(nullptr, nullptr, 10, 100);
+    std::optional<int> test;
+    auto test1 = Config::get<Config::Argument::HOURS>();
+    auto test2 = typeid(test1).name();
     // ArgsParser parser(argc, argv);
     // Log.setTarget(Target::DISABLED);
     // Log.setLevel((Level)Config::verbose_level.value);
