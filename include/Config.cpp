@@ -15,7 +15,7 @@ namespace Config
         parser.add_argument("-V", "--verbose")
             .nargs(argparse::nargs_pattern::optional)
             .scan<'i', int>()
-            .default_value(0);
+            .default_value(2);
 
         parser.add_argument("-P", "--printvals")
             .help(std::string { "Print configurated values" })

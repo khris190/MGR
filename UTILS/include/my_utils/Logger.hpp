@@ -31,37 +31,18 @@ size_t cpyChar(char* dest, unsigned int src);
 
 extern std::mutex mxLog;
 
-enum class Target : short {
-    DISABLED = 0,
-    STDOUT = 1,
-    STDERR = 2,
-    LOG_FILE = 4
-};
+enum class Target : short { DISABLED = 0, STDOUT = 1, STDERR = 2, LOG_FILE = 4 };
 
-enum class Level : short {
-    DEB = 1,
-    INFO = 2,
-    NOTICE = 3,
-    WARNING = 4,
-    ERR = 5,
-    CRIT = 6,
-    ALERT = 7,
-    EMERG = 8
-};
+enum class Level : short { DEB = 1, INFO = 2, NOTICE = 3, WARNING = 4, ERR = 5, CRIT = 6, ALERT = 7, EMERG = 8 };
 
 // String representations of Logger levels
-static map<Level, string> levelMap = {
-    { Level::DEB, "DEBUG" },
-    { Level::INFO, "INFO" },
-    { Level::NOTICE, "NOTICE" },
-    { Level::WARNING, "WARNING" },
-    { Level::ERR, "ERROR" },
-    { Level::CRIT, "CRITICAL" },
-    { Level::ALERT, "ALERT" },
-    { Level::EMERG, "EMERGENCY" }
-};
+static map<Level, string> levelMap
+    = { { Level::DEB, "DEBUG" },       { Level::INFO, "INFO" },      { Level::NOTICE, "NOTICE" },
+        { Level::WARNING, "WARNING" }, { Level::ERR, "ERROR" },      { Level::CRIT, "CRITICAL" },
+        { Level::ALERT, "ALERT" },     { Level::EMERG, "EMERGENCY" } };
 
-class Logger {
+class Logger
+{
 public:
 // write() uses these variables to determine which messages should be written where.
 #ifdef DEBUG
@@ -71,7 +52,7 @@ public:
 #endif
     short LoggerTarget = (short)Target::STDOUT;
     string LoggerFile = "log.log";
-    ofstream LoggingStream;
+    ofstream LoggingFileStream;
 
     // this can speed up time stamp aquisition by 75%
     std::time_t lastTime = 0;
@@ -83,10 +64,7 @@ public:
     bool fileEnabled = true;
     bool deletePrevLog = true;
 
-    ~Logger()
-    {
-        this->LoggingStream.close();
-    }
+    ~Logger() { this->LoggingFileStream.close(); }
 
 #pragma region Target and level
 
@@ -94,43 +72,28 @@ public:
      *
      * \param   Target	The Logger target
      */
-    void setTarget(Target target)
-    {
-        this->LoggerTarget = (short)target;
-    }
+    void setTarget(Target target) { this->LoggerTarget = (short)target; }
 
-    void xorTarget(Target target)
-    {
-        this->LoggerTarget ^= (short)target;
-    }
+    void xorTarget(Target target) { this->LoggerTarget ^= (short)target; }
     /* Set the severity of messages to Logger.
      *
      * \param	Level	The Logger level to set
      */
-    void setLevel(Level level)
-    {
-        this->LoggerLevel = level;
-    }
+    void setLevel(Level level) { this->LoggerLevel = level; }
 
     /* Get the current Logger level. Only messages
      * with equal or higher severity will be written.
      *
      * \return	Level	The current Logger level
      */
-    Level getLevel()
-    {
-        return this->LoggerLevel;
-    }
+    Level getLevel() { return this->LoggerLevel; }
 
     /* Convert the Level enum to a string.
      *
      * \param	Level	The level to convert
      * \return	string	The converted level
      */
-    string levelToString(Level level)
-    {
-        return levelMap[level];
-    }
+    string levelToString(Level level) { return levelMap[level]; }
 
 #pragma endregion Target and level
 
@@ -139,17 +102,18 @@ public:
      *
      * \param	string	The file to which we will Logger
      */
-    short setFile(string fileName, bool deleteFile = false, const std::experimental::source_location location = std::experimental::source_location::current())
+    short setFile(string fileName, bool deleteFile = false,
+                  const std::experimental::source_location location = std::experimental::source_location::current())
     {
-        if (this->LoggingStream.is_open()) {
-            this->LoggingStream.close();
+        if (this->LoggingFileStream.is_open()) {
+            this->LoggingFileStream.close();
         }
         // Make sure we can open the file for writing
         if (deleteFile) {
             remove(fileName.c_str());
         }
-        this->LoggingStream.open(fileName, ofstream::app);
-        if (!this->LoggingStream.is_open()) {
+        this->LoggingFileStream.open(fileName, ofstream::app);
+        if (!this->LoggingFileStream.is_open()) {
             // Logger the failure and return an error code
             this->write(Level::ERR, "Failed to open Logger file '" + fileName + "'", location);
             return 1;
@@ -157,16 +121,17 @@ public:
         this->LoggerFile = fileName;
         return 0;
     }
-    short setFile(string fileName, ofstream::openmode mode, bool deleteFile = false, const std::experimental::source_location location = std::experimental::source_location::current())
+    short setFile(string fileName, ofstream::openmode mode, bool deleteFile = false,
+                  const std::experimental::source_location location = std::experimental::source_location::current())
     {
-        if (this->LoggingStream.is_open()) {
-            this->LoggingStream.close();
+        if (this->LoggingFileStream.is_open()) {
+            this->LoggingFileStream.close();
         }
         if (deleteFile) {
             remove(fileName.c_str());
         }
-        this->LoggingStream.open(fileName, ofstream::app);
-        if (!this->LoggingStream.is_open()) {
+        this->LoggingFileStream.open(fileName, ofstream::app);
+        if (!this->LoggingFileStream.is_open()) {
             // Logger the failure and return an error code
             this->write(Level::ERR, "Failed to open Logger file '" + fileName + "'", location);
             return 1;
@@ -194,7 +159,7 @@ public:
 
         string toLogger;
 
-        if (!this->LoggingStream.is_open()) {
+        if (!this->LoggingFileStream.is_open()) {
             setFile(this->LoggerFile);
         }
 
@@ -220,7 +185,7 @@ public:
         // Logger to a file if it's one of our targets and we've set a LoggerFile
         if ((this->LoggerTarget & (short)Target::LOG_FILE) && this->LoggerFile != "") {
             mxLog.lock();
-            this->LoggingStream << toLogger;
+            this->LoggingFileStream << toLogger;
             mxLog.unlock();
         }
     }
@@ -275,7 +240,8 @@ public:
      *
      * \param	string	The message to write
      */
-    void LogDeb(string message, const std::experimental::source_location location = std::experimental::source_location::current())
+    void LogDeb(string message,
+                const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::DEB, message, location);
     }
@@ -283,7 +249,8 @@ public:
      *
      * \param	string	The message to write
      */
-    void LogInfo(string message, const std::experimental::source_location location = std::experimental::source_location::current())
+    void LogInfo(string message,
+                 const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::INFO, message, location);
     }
@@ -291,7 +258,8 @@ public:
      *
      * \param	string	The message to write
      */
-    void LogNotice(string message, const std::experimental::source_location location = std::experimental::source_location::current())
+    void LogNotice(string message,
+                   const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::NOTICE, message, location);
     }
@@ -299,7 +267,8 @@ public:
      *
      * \param	string	The message to write
      */
-    void LogWar(string message, const std::experimental::source_location location = std::experimental::source_location::current())
+    void LogWar(string message,
+                const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::WARNING, message, location);
     }
@@ -307,7 +276,8 @@ public:
      *
      * \param	string	The message to write
      */
-    void LogErr(string message, const std::experimental::source_location location = std::experimental::source_location::current())
+    void LogErr(string message,
+                const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::ERR, message, location);
     }
@@ -315,7 +285,8 @@ public:
      *
      * \param	string	The message to write
      */
-    void LogCrit(string message, const std::experimental::source_location location = std::experimental::source_location::current())
+    void LogCrit(string message,
+                 const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::CRIT, message, location);
     }
@@ -323,7 +294,8 @@ public:
      *
      * \param	string	The message to write
      */
-    void LogAlert(string message, const std::experimental::source_location location = std::experimental::source_location::current())
+    void LogAlert(string message,
+                  const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::ALERT, message, location);
     }
@@ -331,7 +303,8 @@ public:
      *
      * \param	string	The message to write
      */
-    void LogEmerg(string message, const std::experimental::source_location location = std::experimental::source_location::current())
+    void LogEmerg(string message,
+                  const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::EMERG, message, location);
     }
@@ -342,45 +315,27 @@ public:
 
     /* Date and time will no longer be printed with each Logger message.
      */
-    void excludeTimestamp()
-    {
-        this->timestampEnabled = false;
-    }
+    void excludeTimestamp() { this->timestampEnabled = false; }
 
     /* Date and time will be printed with each Logger message.
      */
-    void includeTimestamp()
-    {
-        this->timestampEnabled = true;
-    }
+    void includeTimestamp() { this->timestampEnabled = true; }
 
     /* Logger level will no longer be printed with each Logger message.
      */
-    void excludeLoggerLevel()
-    {
-        this->levelEnabled = false;
-    }
+    void excludeLoggerLevel() { this->levelEnabled = false; }
 
     /* Logger level will be printed with each Logger message.
      */
-    void includeLoggerLevel()
-    {
-        this->levelEnabled = true;
-    }
+    void includeLoggerLevel() { this->levelEnabled = true; }
 
     /* Function info will no longer be printed with each Logger message.
      */
-    void excludeFunctionInfo()
-    {
-        this->fileEnabled = false;
-    }
+    void excludeFunctionInfo() { this->fileEnabled = false; }
 
     /* Function info will be printed with each Logger message.
      */
-    void includeFunctionInfo()
-    {
-        this->fileEnabled = true;
-    }
+    void includeFunctionInfo() { this->fileEnabled = true; }
 
 #pragma endregion boolSets
 };

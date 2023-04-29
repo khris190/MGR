@@ -12,10 +12,7 @@ struct Sample {
     long nsTime;
     std::string name;
     Sample() { }
-    Sample(std::string name)
-    {
-        this->name = name;
-    }
+    Sample(std::string name) { this->name = name; }
     Sample(std::string name, long nsTime)
     {
         this->name = name;
@@ -23,7 +20,8 @@ struct Sample {
     }
 };
 
-class Profiler {
+class Profiler
+{
 private:
     std::mutex mxSamples;
     std::vector<Sample> samples;
@@ -52,7 +50,8 @@ public:
 // use for acurate creation to block end timing
 #define newTimer(name) PTimer TOKENPASTE2(Timer_, __LINE__) = PTimer(name)
 // use by throwing newTimer({string name}) into code block that has to be measured
-class PTimer {
+class PTimer
+{
 private:
     Sample sample;
     std::chrono::_V2::system_clock::time_point startTime;
