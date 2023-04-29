@@ -19,10 +19,12 @@ int main(int argc, char const* argv[])
         Log.setFile("./" + Config::get<Config::Argument::LOG>(), true);
         Log.xorTarget(Target::LOG_FILE);
     }
-    Log.LogInfo("Starting");
+    // Log.LogInfo("Starting");
     {
         newTimer("mainTestTimer");
-        Log.LogInfo("artGeneration");
+        for (size_t i = 0; i < 10000; i++) {
+            Log.LogInfo("artGeneration");
+        }
         // ArtGeneration gen(Config::population_size.value, Config::shape_amount.value);
         // Log.LogInfo("cairo_image_surface_create_from_png");
         // cairo_surface_t *image = cairo_image_surface_create_from_png(Config::input_name.value.c_str());

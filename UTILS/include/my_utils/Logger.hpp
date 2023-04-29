@@ -2,6 +2,7 @@
 #define LOGGER_HPP
 
 #include <chrono>
+#include <cstdlib>
 #include <cstring>
 #include <ctime>
 #include <experimental/source_location>
@@ -63,6 +64,10 @@ public:
     bool levelEnabled = true;
     bool fileEnabled = true;
     bool deletePrevLog = true;
+
+#define tempStringStartSize 256
+    char* tempString = (char*)malloc(sizeof(char) * tempStringStartSize);
+    size_t tempStringSize = tempStringStartSize;
 
     ~Logger() { this->LoggingFileStream.close(); }
 
@@ -172,7 +177,9 @@ public:
         // printf makes printing a bit faster
         // Logger to stdout if it's one of our targets
         if ((this->LoggerTarget & (short)Target::STDOUT)) {
+            mxLog.lock();
             fprintf(stdout, "%s", toLogger.c_str());
+            mxLog.unlock();
         }
 
         // Logger to stderr if it's one of our targets
@@ -192,7 +199,9 @@ public:
 
     std::string getLoggerfunctionInfo(Level level, const std::experimental::source_location location)
     {
+        newTimer("FunctionInfo");
         string toLogger;
+        size_t offset = 0;
 
         // Append the current date and time if enabled
         if (this->timestampEnabled) {
@@ -200,14 +209,12 @@ public:
             if (this->lastTime < time) {
                 this->lastTime = time;
                 struct tm* timeStruct = std::localtime(&time);
-                strftime(this->timeStr, 120, "%d/%b/%Y %H:%M:%S", timeStruct);
+                strftime(this->timeStr, 200, "%d/%b/%Y %H:%M:%S", timeStruct);
             }
-            char* cstring = (char*)malloc(sizeof(char) * 128);
-            size_t offset = cpyChar(cstring, "[");
-            offset += cpyChar(cstring + offset, this->timeStr);
-            offset += cpyChar(cstring + offset, "] ");
-            toLogger += cstring;
-            free(cstring);
+            offset = cpyChar(tempString, "[");
+            offset += cpyChar(tempString + offset, this->timeStr);
+            offset += cpyChar(tempString + offset, "] \0");
+            toLogger += tempString;
         }
 
         if (this->levelEnabled) {
@@ -219,18 +226,19 @@ public:
             size_t funcNameSize = strlen(location.function_name());
             size_t stringSize = fileNameSize + funcNameSize + 20 + 5;
 
-            char* cstring = (char*)malloc(sizeof(char) * (stringSize));
-
-            size_t test = cpyChar(cstring, location.file_name());
-            test += cpyChar(cstring + test, ":");
-            test += cpyChar(cstring + test, location.line());
-            test += cpyChar(cstring + test, ";");
-            test += cpyChar(cstring + test, location.column());
-            test += cpyChar(cstring + test, "  ");
-            test += cpyChar(cstring + test, location.function_name());
-
-            toLogger += cstring;
-            free(cstring);
+            if (stringSize > tempStringSize) {
+                free(tempString);
+                tempString = (char*)malloc(sizeof(char) * (stringSize));
+            }
+            offset = cpyChar(tempString, location.file_name());
+            offset += cpyChar(tempString + offset, ":");
+            offset += cpyChar(tempString + offset, location.line());
+            offset += cpyChar(tempString + offset, ";");
+            offset += cpyChar(tempString + offset, location.column());
+            offset += cpyChar(tempString + offset, "  ");
+            offset += cpyChar(tempString + offset, location.function_name());
+            cpyChar(tempString + offset, '\0');
+            toLogger += tempString;
         }
         return toLogger;
     }
