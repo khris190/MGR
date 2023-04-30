@@ -1,24 +1,36 @@
 #include "my_utils/Profiler.hpp"
+#include <string>
 
-Profiler::Profiler()
-{
-}
+Profiler profiler;
+Profiler::Profiler() { }
 
-Profiler *Profiler::getInstance()
-{
-    if (!profiler)
-        profiler = new Profiler;
-    return profiler;
-}
+// Profiler* Profiler::getInstance()
+// {
+
+//     // static Profiler* profiler = nullptr;
+//     // static int fd = -1;
+//     // static const size_t kSharedMemSize = sizeof(Profiler);
+
+//     // if (profiler == nullptr) {
+//     //     // Create a new shared memory block
+//     //     fd = shm_open("/profiler", O_CREAT | O_RDWR, 0666);
+//     //     ftruncate(fd, kSharedMemSize);
+//     //     void* ptr = mmap(nullptr, kSharedMemSize, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+
+//     //     // Initialize the singleton instance in the shared memory block
+//     //     profiler = new (ptr) Profiler;
+//     //     atexit(cleanup);
+//     // }
+
+//     // return profiler;
+// }
 
 void Profiler::AddSample(Sample sample)
 {
-    //it will make stuff slower but now there is 0% probability to do a double push_back;
-    mxSamples.lock();  
-    for (size_t i = 0; i < samples.size(); i++)
-    {
-        if (sample.name == samples[i].name)
-        { 
+    // it will make stuff slower but now there is 0% probability to do a double push_back;
+    mxSamples.lock();
+    for (size_t i = 0; i < samples.size(); i++) {
+        if (sample.name == samples[i].name) {
             samples[i].nsTime += sample.nsTime;
             mxSamples.unlock();
             return;
@@ -31,40 +43,35 @@ void Profiler::AddSample(Sample sample)
 std::string Profiler::getTimingsAsString(bool doClearSamples)
 {
     std::string retString;
+    retString.reserve(50);
 #ifdef DEBUG
-    retString += "DEBUG TIMINGS!!!\n";
+    retString = "DEBUG TIMINGS!!!\n ";
 #endif
 
     std::vector<Sample> localSamples = getTimings(doClearSamples);
     long time = 0;
-    for (size_t i = 0; i < localSamples.size(); i++)
-    {
+    for (size_t i = 0; i < localSamples.size(); i++) {
         mxSamples.lock();
-        retString += localSamples[i].name + ": ";
+        retString = localSamples[i].name;
+        retString += ": ";
         time = localSamples[i].nsTime;
         mxSamples.unlock();
         retString += std::to_string(time) + "ns.  ";
-        time /= 1000000; //change to ms.
-        if (time > 1)
-        {
+        time /= 1000000; // change to ms.
+        if (time > 1) {
             retString += std::to_string(time) + "ms.  ";
-            time /= 1000; //change to s.
-            if (time > 1)
-            {
+            time /= 1000; // change to s.
+            if (time > 1) {
                 retString += std::to_string(time) + "s.";
             }
         }
         retString += "\n";
     }
-    if (localSamples.size())
-    {
+    if (localSamples.size()) {
         return retString;
-    }
-    else
-    {
+    } else {
         return "no timings";
     }
-    
 }
 
 std::vector<Sample> Profiler::getTimings(bool doClearSamples)
@@ -72,13 +79,11 @@ std::vector<Sample> Profiler::getTimings(bool doClearSamples)
     std::vector<Sample> retSample;
 
     mxSamples.lock();
-    for (size_t i = 0; i < samples.size(); i++)
-    {
+    for (size_t i = 0; i < samples.size(); i++) {
         retSample.push_back(Sample(samples[i].name, samples[i].nsTime));
     }
     mxSamples.unlock();
-    if (doClearSamples)
-    {
+    if (doClearSamples) {
         clearSamples();
     }
 
@@ -94,12 +99,10 @@ void Profiler::clearSamples()
 
 void Profiler::printProfilerData(bool doClearSamples)
 {
-    for (size_t i = 0; i < samples.size(); i++)
-    {
+    for (size_t i = 0; i < samples.size(); i++) {
         std::cout << samples[i].name << ": " << samples[i].nsTime << "ns" << std::endl;
     }
-    if (doClearSamples)
-    {
+    if (doClearSamples) {
         clearSamples();
     }
 }
@@ -107,14 +110,13 @@ void Profiler::printProfilerData(bool doClearSamples)
 Profiler::~Profiler()
 {
     clearSamples();
-    if (profiler)
-    {
+    if (profiler) {
         delete profiler;
     }
 }
 
 // Initialize pointer to zero so that it can be initialized in first call to getInstance
-Profiler *Profiler::profiler = 0;
+Profiler* Profiler::profiler = 0;
 
 PTimer::PTimer(std::string name)
 {
@@ -125,5 +127,5 @@ PTimer::PTimer(std::string name)
 PTimer::~PTimer()
 {
     sample.nsTime = std::chrono::duration<long, std::nano>(std::chrono::system_clock::now() - startTime).count();
-    Profiler::getInstance()->AddSample(sample);
+    profiler.AddSample(sample);
 }
