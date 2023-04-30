@@ -57,7 +57,7 @@ public:
 
     // this can speed up time stamp aquisition by 75%
     std::time_t lastTime = 0;
-    char timeStr[80];
+    char timeStr[200];
 
     // Flags that change Logger style
     bool timestampEnabled = true;
@@ -67,9 +67,18 @@ public:
 
 #define tempStringStartSize 256
     char* tempString = (char*)malloc(sizeof(char) * tempStringStartSize);
+    char* timeString = (char*)malloc(sizeof(char) * tempStringStartSize);
+    char* levelString = (char*)malloc(sizeof(char) * 64);
+    char* fileString = (char*)malloc(sizeof(char) * tempStringStartSize);
     size_t tempStringSize = tempStringStartSize;
 
-    ~Logger() { this->LoggingFileStream.close(); }
+    ~Logger()
+    {
+        this->LoggingFileStream.close();
+        free(timeString);
+        free(levelString);
+        free(fileString);
+    }
 
 #pragma region Target and level
 
@@ -77,28 +86,28 @@ public:
      *
      * \param   Target	The Logger target
      */
-    void setTarget(Target target) { this->LoggerTarget = (short)target; }
+    void setTarget(Target target);
 
-    void xorTarget(Target target) { this->LoggerTarget ^= (short)target; }
+    void xorTarget(Target target);
     /* Set the severity of messages to Logger.
      *
      * \param	Level	The Logger level to set
      */
-    void setLevel(Level level) { this->LoggerLevel = level; }
+    void setLevel(Level level);
 
     /* Get the current Logger level. Only messages
      * with equal or higher severity will be written.
      *
      * \return	Level	The current Logger level
      */
-    Level getLevel() { return this->LoggerLevel; }
+    Level getLevel();
 
     /* Convert the Level enum to a string.
      *
      * \param	Level	The level to convert
      * \return	string	The converted level
      */
-    string levelToString(Level level) { return levelMap[level]; }
+    string levelToString(Level level);
 
 #pragma endregion Target and level
 
@@ -108,42 +117,10 @@ public:
      * \param	string	The file to which we will Logger
      */
     short setFile(string fileName, bool deleteFile = false,
-                  const std::experimental::source_location location = std::experimental::source_location::current())
-    {
-        if (this->LoggingFileStream.is_open()) {
-            this->LoggingFileStream.close();
-        }
-        // Make sure we can open the file for writing
-        if (deleteFile) {
-            remove(fileName.c_str());
-        }
-        this->LoggingFileStream.open(fileName, ofstream::app);
-        if (!this->LoggingFileStream.is_open()) {
-            // Logger the failure and return an error code
-            this->write(Level::ERR, "Failed to open Logger file '" + fileName + "'", location);
-            return 1;
-        }
-        this->LoggerFile = fileName;
-        return 0;
-    }
+                  const std::experimental::source_location location = std::experimental::source_location::current());
+
     short setFile(string fileName, ofstream::openmode mode, bool deleteFile = false,
-                  const std::experimental::source_location location = std::experimental::source_location::current())
-    {
-        if (this->LoggingFileStream.is_open()) {
-            this->LoggingFileStream.close();
-        }
-        if (deleteFile) {
-            remove(fileName.c_str());
-        }
-        this->LoggingFileStream.open(fileName, ofstream::app);
-        if (!this->LoggingFileStream.is_open()) {
-            // Logger the failure and return an error code
-            this->write(Level::ERR, "Failed to open Logger file '" + fileName + "'", location);
-            return 1;
-        }
-        this->LoggerFile = fileName;
-        return 0;
-    }
+                  const std::experimental::source_location location = std::experimental::source_location::current());
 #pragma endregion setFile
 
     /* Log a message.
@@ -151,97 +128,9 @@ public:
      * \param	Level	The severity of the message
      * \param	string	The message to write
      */
-    void write(Level level, string message, const std::experimental::source_location location)
-    {
-        // Only log if we're at or above the pre-defined severity
-        if (level < this->LoggerLevel) {
-            return;
-        }
-        // Target::DISABLED takes precedence over other targets
-        if (this->LoggerTarget == (short)Target::DISABLED) {
-            return;
-        }
+    void write(Level level, string message, const std::experimental::source_location location);
 
-        string toLogger;
-
-        if (!this->LoggingFileStream.is_open()) {
-            setFile(this->LoggerFile);
-        }
-
-        // Append the message to our Logger statement
-        if (this->fileEnabled || this->timestampEnabled || this->levelEnabled) {
-            toLogger = getLoggerfunctionInfo(level, location) + ":\n" + message + "\n";
-        } else {
-            toLogger = message + "\n";
-        }
-        // printf makes printing a bit faster
-        // Logger to stdout if it's one of our targets
-        if ((this->LoggerTarget & (short)Target::STDOUT)) {
-            mxLog.lock();
-            fprintf(stdout, "%s", toLogger.c_str());
-            mxLog.unlock();
-        }
-
-        // Logger to stderr if it's one of our targets
-        if ((this->LoggerTarget & (short)Target::STDERR)) {
-            mxLog.lock();
-            fprintf(stderr, "%s", toLogger.c_str());
-            mxLog.unlock();
-        }
-
-        // Logger to a file if it's one of our targets and we've set a LoggerFile
-        if ((this->LoggerTarget & (short)Target::LOG_FILE) && this->LoggerFile != "") {
-            mxLog.lock();
-            this->LoggingFileStream << toLogger;
-            mxLog.unlock();
-        }
-    }
-
-    std::string getLoggerfunctionInfo(Level level, const std::experimental::source_location location)
-    {
-        newTimer("FunctionInfo");
-        string toLogger;
-        size_t offset = 0;
-
-        // Append the current date and time if enabled
-        if (this->timestampEnabled) {
-            std::time_t time = system_clock::to_time_t(system_clock::now());
-            if (this->lastTime < time) {
-                this->lastTime = time;
-                struct tm* timeStruct = std::localtime(&time);
-                strftime(this->timeStr, 200, "%d/%b/%Y %H:%M:%S", timeStruct);
-            }
-            offset = cpyChar(tempString, "[");
-            offset += cpyChar(tempString + offset, this->timeStr);
-            offset += cpyChar(tempString + offset, "] \0");
-            toLogger += tempString;
-        }
-
-        if (this->levelEnabled) {
-            toLogger += levelMap[level] + " ";
-        }
-
-        if (this->fileEnabled) {
-            size_t fileNameSize = strlen(location.file_name());
-            size_t funcNameSize = strlen(location.function_name());
-            size_t stringSize = fileNameSize + funcNameSize + 20 + 5;
-
-            if (stringSize > tempStringSize) {
-                free(tempString);
-                tempString = (char*)malloc(sizeof(char) * (stringSize));
-            }
-            offset = cpyChar(tempString, location.file_name());
-            offset += cpyChar(tempString + offset, ":");
-            offset += cpyChar(tempString + offset, location.line());
-            offset += cpyChar(tempString + offset, ";");
-            offset += cpyChar(tempString + offset, location.column());
-            offset += cpyChar(tempString + offset, "  ");
-            offset += cpyChar(tempString + offset, location.function_name());
-            cpyChar(tempString + offset, '\0');
-            toLogger += tempString;
-        }
-        return toLogger;
-    }
+    std::string getLoggerfunctionInfo(Level level, const std::experimental::source_location location);
 
 #pragma region Logs
     /* Log a Debug(lvl 1) message.
@@ -348,7 +237,7 @@ public:
 #pragma endregion boolSets
 };
 
-extern Logger Log;
+extern Logger logger;
 
 #pragma region Bit - wise operators
 inline Target operator&(Target a, Target b)
