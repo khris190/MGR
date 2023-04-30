@@ -64,14 +64,6 @@ public:
     bool fileEnabled = true;
     bool deletePrevLog = true;
 
-#define tempStringStartSize 256
-    char* timeString = (char*)malloc(sizeof(char) * tempStringStartSize);
-    char* levelString = (char*)malloc(sizeof(char) * 64);
-    char* fileString = (char*)malloc(sizeof(char) * tempStringStartSize);
-    char* loggerFunctionInfoString = (char*)malloc(sizeof(char) * tempStringStartSize);
-    size_t fileStringSize = tempStringStartSize;
-    size_t loggerFunctionInfoStringSize = tempStringStartSize;
-
     ~Logger()
     {
         this->LoggingFileStream.close();
@@ -79,6 +71,7 @@ public:
         free(levelString);
         free(fileString);
         free(loggerFunctionInfoString);
+        free(loggerMessageString);
     }
 
 #pragma region Target and level
@@ -129,7 +122,7 @@ public:
      * \param	Level	The severity of the message
      * \param	string	The message to write
      */
-    void write(Level level, string message, const std::experimental::source_location location);
+    void write(Level level, const char* message, const std::experimental::source_location location);
 
     char* getLoggerfunctionInfo(Level level, const std::experimental::source_location location);
 
@@ -138,7 +131,7 @@ public:
      *
      * \param	string	The message to write
      */
-    void LogDeb(string message,
+    void LogDeb(const char* message,
                 const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::DEB, message, location);
@@ -147,7 +140,7 @@ public:
      *
      * \param	string	The message to write
      */
-    void LogInfo(string message,
+    void LogInfo(const char* message,
                  const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::INFO, message, location);
@@ -156,7 +149,7 @@ public:
      *
      * \param	string	The message to write
      */
-    void LogNotice(string message,
+    void LogNotice(const char* message,
                    const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::NOTICE, message, location);
@@ -165,7 +158,7 @@ public:
      *
      * \param	string	The message to write
      */
-    void LogWar(string message,
+    void LogWar(const char* message,
                 const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::WARNING, message, location);
@@ -174,7 +167,7 @@ public:
      *
      * \param	string	The message to write
      */
-    void LogErr(string message,
+    void LogErr(const char* message,
                 const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::ERR, message, location);
@@ -183,7 +176,7 @@ public:
      *
      * \param	string	The message to write
      */
-    void LogCrit(string message,
+    void LogCrit(const char* message,
                  const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::CRIT, message, location);
@@ -192,7 +185,7 @@ public:
      *
      * \param	string	The message to write
      */
-    void LogAlert(string message,
+    void LogAlert(const char* message,
                   const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::ALERT, message, location);
@@ -201,7 +194,7 @@ public:
      *
      * \param	string	The message to write
      */
-    void LogEmerg(string message,
+    void LogEmerg(const char* message,
                   const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::EMERG, message, location);
@@ -236,6 +229,19 @@ public:
     void includeFunctionInfo() { this->fileEnabled = true; }
 
 #pragma endregion boolSets
+
+protected:
+#define tempStringStartSize 256
+    size_t fileStringSize = tempStringStartSize;
+    size_t loggerFunctionInfoStringSize = tempStringStartSize;
+    size_t loggerMessageSize = tempStringStartSize * 2;
+
+    char* timeString = (char*)malloc(sizeof(char) * tempStringStartSize);
+    char* levelString = (char*)malloc(sizeof(char) * 64);
+    char* fileString = (char*)malloc(sizeof(char) * tempStringStartSize);
+
+    char* loggerFunctionInfoString = (char*)malloc(sizeof(char) * tempStringStartSize);
+    char* loggerMessageString = (char*)malloc(sizeof(char) * tempStringStartSize * 2);
 };
 
 extern Logger logger;

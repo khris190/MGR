@@ -27,7 +27,7 @@ int main(int argc, char const* argv[])
     // Logger::getInstance()->LogInfo("Starting");
     {
         newTimer("mainTestTimer");
-        for (size_t i = 0; i < 10000; i++) {
+        for (size_t i = 0; i < 100000; i++) {
             logger.LogInfo("artGeneration");
         }
         // ArtGeneration gen(Config::population_size.value, Config::shape_amount.value);
