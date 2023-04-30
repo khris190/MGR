@@ -1,11 +1,8 @@
 #include "Config.hpp"
 #include "fitness.h"
-#include <optional>
-
 int main(int argc, char const* argv[])
 {
     Config::parse(argc, argv);
-    calculateFitness(nullptr, nullptr, 10, 100);
     std::optional<int> test;
     auto test1 = Config::get<Config::Argument::HOURS>();
     auto test2 = typeid(test1).name();
@@ -33,5 +30,7 @@ int main(int argc, char const* argv[])
         // cairo_surface_destroy(image);
     }
     Log.LogDeb(Profiler::getInstance()->getTimingsAsString());
+    Log.LogInfo(std::to_string(MAX_LEVEL_LENGTH));
+
     return 0;
 }
