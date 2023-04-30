@@ -58,10 +58,10 @@ std::string Profiler::getTimingsAsString(bool doClearSamples)
         mxSamples.unlock();
         retString += std::to_string(time) + "ns.  ";
         time /= 1000000; // change to ms.
-        if (time > 1) {
+        if (time >= 1) {
             retString += std::to_string(time) + "ms.  ";
             time /= 1000; // change to s.
-            if (time > 1) {
+            if (time >= 1) {
                 retString += std::to_string(time) + "s.";
             }
         }
