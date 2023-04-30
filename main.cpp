@@ -26,10 +26,7 @@ int main(int argc, char const* argv[])
     }
     // Logger::getInstance()->LogInfo("Starting");
     {
-        {
-            newTimer("mainTestTimer");
-            newTimer("mainTestTimer2");
-        }
+        newTimer("mainTestTimer");
         for (size_t i = 0; i < 10000; i++) {
             logger.LogInfo("artGeneration");
         }
@@ -40,7 +37,7 @@ int main(int argc, char const* argv[])
         // gen.StartEvolution(image);
         // cairo_surface_destroy(image);
     }
-    logger.LogDeb(profiler.getTimingsAsString());
+    logger.LogDeb(profiler.getTimingsAsString().c_str());
     // Log.LogInfo(std::to_string(MAX_LEVEL_LENGTH));
 
     atexit(cleanup);
