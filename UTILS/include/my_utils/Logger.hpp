@@ -25,7 +25,6 @@ using std::map;
 using std::ofstream;
 // using std::shared_ptr;
 using std::string;
-using std::chrono::system_clock;
 
 size_t cpyChar(char* dest, const char* src);
 size_t cpyChar(char* dest, unsigned int src);
@@ -37,7 +36,7 @@ enum class Target : short { DISABLED = 0, STDOUT = 1, STDERR = 2, LOG_FILE = 4 }
 enum class Level : short { DEB = 1, INFO = 2, NOTICE = 3, WARNING = 4, ERR = 5, CRIT = 6, ALERT = 7, EMERG = 8 };
 
 // String representations of Logger levels
-static map<Level, string> levelMap
+static map<Level, const char*> levelMap
     = { { Level::DEB, "DEBUG" },       { Level::INFO, "INFO" },      { Level::NOTICE, "NOTICE" },
         { Level::WARNING, "WARNING" }, { Level::ERR, "ERROR" },      { Level::CRIT, "CRITICAL" },
         { Level::ALERT, "ALERT" },     { Level::EMERG, "EMERGENCY" } };
@@ -57,7 +56,7 @@ public:
 
     // this can speed up time stamp aquisition by 75%
     std::time_t lastTime = 0;
-    char timeStr[200];
+    char timeStr[200] = "[";
 
     // Flags that change Logger style
     bool timestampEnabled = true;
@@ -66,11 +65,12 @@ public:
     bool deletePrevLog = true;
 
 #define tempStringStartSize 256
-    char* tempString = (char*)malloc(sizeof(char) * tempStringStartSize);
     char* timeString = (char*)malloc(sizeof(char) * tempStringStartSize);
     char* levelString = (char*)malloc(sizeof(char) * 64);
     char* fileString = (char*)malloc(sizeof(char) * tempStringStartSize);
-    size_t tempStringSize = tempStringStartSize;
+    char* loggerFunctionInfoString = (char*)malloc(sizeof(char) * tempStringStartSize);
+    size_t fileStringSize = tempStringStartSize;
+    size_t loggerFunctionInfoStringSize = tempStringStartSize;
 
     ~Logger()
     {
@@ -78,6 +78,7 @@ public:
         free(timeString);
         free(levelString);
         free(fileString);
+        free(loggerFunctionInfoString);
     }
 
 #pragma region Target and level
@@ -130,7 +131,7 @@ public:
      */
     void write(Level level, string message, const std::experimental::source_location location);
 
-    std::string getLoggerfunctionInfo(Level level, const std::experimental::source_location location);
+    char* getLoggerfunctionInfo(Level level, const std::experimental::source_location location);
 
 #pragma region Logs
     /* Log a Debug(lvl 1) message.

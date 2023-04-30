@@ -1,6 +1,11 @@
 #include "my_utils/Logger.hpp"
+#include <cstddef>
+
+using std::chrono::system_clock;
+
 Logger logger;
 std::mutex mxLog;
+
 void Logger::setTarget(Target target) { this->LoggerTarget = (short)target; }
 void Logger::xorTarget(Target target) { this->LoggerTarget ^= (short)target; }
 
@@ -67,10 +72,10 @@ void Logger::write(Level level, string message, const std::experimental::source_
 
     // Append the message to our Logger statement
     if (this->fileEnabled || this->timestampEnabled || this->levelEnabled) {
-        toLogger = getLoggerfunctionInfo(level, location) + ":\n" + message + "\n";
-    } else {
-        toLogger = message + "\n";
+        toLogger = getLoggerfunctionInfo(level, location);
+        toLogger += ":\n";
     }
+    toLogger += message + "\n";
     // printf makes printing a bit faster
     // Logger to stdout if it's one of our targets
     if ((this->LoggerTarget & (short)Target::STDOUT)) {
@@ -94,12 +99,11 @@ void Logger::write(Level level, string message, const std::experimental::source_
     }
 }
 
-std::string Logger::getLoggerfunctionInfo(Level level, const std::experimental::source_location location)
+char* Logger::getLoggerfunctionInfo(Level level, const std::experimental::source_location location)
 {
     newTimer("FunctionInfo");
-    string toLogger;
     size_t offset = 0;
-
+    size_t fullSize = 0;
     // Append the current date and time if enabled
     if (this->timestampEnabled) {
         std::time_t time = system_clock::to_time_t(system_clock::now());
@@ -108,14 +112,15 @@ std::string Logger::getLoggerfunctionInfo(Level level, const std::experimental::
             struct tm* timeStruct = std::localtime(&time);
             strftime(&this->timeStr[1], 200, "%d/%b/%Y %H:%M:%S", timeStruct);
         }
-        offset = cpyChar(timeString, "[");
-        offset += cpyChar(timeString + offset, this->timeStr);
+        offset = cpyChar(timeString + offset, this->timeStr);
         offset += cpyChar(timeString + offset, "] \0");
-        toLogger += timeString;
+        fullSize += offset;
     }
 
     if (this->levelEnabled) {
-        toLogger += levelMap[level] + " ";
+        offset = cpyChar(levelString, levelMap[level]);
+        offset += cpyChar(levelString + offset, " \0");
+        fullSize += offset;
     }
 
     if (this->fileEnabled) {
@@ -123,8 +128,8 @@ std::string Logger::getLoggerfunctionInfo(Level level, const std::experimental::
         size_t funcNameSize = strlen(location.function_name());
         size_t stringSize = fileNameSize + funcNameSize + 20 + 5;
 
-        if (stringSize > tempStringSize) {
-            tempStringSize = stringSize;
+        if (stringSize > fileStringSize) {
+            fileStringSize = stringSize;
             free(fileString);
             fileString = (char*)malloc(sizeof(char) * (stringSize));
         }
@@ -136,7 +141,16 @@ std::string Logger::getLoggerfunctionInfo(Level level, const std::experimental::
         offset += cpyChar(fileString + offset, "  ");
         offset += cpyChar(fileString + offset, location.function_name());
         cpyChar(fileString + offset, "\0");
-        toLogger += fileString;
+        fullSize += offset;
     }
-    return toLogger;
+    if (fullSize > loggerFunctionInfoStringSize) {
+        loggerFunctionInfoStringSize = fullSize;
+        free(loggerFunctionInfoString);
+        loggerFunctionInfoString = (char*)malloc(sizeof(char) * (fullSize));
+    }
+    offset = cpyChar(loggerFunctionInfoString, timeString);
+    offset += cpyChar(loggerFunctionInfoString + offset, levelString);
+    cpyChar(loggerFunctionInfoString + offset, fileString);
+
+    return loggerFunctionInfoString;
 }
