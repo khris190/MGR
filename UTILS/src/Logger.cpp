@@ -5,6 +5,7 @@
 
 using std::chrono::system_clock;
 
+// TODO use string_view?
 Logger logger;
 std::mutex mxLog;
 

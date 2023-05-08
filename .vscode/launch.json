@@ -8,7 +8,7 @@
       // Resolved by CMake Tools:
       "program": "${command:cmake.launchTargetPath}",
       // "args": ["-v", "5"],
-      "args": ["-V", "1", "-L"],
+      "args": ["-V", "1", "-L", "test.log"],
       // "args": ["-S", "0b001"],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
