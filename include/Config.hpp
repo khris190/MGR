@@ -1,3 +1,6 @@
+#ifndef CONFIG_HPP
+#define CONFIG_HPP
+
 #include "external_utils/argparse.hpp"
 #include "my_utils/Logger.hpp"
 #include <any>
@@ -5,23 +8,10 @@
 #include <optional>
 #include <stdexcept>
 #include <string>
+#include <string_view>
+#include <unordered_map>
 
-#define TYPE_FROM_ARGUMENT(enum_value)                                                                                 \
-    std::conditional_t<                                                                                                \
-        enum_value == Argument::VERBOSE, int,                                                                          \
-        std::conditional_t<                                                                                            \
-            enum_value == Argument::PRINT_VALS, bool,                                                                  \
-            std::conditional_t<                                                                                        \
-                enum_value == Argument::INPUT, std::string,                                                            \
-                std::conditional_t<                                                                                    \
-                    enum_value == Argument::OUTPUT, std::string,                                                       \
-                    std::conditional_t<                                                                                \
-                        enum_value == Argument::THREADS, int,                                                          \
-                        std::conditional_t<                                                                            \
-                            enum_value == Argument::POPULATION, int,                                                   \
-                            std::conditional_t<enum_value == Argument::SHAPE_AMOUNT, int,                              \
-                                               std::conditional_t<enum_value == Argument::LOG, std::string,            \
-                                                                  /* default type */ float>>>>>>>>
+// TODO https://www.youtube.com/watch?v=INn3xa4pMfg ??
 
 namespace Config
 {
@@ -43,12 +33,42 @@ namespace Config
         LOG = 13
     };
 
-    static map<Argument, string> Arguments
-        = { { Argument::VERBOSE, "-V" },      { Argument::PRINT_VALS, "-p" },  { Argument::INPUT, "-i" },
-            { Argument::OUTPUT, "-o" },       { Argument::THREADS, "-t" },     { Argument::POPULATION, "-p" },
-            { Argument::SHAPE_AMOUNT, "-s" }, { Argument::SHAPE_TYPES, "-S" }, { Argument::RESEMPLENCE, "-r" },
-            { Argument::HOURS, "--hours" },   { Argument::SCALE, "--scale" },  { Argument::MUTATION, "-m" },
-            { Argument::LOG, "-L" } };
+    template <Argument Condition> struct ArgumentType {
+        using type = float;
+    };
+    template <> struct ArgumentType<Argument::VERBOSE> {
+        using type = int;
+    };
+    template <> struct ArgumentType<Argument::PRINT_VALS> {
+        using type = bool;
+    };
+    template <> struct ArgumentType<Argument::INPUT> {
+        using type = std::string;
+    };
+    template <> struct ArgumentType<Argument::OUTPUT> {
+        using type = std::string;
+    };
+    template <> struct ArgumentType<Argument::LOG> {
+        using type = std::string;
+    };
+    template <> struct ArgumentType<Argument::THREADS> {
+        using type = int;
+    };
+    template <> struct ArgumentType<Argument::POPULATION> {
+        using type = int;
+    };
+    template <> struct ArgumentType<Argument::SHAPE_AMOUNT> {
+        using type = int;
+    };
+    template <> struct ArgumentType<Argument::SHAPE_TYPES> {
+        using type = unsigned int;
+    };
+
+    static std::unordered_map<Argument, std::string_view> Arguments = { { Argument::VERBOSE, "-V" },
+        { Argument::PRINT_VALS, "-p" }, { Argument::INPUT, "-i" }, { Argument::OUTPUT, "-o" },
+        { Argument::THREADS, "-t" }, { Argument::POPULATION, "-p" }, { Argument::SHAPE_AMOUNT, "-s" },
+        { Argument::SHAPE_TYPES, "-S" }, { Argument::RESEMPLENCE, "-r" }, { Argument::HOURS, "--hours" },
+        { Argument::SCALE, "--scale" }, { Argument::MUTATION, "-m" }, { Argument::LOG, "-L" } };
 
     bool parse(int argc, char const* argv[]);
 
@@ -56,8 +76,11 @@ namespace Config
 
     template <typename name> auto testTemplate() -> name;
 
-    template <Argument E> auto get() -> TYPE_FROM_ARGUMENT(E)
+    template <Argument Condition> auto get() -> typename ArgumentType<Condition>::type
     {
-        return parser.get<TYPE_FROM_ARGUMENT(E)>(Arguments[E]);
+        using type = typename ArgumentType<Condition>::type;
+        return parser.get<type>(Arguments[Condition]);
     }
-}
+} // namespace Config
+
+#endif // CONFIG_HPP

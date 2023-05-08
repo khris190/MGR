@@ -3,11 +3,7 @@
 #include "my_utils/Logger.hpp"
 #include "my_utils/Profiler.hpp"
 #include <cstdlib>
-void cleanup()
-{
-    shm_unlink("/profiler");
-    shm_unlink("/logger");
-}
+
 int main(int argc, char const* argv[])
 {
     Config::parse(argc, argv);
@@ -24,23 +20,15 @@ int main(int argc, char const* argv[])
         logger.setFile("./" + Config::get<Config::Argument::LOG>(), true);
         logger.xorTarget(Target::LOG_FILE);
     }
-    // Logger::getInstance()->LogInfo("Starting");
-    {
-        newTimer("mainTestTimer");
-        for (size_t i = 0; i < 100000; i++) {
-            logger.LogInfo("artGeneration");
-        }
-        // ArtGeneration gen(Config::population_size.value, Config::shape_amount.value);
-        // Log.LogInfo("cairo_image_surface_create_from_png");
-        // cairo_surface_t *image = cairo_image_surface_create_from_png(Config::input_name.value.c_str());
-        // Log.LogInfo("StartEvolution");
-        // gen.StartEvolution(image);
-        // cairo_surface_destroy(image);
-    }
+    logger.LogInfo("Starting");
+    // ArtGeneration gen(Config::population_size.value, Config::shape_amount.value);
+    // Log.LogInfo("cairo_image_surface_create_from_png");
+    // cairo_surface_t *image = cairo_image_surface_create_from_png(Config::input_name.value.c_str());
+    // Log.LogInfo("StartEvolution");
+    // gen.StartEvolution(image);
+    // cairo_surface_destroy(image);
     logger.LogDeb(profiler.getTimingsAsString().c_str());
-    // Log.LogInfo(std::to_string(MAX_LEVEL_LENGTH));
 
-    atexit(cleanup);
     return 0;
 }
 // TODO go back to extern singleton
