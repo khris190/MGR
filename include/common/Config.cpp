@@ -60,7 +60,7 @@ namespace Config
           .scan<'b', unsigned int>();
         parser.add_argument("-r", "--resemblance")
           .nargs(1)
-          .default_value(0.9)
+          .default_value(0.9f)
           .help("resemblance of source image at which the program will exit.")
           .scan<'g', float>();
         parser.add_argument("--hours")

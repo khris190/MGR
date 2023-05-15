@@ -11,7 +11,7 @@ myData::ShapeType RandomieType()
     return (myData::ShapeType)out;
 }
 
-void Gene::CreateRandom()
+void Gene::Randomize()
 {
     type_of_shape = RandomieType();
     position = myData::float2(fRand(), fRand());

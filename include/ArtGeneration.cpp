@@ -1,24 +1,16 @@
 #include "ArtGeneration.hpp"
+#include "common/Config.hpp"
+#include "genetic/Population.hpp"
 #include <cstdio>
 #include <exception>
 
-void ArtGeneration::CreateChildren(float mutation_rate)
-{
-    for (size_t i = 0; i < this->childrenSize_; i++) {
-        if (i != this->parent1_ && i != this->parent2_) {
-            this->pChildren_[i]->Cross(this->pChildren_[parent1_], this->pChildren_[parent2_]);
-            this->pChildren_[i]->Mutate(mutation_rate);
-        }
-    }
-}
-
 void ArtGeneration::Draw(cairo_surface_t* img, size_t index)
 {
-    throw new std::runtime_error("notimplemented");
-    // this->pChildren_[index]->Draw(img, Config::scale.value);
+    // throw new std::runtime_error("notimplemented");
+    this->_population.children[index].Draw(img, Config::get<Config::Argument::SCALE>());
 }
 
-void ArtGeneration::AsyncFitness(cairo_surface_t* img, Genotype** children, volatile int* best_indexes,
+void ArtGeneration::AsyncFitness(cairo_surface_t* img, Population population, volatile int* best_indexes,
   volatile float* best_scores, int start, int stop, int _width, int _height)
 {
     newTimer("fitness");
@@ -33,7 +25,7 @@ void ArtGeneration::AsyncFitness(cairo_surface_t* img, Genotype** children, vola
         {
             newTimer("drawing");
             // throw std::runtime_error("not implemented Draw method");
-            children[i]->Draw(temp_surface);
+            population.children[i].Draw(temp_surface);
         }
         float score = fitness(img, temp_surface);
         if (bestScore < score) {
@@ -77,10 +69,10 @@ void ArtGeneration::StartEvolution(cairo_surface_t* img)
         volatile float bestScores[coreCount * 2];
         {
             std::vector<std::future<void>> workers;
-            int offset = this->childrenSize_ / coreCount;
+            int offset = this->_population.children.size() / coreCount;
             for (size_t i = 0; i < coreCount; i++) {
 
-                workers.push_back(pool.submit(ArtGeneration::AsyncFitness, img, this->pChildren_, best + (i * 2),
+                workers.push_back(pool.submit(ArtGeneration::AsyncFitness, img, this->_population, best + (i * 2),
                   bestScores + (i * 2), offset * i, offset * (i + 1), _width, _height));
             }
             for (std::future<void>& t : workers) {
@@ -123,16 +115,16 @@ void ArtGeneration::StartEvolution(cairo_surface_t* img)
 
         if (wiggleCounter % 4 == 3) {
             // Wiggle
-            for (size_t i = 0; i < this->childrenSize_; i++) {
+            for (size_t i = 0; i < this->_population.children.size(); i++) {
                 if (i != parent1_ && i != parent2_) {
-                    this->pChildren_[i]->Wiggle(Config::get<Config::Argument::MUTATION>() * 2);
+                    this->_population.children[i].Wiggle(Config::get<Config::Argument::MUTATION>() * 2);
                 }
             }
         } else if (wiggleCounter % 4 == 0) {
             logger.LogInfo("WIGGLE");
-            this->CreateChildren(Config::get<Config::Argument::MUTATION>());
+            this->_population.CreateNextGeneration(parent1_, parent2_, Config::get<Config::Argument::MUTATION>());
         } else {
-            this->CreateChildren(Config::get<Config::Argument::MUTATION>());
+            this->_population.CreateNextGeneration(parent1_, parent2_, Config::get<Config::Argument::MUTATION>());
         }
         wiggleCounter++;
 
@@ -143,7 +135,7 @@ void ArtGeneration::StartEvolution(cairo_surface_t* img)
         }
         if (noChangesCounter >= 10) {
             logger.LogInfo("using increased mutation rate");
-            this->CreateChildren(Config::get<Config::Argument::MUTATION>() * 2);
+            this->_population.CreateNextGeneration(parent1_, parent2_, Config::get<Config::Argument::MUTATION>() * 2);
         }
 
         lastScore = bestScore;
@@ -173,26 +165,10 @@ void ArtGeneration::StartEvolution(cairo_surface_t* img)
     }
 }
 
-void ArtGeneration::GenerateFirstPopulation(int children_size, int genotype_size)
-{
-    pChildren_ = (Genotype**)malloc(sizeof(Genotype) * children_size);
-    for (size_t i = 0; i < children_size; i++) {
-        pChildren_[i] = new Genotype(genotype_size);
-    }
-}
-
 ArtGeneration::ArtGeneration(int children_size, int genotype_size)
+    : _population(children_size, genotype_size)
 {
     srand(time(NULL));
-    this->childrenSize_ = children_size;
-    GenerateFirstPopulation(children_size, genotype_size);
 }
 
-ArtGeneration::~ArtGeneration()
-{
-    for (size_t i = 0; i < this->childrenSize_; i++) {
-        delete pChildren_[i];
-    }
-
-    free(pChildren_);
-}
+ArtGeneration::~ArtGeneration() { }
