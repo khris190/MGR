@@ -1,5 +1,4 @@
 #include "Gene.hpp"
-#include "common/DataStructures.hpp"
 
 myData::ShapeType RandomieType()
 {

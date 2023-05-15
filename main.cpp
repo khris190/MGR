@@ -1,5 +1,5 @@
 #include "ArtGeneration.hpp"
-#include "Config.hpp"
+#include "common/Config.hpp"
 #include "fitness.h"
 #include "my_utils/Logger.hpp"
 #include "my_utils/Profiler.hpp"
@@ -22,6 +22,16 @@ int main(int argc, char const* argv[])
         logger.setFile("./" + Config::get<Config::Argument::LOG>(), true);
         logger.xorTarget(Target::LOG_FILE);
     }
+
+    // file Exists
+    {
+        struct stat buffer;
+        if ((stat(Config::get<Config::Argument::INPUT>().c_str(), &buffer) != 0)) {
+            logger.LogErr("no input file: " + Config::get<Config::Argument::INPUT>());
+            return 2;
+        }
+    }
+
     logger.LogInfo("Starting");
     ArtGeneration gen(Config::get<Config::Argument::POPULATION>(), Config::get<Config::Argument::SHAPE_AMOUNT>());
     logger.LogInfo("cairo_image_surface_create_from_png");

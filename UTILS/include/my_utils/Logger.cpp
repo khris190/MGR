@@ -1,4 +1,4 @@
-#include "my_utils/Logger.hpp"
+#include "Logger.hpp"
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
@@ -37,8 +37,8 @@ short Logger::setFile(string fileName, bool deleteFile, const std::experimental:
     return 0;
 }
 
-short Logger::setFile(string fileName, ofstream::openmode mode, bool deleteFile,
-                      const std::experimental::source_location location)
+short Logger::setFile(
+  string fileName, ofstream::openmode mode, bool deleteFile, const std::experimental::source_location location)
 {
     if (this->LoggingFileStream.is_open()) {
         this->LoggingFileStream.close();
@@ -107,6 +107,7 @@ void Logger::write(Level level, const char* message, const std::experimental::so
     if ((this->LoggerTarget & (short)Target::LOG_FILE) && this->LoggerFile != "") {
         mxLog.lock();
         this->LoggingFileStream << loggerMessageString;
+        this->LoggingFileStream.flush();
         mxLog.unlock();
     }
 }

@@ -135,6 +135,11 @@ public:
     {
         this->write(Level::DEB, message, location);
     }
+    void LogDeb(std::string message,
+      const std::experimental::source_location location = std::experimental::source_location::current())
+    {
+        this->write(Level::DEB, message.c_str(), location);
+    }
     /* Log a Info(lvl 2) message.
      *
      * \param	string	The message to write
@@ -143,6 +148,11 @@ public:
       const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::INFO, message, location);
+    }
+    void LogInfo(std::string message,
+      const std::experimental::source_location location = std::experimental::source_location::current())
+    {
+        this->write(Level::INFO, message.c_str(), location);
     }
     /* Log a Notice(Lvl 3) message.
      *
@@ -153,6 +163,11 @@ public:
     {
         this->write(Level::NOTICE, message, location);
     }
+    void LogNotice(std::string message,
+      const std::experimental::source_location location = std::experimental::source_location::current())
+    {
+        this->write(Level::NOTICE, message.c_str(), location);
+    }
     /* Log a Warning(lvl 4) message.
      *
      * \param	string	The message to write
@@ -161,6 +176,11 @@ public:
       const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::WARNING, message, location);
+    }
+    void LogWar(std::string message,
+      const std::experimental::source_location location = std::experimental::source_location::current())
+    {
+        this->write(Level::WARNING, message.c_str(), location);
     }
     /* Log a Error(lvl 5) message.
      *
@@ -171,6 +191,12 @@ public:
     {
         this->write(Level::ERR, message, location);
     }
+
+    void LogErr(std::string message,
+      const std::experimental::source_location location = std::experimental::source_location::current())
+    {
+        this->write(Level::ERR, message.c_str(), location);
+    }
     /* Log a Critical(lvl 6) message.
      *
      * \param	string	The message to write
@@ -179,6 +205,11 @@ public:
       const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::CRIT, message, location);
+    }
+    void LogCrit(std::string message,
+      const std::experimental::source_location location = std::experimental::source_location::current())
+    {
+        this->write(Level::CRIT, message.c_str(), location);
     }
     /* Log a Alert(lvl 7) message.
      *
@@ -189,6 +220,11 @@ public:
     {
         this->write(Level::ALERT, message, location);
     }
+    void LogAlert(std::string message,
+      const std::experimental::source_location location = std::experimental::source_location::current())
+    {
+        this->write(Level::ALERT, message.c_str(), location);
+    }
     /* Log a Emergency(lvl 8) message.
      *
      * \param	string	The message to write
@@ -197,6 +233,11 @@ public:
       const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::EMERG, message, location);
+    }
+    void LogEmerg(std::string message,
+      const std::experimental::source_location location = std::experimental::source_location::current())
+    {
+        this->write(Level::EMERG, message.c_str(), location);
     }
 
 #pragma endregion Logs

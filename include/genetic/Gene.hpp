@@ -1,7 +1,7 @@
 #ifndef GENE_HPP
 #define GENE_HPP
 
-#include "Config.hpp"
+#include "common/Config.hpp"
 #include "common/DataStructures.hpp"
 #include "common/Randoms.hpp"
 #include "my_utils/Logger.hpp"

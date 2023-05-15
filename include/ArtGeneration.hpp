@@ -1,7 +1,7 @@
 #ifndef ARTGENERATION_HPP
 #define ARTGENERATION_HPP
 
-#include "Config.hpp"
+#include "common/Config.hpp"
 #include "external_utils/BS_thread_pool_light.hpp"
 #include "fitness.hpp"
 #include "genetic/Genotype.hpp"

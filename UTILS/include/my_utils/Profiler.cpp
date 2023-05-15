@@ -1,29 +1,8 @@
-#include "my_utils/Profiler.hpp"
+#include "Profiler.hpp"
 #include <string>
 
 Profiler profiler;
 Profiler::Profiler() { }
-
-// Profiler* Profiler::getInstance()
-// {
-
-//     // static Profiler* profiler = nullptr;
-//     // static int fd = -1;
-//     // static const size_t kSharedMemSize = sizeof(Profiler);
-
-//     // if (profiler == nullptr) {
-//     //     // Create a new shared memory block
-//     //     fd = shm_open("/profiler", O_CREAT | O_RDWR, 0666);
-//     //     ftruncate(fd, kSharedMemSize);
-//     //     void* ptr = mmap(nullptr, kSharedMemSize, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-
-//     //     // Initialize the singleton instance in the shared memory block
-//     //     profiler = new (ptr) Profiler;
-//     //     atexit(cleanup);
-//     // }
-
-//     // return profiler;
-// }
 
 void Profiler::AddSample(Sample sample)
 {

@@ -6,6 +6,7 @@
 #include "common/Randoms.hpp"
 #include "my_utils/Logger.hpp"
 #include <cairo/cairo.h>
+#include <memory.h>
 #include <stdlib.h>
 #include <tgmath.h>
 

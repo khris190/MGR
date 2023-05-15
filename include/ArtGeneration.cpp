@@ -32,7 +32,7 @@ void ArtGeneration::AsyncFitness(cairo_surface_t* img, Genotype** children, vola
         cairo_surface_t* temp_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, _width, _height);
         {
             newTimer("drawing");
-            throw std::runtime_error("not implemented Draw method");
+            // throw std::runtime_error("not implemented Draw method");
             children[i]->Draw(temp_surface);
         }
         float score = fitness(img, temp_surface);
@@ -84,7 +84,6 @@ void ArtGeneration::StartEvolution(cairo_surface_t* img)
                   bestScores + (i * 2), offset * i, offset * (i + 1), _width, _height));
             }
             for (std::future<void>& t : workers) {
-                t.wait();
                 try {
                     t.get();
                 } catch (const std::exception& e) {

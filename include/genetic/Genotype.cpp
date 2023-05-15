@@ -1,5 +1,4 @@
 #include "Genotype.hpp"
-#include "common/DataStructures.hpp"
 
 Genotype::Genotype(int size_)
 {
@@ -149,7 +148,6 @@ void Genotype::Draw(cairo_surface_t* img, float Scale)
 
 Genotype::~Genotype()
 {
-    logger.LogDeb("Free genotype");
     if (gene_arr) {
         free(gene_arr);
     }
