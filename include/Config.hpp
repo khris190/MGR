@@ -4,11 +4,14 @@
 #include "external_utils/argparse.hpp"
 #include "my_utils/Logger.hpp"
 #include <any>
+#include <bitset>
 #include <cstddef>
 #include <optional>
 #include <stdexcept>
 #include <string>
 #include <string_view>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <unordered_map>
 
 // TODO https://www.youtube.com/watch?v=INn3xa4pMfg ??
@@ -26,7 +29,7 @@ namespace Config
         POPULATION = 6,
         SHAPE_AMOUNT = 7,
         SHAPE_TYPES = 8,
-        RESEMPLENCE = 9,
+        RESEMBLENCE = 9,
         HOURS = 10,
         SCALE = 11,
         MUTATION = 12,
@@ -61,13 +64,13 @@ namespace Config
         using type = int;
     };
     template <> struct ArgumentType<Argument::SHAPE_TYPES> {
-        using type = unsigned int;
+        using type = int;
     };
 
     static std::unordered_map<Argument, std::string_view> Arguments = { { Argument::VERBOSE, "-V" },
         { Argument::PRINT_VALS, "-p" }, { Argument::INPUT, "-i" }, { Argument::OUTPUT, "-o" },
         { Argument::THREADS, "-t" }, { Argument::POPULATION, "-p" }, { Argument::SHAPE_AMOUNT, "-s" },
-        { Argument::SHAPE_TYPES, "-S" }, { Argument::RESEMPLENCE, "-r" }, { Argument::HOURS, "--hours" },
+        { Argument::SHAPE_TYPES, "-S" }, { Argument::RESEMBLENCE, "-r" }, { Argument::HOURS, "--hours" },
         { Argument::SCALE, "--scale" }, { Argument::MUTATION, "-m" }, { Argument::LOG, "-L" } };
 
     bool parse(int argc, char const* argv[]);
@@ -81,6 +84,13 @@ namespace Config
         using type = typename ArgumentType<Condition>::type;
         return parser.get<type>(Arguments[Condition]);
     }
+
+    extern std::time_t start_time;
+    bool doStop(int SecondsAfterToStop = 3600);
+    extern std::string out_folder_name;
+    void CreateFolderForOutput();
+    std::string GetOutputFilePathAndFileName(float Resemblance);
+
 } // namespace Config
 
 #endif // CONFIG_HPP

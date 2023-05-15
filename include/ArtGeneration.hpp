@@ -8,6 +8,7 @@
 #include "my_utils/Logger.hpp"
 #include "my_utils/Profiler.hpp"
 #include <cairo/cairo.h>
+#include <stdexcept>
 #include <stdlib.h>
 #include <thread>
 

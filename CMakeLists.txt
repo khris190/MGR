@@ -25,14 +25,24 @@ add_subdirectory(CUDA)
 add_subdirectory(UTILS)
 add_subdirectory(tests)
 
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)  
 
-SET(LIBS ${LIBS} CUDA_FITNESS MY_UTILS)
+include(CPack)
+find_package(PNG REQUIRED)
+find_package(Cairo REQUIRED)
+find_package(CUDA  REQUIRED)
 
-# include_directories(${CUDA_FITNESS_INCLUDE} ${MY_UTILS_INCLUDE} ${DOCTEST_INCLUDE_DIR} ${INCLUDE_DIR})
+
+SET(LIBS ${LIBS} ${Cairo_LIBRARIES} -lcairo -lX11 ${GLM_LIBRARIES} CUDA_FITNESS MY_UTILS)
+
 add_executable(${PROJECT_NAME} main.cpp ${SOURCES})
 
 add_dependencies(GenerativeArt CUDA_FITNESS MY_UTILS)
 target_link_libraries(GenerativeArt ${LIBS})
+
+
+
+target_include_directories(GenerativeArt PUBLIC ${Cairo_INCLUDE_DIRS} ${PNG_INCLUDE_DIR})
 target_include_directories(GenerativeArt PRIVATE ${CUDA_FITNESS_INCLUDE} ${MY_UTILS_INCLUDE} ${DOCTEST_INCLUDE_DIR} ${INCLUDE_DIR})
 
 

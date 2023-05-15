@@ -23,11 +23,8 @@ file(GLOB INCLUDES
 )
 
 file(GLOB SOURCES
-    src/*.cpp
-    src/*.c
-    src/**/*.cpp
-    src/**/*.c
-    include/external_utils/*
+    include/**/*.cpp
+    include/**/*.c
 )
 
 add_library(${PROJECT_NAME} SHARED ${SOURCES})

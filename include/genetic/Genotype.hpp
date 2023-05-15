@@ -5,6 +5,7 @@
 #include "common/DataStructures.hpp"
 #include "common/Randoms.hpp"
 #include "my_utils/Logger.hpp"
+#include <cairo/cairo.h>
 #include <stdlib.h>
 #include <tgmath.h>
 
@@ -20,7 +21,7 @@ public:
     void Mutate(float mutation_rate = 0.001f);
     void Wiggle(float mutation_rate = 0.001f);
     void Cross(Genotype* parent1_, Genotype* parent2_);
-    // void Draw(cairo_surface_t* img, float scale = 0.5f);
+    void Draw(cairo_surface_t* img, float scale = 0.5f);
     ~Genotype();
 };
 
