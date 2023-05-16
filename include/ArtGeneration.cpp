@@ -24,7 +24,6 @@ void ArtGeneration::AsyncFitness(cairo_surface_t* img, Population population, vo
         cairo_surface_t* temp_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, _width, _height);
         {
             newTimer("drawing");
-            // throw std::runtime_error("not implemented Draw method");
             population.children[i].Draw(temp_surface);
         }
         float score = fitness(img, temp_surface);

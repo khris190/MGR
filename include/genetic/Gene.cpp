@@ -20,6 +20,15 @@ void Gene::Randomize()
     color = myData::color_RGBA(fRand(), fRand(), fRand(), fRand());
 }
 
+void Gene::RandomizeCenter()
+{
+    type_of_shape = RandomieType();
+    position = myData::float2(0.5f, 0.5f);
+    rotation = fRand();
+    scale = myData::float2(fRand(), fRand());
+    color = myData::color_RGBA(fRand(), fRand(), fRand(), fRand());
+}
+
 void Gene::Mutate(float mutation_rate)
 {
     // if (Config::enabled_shape_types_amount > 1) {

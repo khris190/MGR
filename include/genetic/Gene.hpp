@@ -18,6 +18,8 @@ public:
     void Mutate(float mutation_rate = 0.001f);
     void Wiggle(float mutation_rate = 0.001f);
 
+    void RandomizeCenter();
+
 private:
     void MutateType(float mutation_rate = 0.001f);
     void MutateColor(float mutation_rate = 0.001f);
