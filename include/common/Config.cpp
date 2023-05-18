@@ -45,7 +45,7 @@ namespace Config
           .scan<'i', int>();
         parser.add_argument("-S", "--shape-types")
           .nargs(1)
-          .default_value(0b010)
+          .default_value<unsigned int>(0b010)
           .help("Types of generated types in binary 100 - triangles 10 - ellipses 1 - squares.")
           .scan<'b', unsigned int>();
         parser.add_argument("-r", "--resemblance")
