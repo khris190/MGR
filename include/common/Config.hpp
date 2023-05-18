@@ -64,7 +64,7 @@ namespace Config
         using type = int;
     };
     template <> struct ArgumentType<Argument::SHAPE_TYPES> {
-        using type = int;
+        using type = unsigned int;
     };
 
     static std::unordered_map<Argument, std::string_view> Arguments = { { Argument::VERBOSE, "-V" },

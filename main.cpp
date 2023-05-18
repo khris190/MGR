@@ -25,13 +25,13 @@ int main(int argc, char const* argv[])
 
     // file Exists
     {
+        newTimer("main");
         struct stat buffer;
         if ((stat(Config::get<Config::Argument::INPUT>().c_str(), &buffer) != 0)) {
             logger.LogErr("no input file: " + Config::get<Config::Argument::INPUT>());
             return 2;
         }
     }
-
     logger.LogInfo("Starting");
     ArtGeneration gen(Config::get<Config::Argument::POPULATION>(), Config::get<Config::Argument::SHAPE_AMOUNT>());
     logger.LogInfo("cairo_image_surface_create_from_png");
