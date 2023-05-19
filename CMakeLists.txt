@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.11.0)
 
 set(VERSION "1.1.5")
-project(GenerativeArt LANGUAGES CXX CUDA VERSION ${VERSION})
+project(GenerativeArt LANGUAGES CXX C CUDA VERSION ${VERSION})
 set(BINARY_DIR bin)
 set(INCLUDE_DIR include)
 
@@ -16,10 +16,27 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 ")
 set(CMAKE_CXX_FLAGS_DEBUG "-g -D DEBUG")
 
 
-file(GLOB SOURCES
-    ${INCLUDE_DIR}/*.*
-    ${INCLUDE_DIR}/**/*.*
+file(GLOB_RECURSE SOURCES
+    ${INCLUDE_DIR}/*.c
+    ${INCLUDE_DIR}/*.cpp
 )
+file(GLOB_RECURSE HEADERS
+    ${INCLUDE_DIR}/*.h
+    ${INCLUDE_DIR}/*.hpp
+)
+
+# Set the path to your shader files
+set(SHADER_DIR "${CMAKE_SOURCE_DIR}/shaders")
+# Add the shader files to your project's resources
+file(GLOB_RECURSE SHADER_FILES "${SHADER_DIR}/*.vert" "${SHADER_DIR}/*.frag")
+
+# Copy the shader files to the build directory
+foreach(SHADER_FILE ${SHADER_FILES})
+    get_filename_component(FILENAME ${SHADER_FILE} NAME)
+    configure_file(${SHADER_FILE} "../${BINARY_DIR}/shaders/${FILENAME}" COPYONLY)
+endforeach()
+
+
 
 add_subdirectory(CUDA)
 add_subdirectory(UTILS)
@@ -30,20 +47,25 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 include(CPack)
 find_package(PNG REQUIRED)
 find_package(Cairo REQUIRED)
-find_package(CUDA  REQUIRED)
+find_package(CUDA REQUIRED)
+
+find_package(glfw3 3.3 REQUIRED)
+find_package(OpenGL REQUIRED)
+find_package(GLUT REQUIRED)
+find_package(GLEW REQUIRED)
 
 
-SET(LIBS ${LIBS} ${Cairo_LIBRARIES} -lcairo -lX11 ${GLM_LIBRARIES} CUDA_FITNESS MY_UTILS)
+SET(LIBS ${LIBS} ${Cairo_LIBRARIES} ${GLUT_LIBRARY} -lcairo -lX11 ${GLM_LIBRARIES} ${GLEW_LIBRARIES} CUDA_FITNESS MY_UTILS glfw OpenGL::GL -lGL -lGLU -lglut -lGL -lX11 -lpthread -lXrandr -lXi -ldl -lcuda)
 
-add_executable(${PROJECT_NAME} main.cpp ${SOURCES})
+add_executable(${PROJECT_NAME} main.cpp ${SOURCES} )
+
+target_include_directories(GenerativeArt PUBLIC ${Cairo_INCLUDE_DIRS} ${PNG_INCLUDE_DIR} ${CUDA_INCLUDE_DIRS} ${GLUT_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS})
+target_include_directories(GenerativeArt PRIVATE ${CUDA_FITNESS_INCLUDE} ${MY_UTILS_INCLUDE} ${DOCTEST_INCLUDE_DIR} ${INCLUDE_DIR})
 
 add_dependencies(GenerativeArt CUDA_FITNESS MY_UTILS)
 target_link_libraries(GenerativeArt ${LIBS})
 
 
-
-target_include_directories(GenerativeArt PUBLIC ${Cairo_INCLUDE_DIRS} ${PNG_INCLUDE_DIR})
-target_include_directories(GenerativeArt PRIVATE ${CUDA_FITNESS_INCLUDE} ${MY_UTILS_INCLUDE} ${DOCTEST_INCLUDE_DIR} ${INCLUDE_DIR})
 
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

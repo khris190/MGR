@@ -1,6 +1,8 @@
 #include "ArtGeneration.hpp"
 #include "common/Config.hpp"
+#include "drawing/openGL/openGLDrawer.hpp"
 #include "fitness.h"
+#include "genetic/Genotype.hpp"
 #include "my_utils/Logger.hpp"
 #include "my_utils/Profiler.hpp"
 #include <cairo/cairo.h>
@@ -8,10 +10,9 @@
 
 int main(int argc, char const* argv[])
 {
+
     Config::parse(argc, argv);
-    std::optional<int> test;
-    auto test1 = Config::get<Config::Argument::SHAPE_TYPES>();
-    auto test2 = typeid(test1).name();
+    // OpenGLDrawer::Draw();
     logger.setTarget(Target::DISABLED);
     logger.setLevel((Level)Config::get<Config::Argument::VERBOSE>());
 

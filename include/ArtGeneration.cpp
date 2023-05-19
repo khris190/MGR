@@ -1,6 +1,8 @@
 #include "ArtGeneration.hpp"
 #include "common/Config.hpp"
+#include "drawing/openGL/openGLDrawer.hpp"
 #include "genetic/Population.hpp"
+#include "my_utils/Profiler.hpp"
 #include <cstdio>
 #include <exception>
 
@@ -141,16 +143,23 @@ void ArtGeneration::StartEvolution(cairo_surface_t* img)
         logger.LogInfo(
           ("Score: " + std::to_string(bestScore) + "\nDifference: " + std::to_string(bestScore - savedBestScore))
             .c_str());
-        logger.LogDeb(profiler.getTimingsAsString().c_str());
+        // logger.LogDeb(profiler.getTimingsAsString().c_str());
 
         if (bestScore >= savedBestScore) {
             savedBestScore = bestScore;
+            cairo_surface_t* temp_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, _width, _height);
             if (MutationsCounter % 10 == 0) {
-                cairo_surface_t* temp_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, _width, _height);
-                this->Draw(temp_surface, this->parent1_);
+                {
+                    newTimer("old drawing");
+                    this->Draw(temp_surface, this->parent1_);
+                }
                 cairo_surface_write_to_png(temp_surface, Config::GetOutputFilePathAndFileName(savedBestScore).c_str());
-
                 cairo_surface_destroy(temp_surface);
+                {
+
+                    // newTimer("new drawing");
+                    OpenGLDrawer::Draw(this->_population.children[this->parent1_]);
+                }
             }
             MutationsCounter++;
         }

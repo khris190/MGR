@@ -93,8 +93,8 @@ void Genotype::Draw(cairo_surface_t* img, float Scale)
         int x = genes[i].position.x * _width;
         int y = genes[i].position.y * _height;
 
-        float scaleX = genes[i].scale.x * _width * Scale * 0.5;
-        float scaleY = genes[i].scale.y * _height * Scale * 0.5;
+        float scaleX = genes[i].scale.x * _width * Scale;
+        float scaleY = genes[i].scale.y * _height * Scale;
         float rotation = genes[i].rotation * 3.14;
 
         // kwadrat

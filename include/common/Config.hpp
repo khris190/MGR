@@ -68,34 +68,6 @@ namespace Config
         using type = unsigned int;
     };
 
-    // template <Argument Arg> struct ArgumentType {
-    //     template <Argument T> static constexpr auto getType()
-    //     {
-    //         if constexpr (T == Argument::VERBOSE)
-    //             return std::__type_identity<int> {};
-    //         else if constexpr (T == Argument::PRINT_VALS)
-    //             return std::__type_identity<bool> {};
-    //         else if constexpr (T == Argument::INPUT)
-    //             return std::__type_identity<std::string> {};
-    //         else if constexpr (T == Argument::OUTPUT)
-    //             return std::__type_identity<std::string> {};
-    //         else if constexpr (T == Argument::LOG)
-    //             return std::__type_identity<std::string> {};
-    //         else if constexpr (T == Argument::THREADS)
-    //             return std::__type_identity<int> {};
-    //         else if constexpr (T == Argument::POPULATION)
-    //             return std::__type_identity<int> {};
-    //         else if constexpr (T == Argument::SHAPE_AMOUNT)
-    //             return std::__type_identity<int> {};
-    //         else if constexpr (T == Argument::SHAPE_TYPES)
-    //             return std::__type_identity<unsigned int> {};
-    //         else
-    //             return std::__type_identity<float> {};
-    //     }
-
-    //     using type = typename decltype(getType<Arg>())::type;
-    // };
-
     static std::unordered_map<Argument, std::string_view> Arguments = { { Argument::VERBOSE, "-V" },
         { Argument::PRINT_VALS, "-p" }, { Argument::INPUT, "-i" }, { Argument::OUTPUT, "-o" },
         { Argument::THREADS, "-t" }, { Argument::POPULATION, "-p" }, { Argument::SHAPE_AMOUNT, "-s" },
