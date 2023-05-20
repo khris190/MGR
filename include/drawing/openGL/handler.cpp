@@ -1,4 +1,5 @@
 #include "handler.hpp"
+#include <stdexcept>
 namespace OGLhandler
 {
 
@@ -9,12 +10,22 @@ namespace OGLhandler
 
         if (!glfwInit()) // inicjacja biblioteki GLFW
             exit(EXIT_FAILURE);
-
+        glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, 1);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // inicjacja wersji kontekstu
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // incicjacja profilu rdzennego
         glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
+
+        glfwWindowHint(GLFW_SAMPLES, 4);
+
+        glfwWindowHint(GLFW_RED_BITS, 8); // 8 bits for red channel
+        glfwWindowHint(GLFW_GREEN_BITS, 8); // 8 bits for green channel
+        glfwWindowHint(GLFW_BLUE_BITS, 8); // 8 bits for blue channel
+        glfwWindowHint(GLFW_ALPHA_BITS, 8); // 8 bits for alpha channel
+        glfwWindowHint(GLFW_DEPTH_BITS, 24); // 24 bits for depth buffer
+        glfwWindowHint(GLFW_STENCIL_BITS, 8); // 8 bits for stencil buffer
+        glEnable(GL_MULTISAMPLE);
         window = glfwCreateWindow(width, height, title, NULL, NULL); // utworzenie okna i zwiazanego z nim kontekstu
         if (!window) {
             glfwTerminate(); // konczy dzialanie biblioteki GLFW
@@ -24,8 +35,15 @@ namespace OGLhandler
         glfwSetKeyCallback(window, keyCallback); // rejestracja funkcji zwrotnej do oblsugi klawiatury
 
         glfwMakeContextCurrent(window);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
         glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        // Initialize GLEW
+        if (glewInit() != GLEW_OK) {
+            // GLEW initialization failed
+            glfwTerminate();
+            return;
+        }
     }
 
     void initGLEW()
@@ -46,6 +64,17 @@ namespace OGLhandler
         glfwSwapInterval(0); // v-sync on
     }
 
+    void initFramebuffer()
+    {
+        glGenFramebuffers(1, &fboID);
+        glBindFramebuffer(GL_FRAMEBUFFER, fboID);
+
+        GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        if (status != GL_FRAMEBUFFER_COMPLETE) {
+            throw std::runtime_error("chuj");
+        }
+    }
+
     /* #endregion */
 
     //******************************************************************************************
@@ -56,15 +85,23 @@ namespace OGLhandler
 
     std::array<GLuint, 2> vao; // identyfikatory obiektow VAO
     std::array<GLuint, 3> buffers; // identyfikatory obiektow VBO
-
+    int width;
+    int height;
     GLFWwindow* window;
+    GLuint fboID;
+    GLuint textureID;
+    GLuint depthrenderbuffer;
+    GLenum DrawBuffers[1];
     //******************************************************************************************
 
     void initEngine(int width, int height)
     {
-        initGLFW();
+        OGLhandler::height = height;
+        OGLhandler::width = width;
+        initGLFW(width, height);
         initGLEW();
         initGL();
+        // initFramebuffer();
     }
 
     void draw()
@@ -72,7 +109,7 @@ namespace OGLhandler
 
         // glowna petla programu
         while (!glfwWindowShouldClose(window)) {
-            renderScene();
+            prepareScene();
 
             glfwSwapBuffers(window); // zamieniamy bufory
             glfwPollEvents(); // przetwarzanie zdarzen
@@ -112,9 +149,14 @@ namespace OGLhandler
     **------------------------------------------------------------------------------------------*/
     void cleanup()
     {
+        glDeleteTextures(1, &textureID);
+        glDeleteFramebuffers(1, &fboID);
         glDeleteBuffers((GLsizei)buffers.size(), buffers.data()); // usuniecie VBO
         glDeleteVertexArrays((GLsizei)vao.size(), vao.data()); // usuiecie VAO
         glDeleteProgram(shaderProgram); // usuniecie programu cieniowania
+
+        glfwDestroyWindow(OGLhandler::window); // niszczy okno i jego kontekst
+        glfwTerminate();
     }
 
     /*------------------------------------------------------------------------------------------
@@ -131,8 +173,6 @@ namespace OGLhandler
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // kolor (RGBA) uzywany do czyszczenia bufora koloru
 
         setupShaders();
-
-        setupBuffers();
     }
 
     /*------------------------------------------------------------------------------------------
@@ -151,67 +191,9 @@ namespace OGLhandler
     }
 
     /*------------------------------------------------------------------------------------------
-    ** funkcja inicjujaca VAO oraz zawarte w nim VBO z danymi o modelu
-    **------------------------------------------------------------------------------------------*/
-    void setupBuffers()
-    {
-        glGenVertexArrays((GLsizei)vao.size(), vao.data()); // generowanie identyfikatora VAO
-        glGenBuffers((GLsizei)buffers.size(), buffers.data()); // generowanie identyfikatorow VBO
-
-#pragma region trojkat
-        // wspolrzedne wierzcholkow trojkata
-        float positions[] = { 0.1f, 0.0f, 0.0f, 1.0f, 0.9f, -0.5f, 0.0f, 1.0f, 0.9f, 0.5f, 0.0f, 1.0f };
-
-        // kolory wierzchokow trojkata*
-        std::vector<float> colors { 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f };
-
-        glBindVertexArray(vao[0]); // dowiazanie pierwszego VAO
-
-        // VBO dla wspolrzednych wierzcholkow
-        glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
-        glEnableVertexAttribArray(vertexLoc); // wlaczenie tablicy atrybutu wierzcholka - wspolrzedne
-        glVertexAttribPointer(
-          vertexLoc, 4, GL_FLOAT, GL_FALSE, 0, 0); // zdefiniowanie danych tablicy atrybutu wierzchoka - wspolrzedne
-
-        // VBO dla kolorow
-        glBindBuffer(GL_ARRAY_BUFFER, buffers[1]);
-        glBufferData(
-          GL_ARRAY_BUFFER, colors.size() * sizeof(float), reinterpret_cast<const void*>(colors.data()), GL_STATIC_DRAW);
-        glEnableVertexAttribArray(colorLoc); // wlaczenie tablicy atrybutu wierzcholka - kolory
-        glVertexAttribPointer(
-          colorLoc, 4, GL_FLOAT, GL_FALSE, 0, 0); // zdefiniowanie danych tablicy atrybutu wierzcholka - kolory
-
-#pragma endregion
-
-#pragma region kwadrat
-        // wspolrzedne i kolory kwadratu (x, y, z, w, r, g, b, a)
-
-        float positionsAndColors[]
-          = { -0.9f, 0.4f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, -0.9f, -0.4f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, -0.1f,
-                0.4f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, -0.1f, -0.4f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f };
-
-        glBindVertexArray(vao[1]);
-        // VBO dla wspolrzednych i kolorow
-        glBindBuffer(GL_ARRAY_BUFFER, buffers[2]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(positionsAndColors), positionsAndColors, GL_STATIC_DRAW);
-
-        int stride = 8 * sizeof(float); // 8 = 4 wspolrzedne wierzchoka + 4 kanaly koloru
-        glEnableVertexAttribArray(vertexLoc);
-        glVertexAttribPointer(vertexLoc, 4, GL_FLOAT, GL_FALSE, stride, 0); // wspolrzedne wierzcholkow
-        glEnableVertexAttribArray(colorLoc);
-        glVertexAttribPointer(colorLoc, 4, GL_FLOAT, GL_FALSE, stride,
-          reinterpret_cast<const void*>(4 * sizeof(float))); // kolory wierzcholkow
-
-#pragma endregion
-
-        glBindVertexArray(0);
-    }
-
-    /*------------------------------------------------------------------------------------------
     ** funkcja rysujaca scene
     **------------------------------------------------------------------------------------------*/
-    void renderScene()
+    void prepareScene()
     {
 
         glClear(GL_COLOR_BUFFER_BIT); // czyszczenie bufora koloru

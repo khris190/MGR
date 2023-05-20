@@ -22,9 +22,14 @@ namespace OGLhandler
     extern std::array<GLuint, 2> vao; // identyfikatory obiektow VAO
     extern std::array<GLuint, 3> buffers; // identyfikatory obiektow VBO
 
+    extern int width;
+    extern int height;
+
     extern GLFWwindow* window;
-    // extern GLuint textureID;
-    // extern GLuint fboID;
+    extern GLuint textureID;
+    extern GLuint fboID;
+    extern GLuint depthrenderbuffer;
+    extern GLenum DrawBuffers[1];
 
     //******************************************************************************************
 
@@ -36,7 +41,7 @@ namespace OGLhandler
     void initGL();
     void setupShaders();
     void setupBuffers();
-    void renderScene();
+    void prepareScene();
 
     // void initGLEW();
     // void initGLFW();

@@ -36,19 +36,28 @@ float calculateFitness(unsigned char* img_data, unsigned char* surface_data, int
     unsigned char* test;
     // Allocate Unified Memory – accessible from CPU or GPU
     int size = _width * _height;
+
+    cudaMallocManaged(&test, 4 * size * sizeof(unsigned char));
+
+    cudaMemcpy(test, surface_data, 4 * size, cudaMemcpyDefault);
+    float result = calculateFitnessGL(img_data, test, _width, _height, true);
+    // Free memory
+    cudaFree(test);
+    return (result);
+}
+
+float calculateFitnessGL(unsigned char* img_data, unsigned char* surface_data, int _width, int _height, bool old)
+{
+    int size = _width * _height;
     mxX.lock();
     if (x == nullptr) {
         cudaMallocManaged(&x, 4 * size * sizeof(unsigned char));
         cudaMemcpy(x, img_data, 4 * size, cudaMemcpyDefault);
     }
     mxX.unlock();
-    cudaMallocManaged(&test, 4 * size * sizeof(unsigned char));
-
-    cudaMemcpy(test, surface_data, 4 * size, cudaMemcpyDefault);
-
     {
         // newTimer("calculate fitness_v1_RGBA2");
-        fitness_v1_RGBA2<<<_width, _height>>>(size, x, test);
+        fitness_v1_RGBA2<<<_width, _height>>>(size, x, surface_data);
         cudaError_t ce = cudaGetLastError();
         cudaDeviceSynchronize();
     }
@@ -61,29 +70,43 @@ float calculateFitness(unsigned char* img_data, unsigned char* surface_data, int
 
     {
         // newTimer("calculateFitnessFromArray");
-        calculateFitnessFromArray<<<threadAmount, threadAmount>>>(offset, (float*)test, size);
+        calculateFitnessFromArray<<<threadAmount, threadAmount>>>(offset, (float*)surface_data, size);
         cudaError_t ce = cudaGetLastError();
         cudaDeviceSynchronize();
     }
 
     double result = 0;
     float tmp_fitness = 0;
+    if (old) {
+        {
+            // newTimer("calculate fitness cpu");
+            {
+                for (int i = 0; i < amount; i++) {
+                    memcpy(&tmp_fitness, (void*)(surface_data + 4 * i * offset), sizeof(float));
+                    result += tmp_fitness;
+                }
+                for (size_t i = 0; i < rest; i++) {
+                    memcpy(&tmp_fitness, (void*)(surface_data + amount * offset * 4 + i * 4), sizeof(float));
+                    result += tmp_fitness;
+                }
+                result /= size;
+            }
+        }
+        return (result);
+    }
+    float tempSurface[size];
+    cudaMemcpy(tempSurface, surface_data, size * sizeof(float), cudaMemcpyDefault);
     {
         // newTimer("calculate fitness cpu");
         {
             for (int i = 0; i < amount; i++) {
-                memcpy(&tmp_fitness, (void*)(test + 4 * i * offset), sizeof(float));
-                result += tmp_fitness;
+                result += tempSurface[i * offset];
             }
             for (size_t i = 0; i < rest; i++) {
-                memcpy(&tmp_fitness, (void*)(test + amount * offset * 4 + i * 4), sizeof(float));
-                result += tmp_fitness;
+                result += tempSurface[amount * offset + i];
             }
             result /= size;
         }
     }
-
-    // Free memory
-    cudaFree(test);
     return (result);
 }

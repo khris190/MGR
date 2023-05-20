@@ -5,6 +5,7 @@
 #include "my_utils/Profiler.hpp"
 #include <cstdio>
 #include <exception>
+#include "fitness.hpp"
 
 void ArtGeneration::Draw(cairo_surface_t* img, size_t index)
 {
@@ -155,11 +156,15 @@ void ArtGeneration::StartEvolution(cairo_surface_t* img)
                 }
                 cairo_surface_write_to_png(temp_surface, Config::GetOutputFilePathAndFileName(savedBestScore).c_str());
                 cairo_surface_destroy(temp_surface);
+                logger.LogDeb(profiler.getTimingsAsString().c_str());
                 {
 
-                    // newTimer("new drawing");
-                    OpenGLDrawer::Draw(this->_population.children[this->parent1_]);
+                    OpenGLDrawer::Initialize(_width, _height);
+                    newTimer("new drawing and fitness");
+                    unsigned char* data = OpenGLDrawer::Draw(this->_population.children[this->parent1_]);
+                    fitnessGL(img, data);
                 }
+                logger.LogDeb(profiler.getTimingsAsString().c_str());
             }
             MutationsCounter++;
         }

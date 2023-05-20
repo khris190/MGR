@@ -40,6 +40,7 @@ endforeach()
 
 add_subdirectory(CUDA)
 add_subdirectory(UTILS)
+add_subdirectory(HEADERONLY)
 add_subdirectory(tests)
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)  
@@ -55,13 +56,13 @@ find_package(GLUT REQUIRED)
 find_package(GLEW REQUIRED)
 
 
-SET(LIBS ${LIBS} ${Cairo_LIBRARIES} ${GLUT_LIBRARY} -lcairo -lX11 ${GLM_LIBRARIES} ${GLEW_LIBRARIES} CUDA_FITNESS MY_UTILS glfw OpenGL::GL -lGL -lGLU -lglut -lGL -lX11 -lpthread -lXrandr -lXi -ldl -lcuda)
+SET(LIBS ${LIBS} ${Cairo_LIBRARIES} ${GLUT_LIBRARY} -lcairo -lX11 ${GLM_LIBRARIES} ${GLEW_LIBRARIES} CUDA_FITNESS MY_UTILS glfw OpenGL::GL -lGL -lGLU -lglut -lGL -lX11 -lpthread -lXrandr -lXi -ldl -lcuda HEADER_ONLY ${CUDA_LIBRARIES} ${CUDA_CUDA_LIBRARY} ${OPENGL_LIBRARIES})
 
 add_executable(${PROJECT_NAME} main.cpp ${SOURCES} )
 
-target_include_directories(GenerativeArt PUBLIC ${Cairo_INCLUDE_DIRS} ${PNG_INCLUDE_DIR} ${CUDA_INCLUDE_DIRS} ${GLUT_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS})
-target_include_directories(GenerativeArt PRIVATE ${CUDA_FITNESS_INCLUDE} ${MY_UTILS_INCLUDE} ${DOCTEST_INCLUDE_DIR} ${INCLUDE_DIR})
-
+target_include_directories(GenerativeArt PUBLIC ${Cairo_INCLUDE_DIRS} ${PNG_INCLUDE_DIR} ${CUDA_INCLUDE_DIRS} ${GLUT_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${CUDA_INCLUDE_DIRS})
+target_include_directories(GenerativeArt PRIVATE ${CUDA_FITNESS_INCLUDE} ${MY_UTILS_INCLUDE} ${DOCTEST_INCLUDE_DIR} ${INCLUDE_DIR} )
+target_include_directories(GenerativeArt INTERFACE ${HEADER_ONLY_INCLUDE})
 add_dependencies(GenerativeArt CUDA_FITNESS MY_UTILS)
 target_link_libraries(GenerativeArt ${LIBS})
 
