@@ -24,7 +24,8 @@
         "--hours",
         "4",
         "--scale",
-        "0.2"
+        "0.2",
+        "-L"
       ],
       // "args": ["-S", "0b001"],
       "stopAtEntry": false,

@@ -76,6 +76,7 @@ inline myData::position rotate(float x, float y, float angle)
 // TODO use opengl
 void Genotype::Draw(cairo_surface_t* img, float Scale)
 {
+    newTimer("olddrawing");
     cairo_t* cr;
     for (size_t i = 0; i < genes.size(); i++) {
         int _width, _height;

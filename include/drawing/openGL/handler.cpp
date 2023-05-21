@@ -1,4 +1,5 @@
 #include "handler.hpp"
+#include <GL/glcorearb.h>
 #include <stdexcept>
 namespace OGLhandler
 {
@@ -11,8 +12,8 @@ namespace OGLhandler
         if (!glfwInit()) // inicjacja biblioteki GLFW
             exit(EXIT_FAILURE);
         glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, 1);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // inicjacja wersji kontekstu
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); // inicjacja wersji kontekstu
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // incicjacja profilu rdzennego
         glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
@@ -23,8 +24,6 @@ namespace OGLhandler
         glfwWindowHint(GLFW_GREEN_BITS, 8); // 8 bits for green channel
         glfwWindowHint(GLFW_BLUE_BITS, 8); // 8 bits for blue channel
         glfwWindowHint(GLFW_ALPHA_BITS, 8); // 8 bits for alpha channel
-        glfwWindowHint(GLFW_DEPTH_BITS, 24); // 24 bits for depth buffer
-        glfwWindowHint(GLFW_STENCIL_BITS, 8); // 8 bits for stencil buffer
         glEnable(GL_MULTISAMPLE);
         window = glfwCreateWindow(width, height, title, NULL, NULL); // utworzenie okna i zwiazanego z nim kontekstu
         if (!window) {
@@ -38,12 +37,7 @@ namespace OGLhandler
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        // Initialize GLEW
-        if (glewInit() != GLEW_OK) {
-            // GLEW initialization failed
-            glfwTerminate();
-            return;
-        }
+        glfwSwapInterval(0); // v-sync on
     }
 
     void initGLEW()
@@ -56,12 +50,14 @@ namespace OGLhandler
             exit(1);
         }
 
-        if (!GLEW_VERSION_3_3) {
-            std::cerr << "Brak obslugi OpenGL 3.3\n";
+        if (!__GLEW_VERSION_4_6) {
+            std::cerr << "Brak obslugi OpenGL 4.6\n";
             exit(2);
         }
 
-        glfwSwapInterval(0); // v-sync on
+        if (glewIsExtensionSupported("GL_ARB_blend_func_extended")) {
+            glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_ONE);
+        }
     }
 
     void initFramebuffer()
@@ -195,16 +191,11 @@ namespace OGLhandler
     **------------------------------------------------------------------------------------------*/
     void prepareScene()
     {
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Set the clear color to a light blue
 
         glClear(GL_COLOR_BUFFER_BIT); // czyszczenie bufora koloru
 
         glUseProgram(shaderProgram); // wlaczenie programu cieniowania
-
-        // wyrysowanie pierwszego VAO (trojkat)
-        // drawVAO(GL_TRIANGLES, vao[0], 3);
-
-        // wyrysowanie dugiego VAO (kwadrat)
-        // drawVAO(GL_TRIANGLE_STRIP, vao[1], 4);
     }
 
 } // namespace OGLhandler

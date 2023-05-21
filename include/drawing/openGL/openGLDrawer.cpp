@@ -1,8 +1,10 @@
 #include "openGLDrawer.hpp"
 #include "drawing/openGL/handler.hpp"
+#include "drawing/openGL/objects/mesh.hpp"
 #include "my_utils/Profiler.hpp"
 namespace OpenGLDrawer
 {
+    GLuint bufferID;
     void TESTTEXTURE(int width, int height)
     {
         GLuint textureID;
@@ -22,15 +24,9 @@ namespace OpenGLDrawer
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureID, 0);
     }
 
-    unsigned char* CUDA(int width, int height)
+    unsigned char* GetCUDAImgDataPointer(int width, int height)
     {
         newTimer("cuda pass data FULL");
-        GLuint bufferID;
-        glGenBuffers(1, &bufferID);
-        glBindBuffer(GL_PIXEL_PACK_BUFFER, bufferID);
-        glBufferData(GL_PIXEL_PACK_BUFFER, width * height * 4 * sizeof(unsigned char), nullptr, GL_STREAM_READ);
-        glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
-
         cudaGraphicsResource* cudaResource;
         cudaGraphicsGLRegisterBuffer(&cudaResource, bufferID, cudaGraphicsMapFlagsNone);
         newTimer("cuda pass data");
@@ -41,42 +37,52 @@ namespace OpenGLDrawer
         cudaGraphicsResourceGetMappedPointer((void**)&devPixels, &size, cudaResource);
         return devPixels;
     }
-    void Initialize(int width, int height) { OGLhandler::initEngine(width, height); }
-
-    unsigned char* Draw(Genotype& populus)
+    void Initialize(int width, int height)
     {
+        OGLhandler::initEngine(width, height);
+
+        glGenBuffers(1, &bufferID);
+        glBindBuffer(GL_PIXEL_PACK_BUFFER, bufferID);
+        glBufferData(GL_PIXEL_PACK_BUFFER, width * height * 4 * sizeof(unsigned char), nullptr, GL_STREAM_READ);
+        glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+    }
+
+    void Draw(Genotype& populus, float scale)
+    {
+        newTimer("new drawing");
+        AddTriangles(populus, scale);
+        OGLhandler::prepareScene();
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // if not already bound
+        glViewport(0, 0, OGLhandler::width, OGLhandler::height);
+        glClear(GL_DEPTH_BUFFER_BIT);
         {
-
-            newTimer("new drawing");
-            AddTriangles(populus);
+            newTimer("new DrawLastVAO");
+            mesh::DrawLastVAO();
         }
-        int width = OGLhandler::width;
-        int height = OGLhandler::height;
         {
-            newTimer("new drawing");
-            OGLhandler::prepareScene();
-
-            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // if not already bound
-            glViewport(0, 0, width, height);
-            mesh::DrawVAO();
+            newTimer("new glfwSwapBuffers");
+            glfwSwapBuffers(OGLhandler::window);
         }
-
-        glfwSwapBuffers(OGLhandler::window);
-
-        void* res = CUDA(width, height);
-        SaveToPNG("testnew.png");
-        // glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-        return (unsigned char*)res;
+        {
+            newTimer("new Clear");
+            mesh::Clear();
+        }
     }
     void clean() { OGLhandler::cleanup(); }
-    void SaveToPNG(const char* filename)
+
+    std::vector<unsigned char> getPixels()
     {
         std::vector<unsigned char> data(OGLhandler::width * OGLhandler::height * 4); // 3 channels (RGB)
         {
             newTimer("pixelReading");
             glReadPixels(0, 0, OGLhandler::width, OGLhandler::height, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
         }
+        return data;
+    }
+
+    void SaveToPNG(const char* filename)
+    {
+        std::vector<unsigned char> data = getPixels();
         std::vector<unsigned char> flippedPixels(OGLhandler::width * OGLhandler::height * 4);
         {
             newTimer("pixelFlippin");
@@ -87,8 +93,7 @@ namespace OpenGLDrawer
         }
         {
             newTimer("fileWritin");
-            stbi_write_png(
-              filename, OGLhandler::width, OGLhandler::height, 4, flippedPixels.data(), OGLhandler::width * 4);
+            stbi_write_png(filename, OGLhandler::width, OGLhandler::height, 4, data.data(), OGLhandler::width * 4);
         }
     }
 
@@ -130,11 +135,11 @@ namespace OpenGLDrawer
                 p2.y = p2.y / (float)(OGLhandler::height)*2 - 1;
                 p1.x = p1.x / (float)(OGLhandler::width)*2 - 1;
                 p1.y = p1.y / (float)(OGLhandler::height)*2 - 1;
-                Verticies.insert(Verticies.end(), { x, -y, distance * i - 0.5f, 1.f });
+                Verticies.insert(Verticies.end(), { x, y, distance * i - 1.f, 1.f });
                 Verticies.insert(Verticies.end(), color, color + 4);
-                Verticies.insert(Verticies.end(), { p1.x, -p1.y, distance * i - 0.5f, 1.f });
+                Verticies.insert(Verticies.end(), { p1.x, p1.y, distance * i - 1.f, 1.f });
                 Verticies.insert(Verticies.end(), color, color + 4);
-                Verticies.insert(Verticies.end(), { p2.x, -p2.y, distance * i - 0.5f, 1.f });
+                Verticies.insert(Verticies.end(), { p2.x, p2.y, distance * i - 1.f, 1.f });
                 Verticies.insert(Verticies.end(), color, color + 4);
             }
             i++;

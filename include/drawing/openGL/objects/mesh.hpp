@@ -27,7 +27,9 @@ namespace mesh
 
     void DrawVAO(GLenum mode);
     void DrawVAO();
-
+    void DrawLastVAO(GLenum mode);
+    void DrawLastVAO();
+    void Clear();
 } // namespace mesh
 
 #endif // MESH_HPP

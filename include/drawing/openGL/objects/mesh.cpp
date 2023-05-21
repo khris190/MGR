@@ -11,7 +11,7 @@ namespace mesh
     GLuint shaderProgram;
     GLuint vertexLoc;
     GLuint colorLoc;
-
+    // TODO !!!! remove/update VAO
     bool AddVao(std::vector<float> vertices, GLuint shaderProgram, GLenum mode)
     {
         drawMode.push_back(mode);
@@ -64,4 +64,25 @@ namespace mesh
         }
     }
 
+    void DrawLastVAO(GLenum mode)
+    {
+        int i = vao.size() - 1;
+        glBindVertexArray(vao[i]);
+        glDrawArrays(mode, 0, vaoVerticies[i]);
+    }
+
+    void DrawLastVAO()
+    {
+        int i = vao.size() - 1;
+        glBindVertexArray(vao[i]);
+        glDrawArrays(drawMode[i], 0, vaoVerticies[i]);
+    }
+
+    void Clear()
+    {
+        glDeleteVertexArrays(vao.size(), &vao.front()); // generowanie identyfikatora VAO
+        glDeleteBuffers(buffers.size(), &buffers.front()); // generowanie identyfikatorow VBO }
+        vao.clear();
+        buffers.clear();
+    }
 } // namespace mesh

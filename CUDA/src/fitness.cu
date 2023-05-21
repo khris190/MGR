@@ -7,11 +7,12 @@ __global__ void fitness_v1_RGBA2(int n, unsigned char* pA, unsigned char* pB)
 {
     int i = threadIdx.x + blockIdx.x * blockDim.x;
     if (i < n) {
-        float absR = fabsf(pA[i * 4 + 0] - pB[i * 4 + 0]);
+        // TODO IMPORTANTE wtf BGRA???
+        float absR = fabsf(pA[i * 4 + 0] - pB[i * 4 + 2]);
         float absG = fabsf(pA[i * 4 + 1] - pB[i * 4 + 1]);
-        float absB = fabsf(pA[i * 4 + 2] - pB[i * 4 + 2]);
+        float absB = fabsf(pA[i * 4 + 2] - pB[i * 4 + 0]);
         float absA = fabsf(pA[i * 4 + 3] - pB[i * 4 + 3]);
-#define AlphaMulti 1.0f
+#define AlphaMulti 1.f
         float val2 = (absR + absG + absB) + absA * AlphaMulti;
         val2 = (float)(255.f - val2 / (3.f + AlphaMulti)) / 255.f;
         memcpy(&pB[(i)*4], &val2, sizeof(float));
@@ -48,6 +49,7 @@ float calculateFitness(unsigned char* img_data, unsigned char* surface_data, int
 
 float calculateFitnessGL(unsigned char* img_data, unsigned char* surface_data, int _width, int _height, bool old)
 {
+    newTimer("calculateFitnessGL");
     int size = _width * _height;
     mxX.lock();
     if (x == nullptr) {
@@ -56,7 +58,7 @@ float calculateFitnessGL(unsigned char* img_data, unsigned char* surface_data, i
     }
     mxX.unlock();
     {
-        // newTimer("calculate fitness_v1_RGBA2");
+        newTimer("calculate fitness_v1_RGBA2");
         fitness_v1_RGBA2<<<_width, _height>>>(size, x, surface_data);
         cudaError_t ce = cudaGetLastError();
         cudaDeviceSynchronize();
@@ -69,7 +71,7 @@ float calculateFitnessGL(unsigned char* img_data, unsigned char* surface_data, i
     size_t threadAmount = sqrt(amount) + 1;
 
     {
-        // newTimer("calculateFitnessFromArray");
+        newTimer("calculateFitnessFromArray");
         calculateFitnessFromArray<<<threadAmount, threadAmount>>>(offset, (float*)surface_data, size);
         cudaError_t ce = cudaGetLastError();
         cudaDeviceSynchronize();
@@ -79,7 +81,7 @@ float calculateFitnessGL(unsigned char* img_data, unsigned char* surface_data, i
     float tmp_fitness = 0;
     if (old) {
         {
-            // newTimer("calculate fitness cpu");
+            newTimer("calculate fitness cpu");
             {
                 for (int i = 0; i < amount; i++) {
                     memcpy(&tmp_fitness, (void*)(surface_data + 4 * i * offset), sizeof(float));
@@ -95,9 +97,9 @@ float calculateFitnessGL(unsigned char* img_data, unsigned char* surface_data, i
         return (result);
     }
     float tempSurface[size];
+    newTimer("calculate fitness cpu and mem cpy");
     cudaMemcpy(tempSurface, surface_data, size * sizeof(float), cudaMemcpyDefault);
     {
-        // newTimer("calculate fitness cpu");
         {
             for (int i = 0; i < amount; i++) {
                 result += tempSurface[i * offset];

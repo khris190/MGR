@@ -21,11 +21,16 @@
 
 namespace OpenGLDrawer
 {
+    extern GLuint bufferID;
+    unsigned char* GetCUDAImgDataPointer(int width, int height);
+
     void Initialize(int width, int height);
 
-    unsigned char* Draw(Genotype& populus);
+    void Draw(Genotype& populus, float scale);
 
     void clean();
+
+    std::vector<unsigned char> getPixels();
 
     void SaveToPNG(const char* filename);
 

@@ -17,17 +17,8 @@ float fitness_v1_RGBA(unsigned char* pA, unsigned char* pB)
 
 float fitness(cairo_surface_t* img, cairo_surface_t* surface)
 {
-    newTimer("fitness function timer");
-    unsigned char* img_data = cairo_image_surface_get_data(img);
     unsigned char* surface_data = cairo_image_surface_get_data(surface);
-
-    int _width, _height;
-
-    _width = cairo_image_surface_get_width(img);
-    _height = cairo_image_surface_get_height(img);
-
-    float ret = calculateFitness(img_data, surface_data, _width, _height);
-    return ret;
+    return fitness(img, surface_data);
 
     // int temp_offset;
     // int offset = _width * _height;
@@ -50,6 +41,20 @@ float fitness(cairo_surface_t* img, cairo_surface_t* surface)
     // img_fitness /= _height;
     // return img_fitness;
 }
+
+float fitness(cairo_surface_t* img, unsigned char* surface)
+{
+    unsigned char* img_data = cairo_image_surface_get_data(img);
+
+    int _width, _height;
+
+    _width = cairo_image_surface_get_width(img);
+    _height = cairo_image_surface_get_height(img);
+
+    float ret = calculateFitness(img_data, surface, _width, _height);
+    return ret;
+}
+
 float fitnessGL(cairo_surface_t* img, unsigned char* surface)
 {
     newTimer("fitnessGL function timer");
