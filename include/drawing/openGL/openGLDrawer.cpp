@@ -50,31 +50,24 @@ namespace OpenGLDrawer
     void Draw(Genotype& populus, float scale)
     {
         newTimer("new drawing");
-        AddTriangles(populus, scale);
+        {
+            newTimer("add triangles");
+            AddTriangles(populus, scale);
+        }
         OGLhandler::prepareScene();
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // if not already bound
         glViewport(0, 0, OGLhandler::width, OGLhandler::height);
         glClear(GL_DEPTH_BUFFER_BIT);
-        {
-            newTimer("new DrawLastVAO");
-            mesh::DrawLastVAO();
-        }
-        {
-            newTimer("new glfwSwapBuffers");
-            glfwSwapBuffers(OGLhandler::window);
-        }
-        {
-            newTimer("new Clear");
-            mesh::Clear();
-        }
+        mesh::DrawLastVAO();
+        glfwSwapBuffers(OGLhandler::window);
+        mesh::Clear();
     }
     void clean() { OGLhandler::cleanup(); }
 
     std::vector<unsigned char> getPixels()
     {
-        std::vector<unsigned char> data(OGLhandler::width * OGLhandler::height * 4); // 3 channels (RGB)
+        std::vector<unsigned char> data(OGLhandler::width * OGLhandler::height * 4);
         {
-            newTimer("pixelReading");
             glReadPixels(0, 0, OGLhandler::width, OGLhandler::height, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
         }
         return data;

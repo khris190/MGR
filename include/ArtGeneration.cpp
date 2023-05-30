@@ -147,9 +147,8 @@ void ArtGeneration::StartEvolution(cairo_surface_t* img)
 
         if (bestScore >= savedBestScore) {
             savedBestScore = bestScore;
-            if (MutationsCounter % 10 == 0) {
+            if (MutationsCounter % 50 == 0) {
                 {
-                    newTimer("new drawing and fitness");
                     OpenGLDrawer::Draw(this->_population.children[this->_population.bests[1].first],
                       Config::get<Config::Argument::SCALE>());
                     OpenGLDrawer::SaveToPNG(Config::GetOutputFilePathAndFileName(savedBestScore).c_str());
@@ -160,7 +159,6 @@ void ArtGeneration::StartEvolution(cairo_surface_t* img)
         }
     } while (bestScore < Config::get<Config::Argument::RESEMBLENCE>() && !Config::doStop());
 
-    newTimer("new drawing and fitness");
     OpenGLDrawer::Draw(
       this->_population.children[this->_population.bests[1].first], Config::get<Config::Argument::SCALE>());
     OpenGLDrawer::SaveToPNG(Config::GetOutputFilePathAndFileName(savedBestScore).c_str());

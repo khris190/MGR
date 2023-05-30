@@ -1,13 +1,8 @@
 #include "Population.hpp"
-#include "common/Config.hpp"
-#include "fitness.hpp"
-#include "genetic/Genotype.hpp"
-#include "drawing/openGL/openGLDrawer.hpp"
-#include "my_utils/Profiler.hpp"
-#include <sys/types.h>
-#include <utility>
+#include "external_utils/BS_thread_pool_light.hpp"
 
 Population::Population(int populationSize, int genotypeSize)
+    : pool(Config::get<Config::Argument::THREADS>())
 {
     this->scores.reserve(populationSize);
     this->children.reserve(populationSize);
@@ -15,6 +10,7 @@ Population::Population(int populationSize, int genotypeSize)
         this->children.push_back(Genotype(genotypeSize));
         this->scores.push_back(0.f);
     }
+    workers = std::vector<std::future<float>>(children.size());
 }
 
 void Population::CreateNextGeneration(int parent1_, int parent2_, float mutation_rate)
@@ -35,22 +31,27 @@ void Population::CreateNextGeneration(float mutation_rate)
         }
     }
 }
-
+float MyFitness(cairo_surface_t* img, unsigned char* surface) { return fitness(img, surface); }
 void Population::DrawNFitness(cairo_surface_t* img)
 {
     float scale = Config::get<Config::Argument::SCALE>();
-    newTimer("drawwand initialize");
     int width = cairo_image_surface_get_width(img);
     int height = cairo_image_surface_get_height(img);
     {
-        newTimer("onlydraw"); // TODO the this place is like 95% of time
+
+        std::vector<std::vector<unsigned char>> images(children.size());
         for (size_t i = 0; i < this->children.size(); i++) {
             OpenGLDrawer::Draw(this->children[i], scale);
 
-            std::vector<unsigned char> data = OpenGLDrawer::getPixels();
-            this->scores[i] = fitness(img, data.data());
+            images[i] = OpenGLDrawer::getPixels();
+            workers[i] = pool.submit(MyFitness, img, images[i].data());
             // u_char* cudaSurface = OpenGLDrawer::GetCUDAImgDataPointer(width, height);
             // this->scores[i] = fitnessGL(img, cudaSurface);
+        }
+        {
+            for (size_t i = 0; i < this->children.size(); i++) {
+                this->scores[i] = workers[i].get();
+            }
         }
         this->bests = getBest();
     }
@@ -58,7 +59,6 @@ void Population::DrawNFitness(cairo_surface_t* img)
 
 std::vector<std::pair<int, float>> Population::getBest()
 {
-    newTimer("getBest");
     std::vector<std::pair<int, float>> result;
     result.push_back(
       std::pair<int, float>((this->scores[0] > this->scores[1]) ? 1 : 0, std::min(this->scores[0], this->scores[1])));
