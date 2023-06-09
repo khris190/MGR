@@ -1,5 +1,6 @@
 #include "../include/fitness.h"
 #include "my_utils/Profiler.hpp"
+#include <exception>
 
 static unsigned char* x = nullptr;
 static std::mutex mxX;
@@ -61,6 +62,9 @@ float calculateFitnessGL(unsigned char* img_data, unsigned char* surface_data, i
         newTimer("calculate fitness_v1_RGBA2");
         fitness_v1_RGBA2<<<_width, _height>>>(size, x, surface_data);
         cudaError_t ce = cudaGetLastError();
+        if (ce != cudaSuccess) {
+            throw std::runtime_error(cudaGetErrorString(ce));
+        }
         cudaDeviceSynchronize();
     }
     // increasing of this number lowers calculate fitness cpu timings 2 times and increases calculateFitnessFromArray 4
@@ -74,6 +78,9 @@ float calculateFitnessGL(unsigned char* img_data, unsigned char* surface_data, i
         newTimer("calculateFitnessFromArray");
         calculateFitnessFromArray<<<threadAmount, threadAmount>>>(offset, (float*)surface_data, size);
         cudaError_t ce = cudaGetLastError();
+        if (ce != cudaSuccess) {
+            throw std::runtime_error(cudaGetErrorString(ce));
+        }
         cudaDeviceSynchronize();
     }
 
