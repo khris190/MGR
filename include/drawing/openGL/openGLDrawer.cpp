@@ -26,15 +26,16 @@ namespace OpenGLDrawer
 
     unsigned char* GetCUDAImgDataPointer(int width, int height)
     {
-        newTimer("cuda pass data FULL");
-        cudaGraphicsResource* cudaResource;
-        cudaGraphicsGLRegisterBuffer(&cudaResource, bufferID, cudaGraphicsMapFlagsNone);
-        newTimer("cuda pass data");
+        // TODO fix
+        //  newTimer("cuda pass data FULL");
+        //  cudaGraphicsResource* cudaResource;
+        //  cudaGraphicsGLRegisterBuffer(&cudaResource, bufferID, cudaGraphicsMapFlagsNone);
+        //  newTimer("cuda pass data");
 
         unsigned char* devPixels;
-        size_t size;
-        cudaGraphicsMapResources(1, &cudaResource, nullptr);
-        cudaGraphicsResourceGetMappedPointer((void**)&devPixels, &size, cudaResource);
+        // size_t size;
+        // cudaGraphicsMapResources(1, &cudaResource, nullptr);
+        // cudaGraphicsResourceGetMappedPointer((void**)&devPixels, &size, cudaResource);
         return devPixels;
     }
     void Initialize(int width, int height)

@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION 3.0.0)
-project(MY_UTILS LANGUAGES CXX C CUDA VERSION 1.1.5)
+cmake_minimum_required(VERSION 3.11.0)
+project(MY_UTILS LANGUAGES CXX CUDA VERSION 1.1.5)
 
-enable_language(CUDA)
-find_package(CUDA REQUIRED)
+# enable_language(CUDA)
+# find_package(CUDA REQUIRED)
 
 # set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -gencode arch=compute_61,code=sm_61")
 
@@ -11,11 +11,11 @@ if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
 endif(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
 
 # set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -msse2 ")
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 ")
 
 
-include(CTest)
-enable_testing()
+# include(CTest)
+# enable_testing()
 
 file(GLOB INCLUDES
     include/**/*.hpp

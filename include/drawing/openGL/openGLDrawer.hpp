@@ -17,7 +17,7 @@
 #include "stb_image_write.h"
 #include "drawing/openGL/handler.hpp"
 #include <GL/gl.h>
-#include <cuda_gl_interop.h>
+// #include <cuda_gl_interop.h>
 
 namespace OpenGLDrawer
 {

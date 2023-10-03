@@ -38,7 +38,7 @@ endforeach()
 
 
 
-add_subdirectory(CUDA)
+add_subdirectory(CUDA_FITNESS)
 add_subdirectory(UTILS)
 add_subdirectory(HEADERONLY)
 add_subdirectory(tests)
@@ -48,7 +48,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 include(CPack)
 find_package(PNG REQUIRED)
 find_package(Cairo REQUIRED)
-find_package(CUDA REQUIRED)
+# find_package(CUDA REQUIRED)
 
 find_package(glfw3 3.3 REQUIRED)
 find_package(OpenGL REQUIRED)
@@ -65,8 +65,6 @@ target_include_directories(GenerativeArt PRIVATE ${CUDA_FITNESS_INCLUDE} ${MY_UT
 target_include_directories(GenerativeArt INTERFACE ${HEADER_ONLY_INCLUDE})
 add_dependencies(GenerativeArt CUDA_FITNESS MY_UTILS)
 target_link_libraries(GenerativeArt ${LIBS})
-
-
 
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

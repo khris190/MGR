@@ -12,10 +12,8 @@ int main(int argc, char const* argv[])
 {
 
     Config::parse(argc, argv);
-    // OpenGLDrawer::Draw();
     logger.setTarget(Target::DISABLED);
     logger.setLevel((Level)Config::get<Config::Argument::VERBOSE>());
-
     if (Config::is_used(Config::Argument::VERBOSE)) {
         logger.xorTarget(Target::STDOUT);
     }
@@ -44,4 +42,3 @@ int main(int argc, char const* argv[])
 
     return 0;
 }
-// TODO go back to extern singleton

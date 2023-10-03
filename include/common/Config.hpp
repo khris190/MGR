@@ -15,8 +15,6 @@
 #include <type_traits>
 #include <unordered_map>
 
-// TODO https://www.youtube.com/watch?v=INn3xa4pMfg ??
-
 namespace Config
 {
 

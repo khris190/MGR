@@ -40,6 +40,7 @@ static map<Level, const char*> levelMap = { { Level::DEB, "DEBUG" }, { Level::IN
     { Level::NOTICE, "NOTICE" }, { Level::WARNING, "WARNING" }, { Level::ERR, "ERROR" }, { Level::CRIT, "CRITICAL" },
     { Level::ALERT, "ALERT" }, { Level::EMERG, "EMERGENCY" } };
 
+// TODO fix file being created even if im not logging to file
 class Logger
 {
 public:

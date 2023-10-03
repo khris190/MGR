@@ -1,8 +1,7 @@
-cmake_minimum_required(VERSION 3.0.0)
-project(CUDA_FITNESS VERSION 0.1.0)
+cmake_minimum_required(VERSION 3.20.0)
+project(CUDA_FITNESS LANGUAGES CUDA VERSION 0.1.0)
 
-enable_language(CUDA)
-find_package(CUDA REQUIRED)
+# find_package(CUDA REQUIRED)
 
 # set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -gencode arch=compute_61,code=sm_61")
 
