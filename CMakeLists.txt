@@ -11,6 +11,7 @@ set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_compile_definitions(VERSION="${VERSION}")
+add_compile_definitions(PROJECT_NAME="${PROJECT_NAME}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 ")
 
 set(CMAKE_CXX_FLAGS_DEBUG "-g -D DEBUG")
@@ -55,17 +56,18 @@ find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 find_package(GLEW REQUIRED)
 
+# im not sure why CUDA_CUDA_LIBRARY doesnt work and CMAKE_CUDA_IMPLICIT_LINK_DIRECTORIES works
+find_library(CUDART_LIBRARY cudart ${CMAKE_CUDA_IMPLICIT_LINK_DIRECTORIES})
 
-SET(LIBS ${LIBS} ${Cairo_LIBRARIES} ${GLUT_LIBRARY} -lcairo -lX11 ${GLM_LIBRARIES} ${GLEW_LIBRARIES} CUDA_FITNESS MY_UTILS glfw OpenGL::GL -lGL -lGLU -lglut -lGL -lX11 -lpthread -lXrandr -lXi -ldl -lcuda HEADER_ONLY ${CUDA_LIBRARIES} ${CUDA_CUDA_LIBRARY} ${OPENGL_LIBRARIES})
+SET(LIBS ${LIBS} -lcairo -lX11 ${GLEW_LIBRARIES} CUDA_FITNESS MY_UTILS glfw OpenGL::GL -lGL -lGLU -lglut -lGL -lX11 -lpthread -lXrandr -lXi -ldl -lcuda HEADER_ONLY ${CUDART_LIBRARY} ${CUDA_CUDA_LIBRARY} ${OPENGL_LIBRARIES})
 
 add_executable(${PROJECT_NAME} main.cpp ${SOURCES} )
 
-target_include_directories(GenerativeArt PUBLIC ${Cairo_INCLUDE_DIRS} ${PNG_INCLUDE_DIR} ${CUDA_INCLUDE_DIRS} ${GLUT_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${CUDA_INCLUDE_DIRS})
+target_include_directories(GenerativeArt PUBLIC ${PNG_INCLUDE_DIR} ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES} ${GLUT_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS})
 target_include_directories(GenerativeArt PRIVATE ${CUDA_FITNESS_INCLUDE} ${MY_UTILS_INCLUDE} ${DOCTEST_INCLUDE_DIR} ${INCLUDE_DIR} )
 target_include_directories(GenerativeArt INTERFACE ${HEADER_ONLY_INCLUDE})
 add_dependencies(GenerativeArt CUDA_FITNESS MY_UTILS)
 target_link_libraries(GenerativeArt ${LIBS})
-
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_VERBOSE_MAKEFILE ON)

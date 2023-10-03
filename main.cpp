@@ -12,7 +12,7 @@ int main(int argc, char const* argv[])
 {
 
     Config::parse(argc, argv);
-    logger.setTarget(Target::DISABLED);
+    logger.setTarget(Target::STDOUT);
     logger.setLevel((Level)Config::get<Config::Argument::VERBOSE>());
     if (Config::is_used(Config::Argument::VERBOSE)) {
         logger.xorTarget(Target::STDOUT);

@@ -5,9 +5,13 @@
 #define VERSION "0.0.1"
 #endif // !VERSION
 
+#ifndef PROJECT_NAME
+#define PROJECT_NAME "null"
+#endif // !PROJECT_NAME
+
 namespace Config
 {
-    argparse::ArgumentParser parser("main", VERSION, argparse ::default_arguments::all);
+    argparse::ArgumentParser parser(PROJECT_NAME, VERSION, argparse::default_arguments::all);
     bool is_used(Argument arg) { return parser.is_used(Arguments[arg]); }
 
     bool parse(int argc, char const* argv[])
