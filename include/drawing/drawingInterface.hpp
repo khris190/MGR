@@ -2,10 +2,16 @@
 #define DRAWINGINTERFACE_HPP
 
 #include "genetic/Genotype.hpp"
-class IDrawer
+class AbstractDrawer
 {
 public:
-    virtual void drawImage(Genotype genotype) = 0;
+    AbstractDrawer(Genotype& individual);
+    AbstractDrawer(AbstractDrawer&&) = default;
+    AbstractDrawer(const AbstractDrawer&) = default;
+    AbstractDrawer& operator=(AbstractDrawer&&) = default;
+    AbstractDrawer& operator=(const AbstractDrawer&) = default;
+    ~AbstractDrawer();
+    // virtual void drawImage(Genotype genotype) = 0;
 
 private:
 };

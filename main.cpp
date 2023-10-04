@@ -1,20 +1,20 @@
 #include "ArtGeneration.hpp"
 #include "common/Config.hpp"
+#include "drawing/openGL/openGLDrawer.hpp"
 #include "fitness.h"
+#include "genetic/Genotype.hpp"
 #include "my_utils/Logger.hpp"
 #include "my_utils/Profiler.hpp"
 #include <cairo/cairo.h>
 #include <cstdlib>
+#include <string>
 
 int main(int argc, char const* argv[])
 {
-    Config::parse(argc, argv);
-    std::optional<int> test;
-    auto test1 = Config::get<Config::Argument::SHAPE_TYPES>();
-    auto test2 = typeid(test1).name();
-    logger.setTarget(Target::DISABLED);
-    logger.setLevel((Level)Config::get<Config::Argument::VERBOSE>());
 
+    Config::parse(argc, argv);
+    logger.setTarget(Target::STDOUT);
+    logger.setLevel((Level)Config::get<Config::Argument::VERBOSE>());
     if (Config::is_used(Config::Argument::VERBOSE)) {
         logger.xorTarget(Target::STDOUT);
     }
@@ -24,13 +24,10 @@ int main(int argc, char const* argv[])
     }
 
     // file Exists
-    {
-        newTimer("main");
-        struct stat buffer;
-        if ((stat(Config::get<Config::Argument::INPUT>().c_str(), &buffer) != 0)) {
-            logger.LogErr("no input file: " + Config::get<Config::Argument::INPUT>());
-            return 2;
-        }
+    struct stat buffer;
+    if ((stat(Config::get<Config::Argument::INPUT>().c_str(), &buffer) != 0)) {
+        logger.LogErr("no input file: " + Config::get<Config::Argument::INPUT>());
+        return 2;
     }
     logger.LogInfo("Starting");
     ArtGeneration gen(Config::get<Config::Argument::POPULATION>(), Config::get<Config::Argument::SHAPE_AMOUNT>());
@@ -43,4 +40,3 @@ int main(int argc, char const* argv[])
 
     return 0;
 }
-// TODO go back to extern singleton

@@ -18,12 +18,16 @@
 
 #include "Profiler.hpp"
 
-// using std::cerr;
-// using std::cout;
-// using std::endl;
+#ifdef DEBUG
+#define DEFAULT_ENABLE_FILE_INFO true;
+#define DEFAULT_LOG_LEVEL Level::DEB;
+#else
+#define DEFAULT_ENABLE_FILE_INFO false;
+#define DEFAULT_LOG_LEVEL Level::INFO;
+#endif
+
 using std::map;
 using std::ofstream;
-// using std::shared_ptr;
 using std::string;
 
 size_t cpyChar(char* dest, const char* src);
@@ -40,15 +44,12 @@ static map<Level, const char*> levelMap = { { Level::DEB, "DEBUG" }, { Level::IN
     { Level::NOTICE, "NOTICE" }, { Level::WARNING, "WARNING" }, { Level::ERR, "ERROR" }, { Level::CRIT, "CRITICAL" },
     { Level::ALERT, "ALERT" }, { Level::EMERG, "EMERGENCY" } };
 
+// TODO fix file being created even if im not logging to file
 class Logger
 {
 public:
-// write() uses these variables to determine which messages should be written where.
-#ifdef DEBUG
-    Level LoggerLevel = Level::DEB;
-#else
-    Level LoggerLevel = Level::INFO;
-#endif
+    // write() uses these variables to determine which messages should be written where.
+    Level LoggerLevel = DEFAULT_LOG_LEVEL;
     short LoggerTarget = (short)Target::STDOUT;
     string LoggerFile = "log.log";
     ofstream LoggingFileStream;
@@ -60,7 +61,7 @@ public:
     // Flags that change Logger style
     bool timestampEnabled = true;
     bool levelEnabled = true;
-    bool fileEnabled = true;
+    bool fileEnabled = DEFAULT_ENABLE_FILE_INFO;
     bool deletePrevLog = true;
 
     ~Logger()

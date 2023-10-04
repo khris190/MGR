@@ -1,5 +1,6 @@
 #include "../include/fitness.h"
 #include "my_utils/Profiler.hpp"
+#include <exception>
 
 static unsigned char* x = nullptr;
 static std::mutex mxX;
@@ -7,11 +8,12 @@ __global__ void fitness_v1_RGBA2(int n, unsigned char* pA, unsigned char* pB)
 {
     int i = threadIdx.x + blockIdx.x * blockDim.x;
     if (i < n) {
-        float absR = fabsf(pA[i * 4 + 0] - pB[i * 4 + 0]);
+        // TODO IMPORTANTE wtf BGRA???
+        float absR = fabsf(pA[i * 4 + 0] - pB[i * 4 + 2]);
         float absG = fabsf(pA[i * 4 + 1] - pB[i * 4 + 1]);
-        float absB = fabsf(pA[i * 4 + 2] - pB[i * 4 + 2]);
+        float absB = fabsf(pA[i * 4 + 2] - pB[i * 4 + 0]);
         float absA = fabsf(pA[i * 4 + 3] - pB[i * 4 + 3]);
-#define AlphaMulti 1.0f
+#define AlphaMulti 1.f
         float val2 = (absR + absG + absB) + absA * AlphaMulti;
         val2 = (float)(255.f - val2 / (3.f + AlphaMulti)) / 255.f;
         memcpy(&pB[(i)*4], &val2, sizeof(float));
@@ -36,20 +38,33 @@ float calculateFitness(unsigned char* img_data, unsigned char* surface_data, int
     unsigned char* test;
     // Allocate Unified Memory – accessible from CPU or GPU
     int size = _width * _height;
+
+    cudaMallocManaged(&test, 4 * size * sizeof(unsigned char));
+
+    cudaMemcpy(test, surface_data, 4 * size, cudaMemcpyDefault);
+    float result = calculateFitnessGL(img_data, test, _width, _height, true);
+    // Free memory
+    cudaFree(test);
+    return (result);
+}
+
+float calculateFitnessGL(unsigned char* img_data, unsigned char* surface_data, int _width, int _height, bool old)
+{
+    newTimer("calculateFitnessGL");
+    int size = _width * _height;
     mxX.lock();
     if (x == nullptr) {
         cudaMallocManaged(&x, 4 * size * sizeof(unsigned char));
         cudaMemcpy(x, img_data, 4 * size, cudaMemcpyDefault);
     }
     mxX.unlock();
-    cudaMallocManaged(&test, 4 * size * sizeof(unsigned char));
-
-    cudaMemcpy(test, surface_data, 4 * size, cudaMemcpyDefault);
-
     {
-        // newTimer("calculate fitness_v1_RGBA2");
-        fitness_v1_RGBA2<<<_width, _height>>>(size, x, test);
+        newTimer("calculate fitness_v1_RGBA2");
+        fitness_v1_RGBA2<<<_width, _height>>>(size, x, surface_data);
         cudaError_t ce = cudaGetLastError();
+        if (ce != cudaSuccess) {
+            throw std::runtime_error(cudaGetErrorString(ce));
+        }
         cudaDeviceSynchronize();
     }
     // increasing of this number lowers calculate fitness cpu timings 2 times and increases calculateFitnessFromArray 4
@@ -60,30 +75,47 @@ float calculateFitness(unsigned char* img_data, unsigned char* surface_data, int
     size_t threadAmount = sqrt(amount) + 1;
 
     {
-        // newTimer("calculateFitnessFromArray");
-        calculateFitnessFromArray<<<threadAmount, threadAmount>>>(offset, (float*)test, size);
+        newTimer("calculateFitnessFromArray");
+        calculateFitnessFromArray<<<threadAmount, threadAmount>>>(offset, (float*)surface_data, size);
         cudaError_t ce = cudaGetLastError();
+        if (ce != cudaSuccess) {
+            throw std::runtime_error(cudaGetErrorString(ce));
+        }
         cudaDeviceSynchronize();
     }
 
     double result = 0;
     float tmp_fitness = 0;
+    if (old) {
+        {
+            newTimer("calculate fitness cpu");
+            {
+                for (int i = 0; i < amount; i++) {
+                    memcpy(&tmp_fitness, (void*)(surface_data + 4 * i * offset), sizeof(float));
+                    result += tmp_fitness;
+                }
+                for (size_t i = 0; i < rest; i++) {
+                    memcpy(&tmp_fitness, (void*)(surface_data + amount * offset * 4 + i * 4), sizeof(float));
+                    result += tmp_fitness;
+                }
+                result /= size;
+            }
+        }
+        return (result);
+    }
+    float tempSurface[size];
+    newTimer("calculate fitness cpu and mem cpy");
+    cudaMemcpy(tempSurface, surface_data, size * sizeof(float), cudaMemcpyDefault);
     {
-        // newTimer("calculate fitness cpu");
         {
             for (int i = 0; i < amount; i++) {
-                memcpy(&tmp_fitness, (void*)(test + 4 * i * offset), sizeof(float));
-                result += tmp_fitness;
+                result += tempSurface[i * offset];
             }
             for (size_t i = 0; i < rest; i++) {
-                memcpy(&tmp_fitness, (void*)(test + amount * offset * 4 + i * 4), sizeof(float));
-                result += tmp_fitness;
+                result += tempSurface[amount * offset + i];
             }
             result /= size;
         }
     }
-
-    // Free memory
-    cudaFree(test);
     return (result);
 }
