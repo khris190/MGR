@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.11.0)
+cmake_minimum_required(VERSION 3.27.0)
 project(MY_UTILS LANGUAGES CXX CUDA VERSION 1.1.5)
 
 # enable_language(CUDA)

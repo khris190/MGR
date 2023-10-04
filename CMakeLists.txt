@@ -56,7 +56,7 @@ find_package(GLEW REQUIRED)
 # im not sure why CUDA_CUDA_LIBRARY doesnt work and CMAKE_CUDA_IMPLICIT_LINK_DIRECTORIES works
 find_library(CUDART_LIBRARY cudart ${CMAKE_CUDA_IMPLICIT_LINK_DIRECTORIES})
 
-SET(LIBS ${LIBS} -lcairo -lX11 ${GLEW_LIBRARIES} CUDA_FITNESS MY_UTILS glfw OpenGL::GL -lGL -lGLU -lglut -lGL -lX11 -lpthread -lXrandr -lXi -ldl -lcuda ${CUDART_LIBRARY} ${CUDA_CUDA_LIBRARY} ${OPENGL_LIBRARIES})
+SET(LIBS ${LIBS} -lcairo -lX11 ${GLEW_LIBRARIES} CUDA_FITNESS MY_UTILS glfw OpenGL::GL -lGL -lGLU -lglut -lGL -lpthread -lXrandr -lXi -ldl -lcuda ${CUDART_LIBRARY} ${CUDA_CUDA_LIBRARY} ${OPENGL_LIBRARIES})
 
 add_executable(${PROJECT_NAME} main.cpp ${SOURCES} )
 
