@@ -67,7 +67,7 @@ void Logger::write(Level level, const char* message, const std::experimental::so
         return;
     }
     size_t offset = 0;
-    if (!this->LoggingFileStream.is_open()) {
+    if (this->LoggerTarget & (short)Target::LOG_FILE && !this->LoggingFileStream.is_open()) {
         setFile(this->LoggerFile);
     }
 
