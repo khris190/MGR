@@ -14,7 +14,7 @@
 #endif
 #define STB_IMAGE_WRITE_STATIC
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
+#include "external_utils/stb_image_write.h"
 #include "drawing/openGL/handler.hpp"
 // #include <GL/gl.h>
 #include <cuda_gl_interop.h>

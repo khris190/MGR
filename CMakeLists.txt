@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.11.0)
+cmake_minimum_required(VERSION 3.27.0)
 
 set(VERSION "1.1.5")
 project(GenerativeArt LANGUAGES CXX C CUDA VERSION ${VERSION})
@@ -41,15 +41,12 @@ endforeach()
 
 add_subdirectory(CUDA_FITNESS)
 add_subdirectory(UTILS)
-add_subdirectory(HEADERONLY)
 add_subdirectory(tests)
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)  
 
 include(CPack)
 find_package(PNG REQUIRED)
-find_package(Cairo REQUIRED)
-# find_package(CUDA REQUIRED)
 
 find_package(glfw3 3.3 REQUIRED)
 find_package(OpenGL REQUIRED)
@@ -59,7 +56,7 @@ find_package(GLEW REQUIRED)
 # im not sure why CUDA_CUDA_LIBRARY doesnt work and CMAKE_CUDA_IMPLICIT_LINK_DIRECTORIES works
 find_library(CUDART_LIBRARY cudart ${CMAKE_CUDA_IMPLICIT_LINK_DIRECTORIES})
 
-SET(LIBS ${LIBS} -lcairo -lX11 ${GLEW_LIBRARIES} CUDA_FITNESS MY_UTILS glfw OpenGL::GL -lGL -lGLU -lglut -lGL -lX11 -lpthread -lXrandr -lXi -ldl -lcuda HEADER_ONLY ${CUDART_LIBRARY} ${CUDA_CUDA_LIBRARY} ${OPENGL_LIBRARIES})
+SET(LIBS ${LIBS} -lcairo -lX11 ${GLEW_LIBRARIES} CUDA_FITNESS MY_UTILS glfw OpenGL::GL -lGL -lGLU -lglut -lGL -lX11 -lpthread -lXrandr -lXi -ldl -lcuda ${CUDART_LIBRARY} ${CUDA_CUDA_LIBRARY} ${OPENGL_LIBRARIES})
 
 add_executable(${PROJECT_NAME} main.cpp ${SOURCES} )
 
