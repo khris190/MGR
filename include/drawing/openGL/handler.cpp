@@ -176,7 +176,7 @@ namespace OGLhandler
     **------------------------------------------------------------------------------------------*/
     void setupShaders()
     {
-        if (!shaders::setupShaders("shaders/triangle.vert", "shaders/triangle.frag", shaderProgram))
+        if (!shaders::setupShaders("shaders/triangle/shader.vert", "shaders/triangle/shader.frag", shaderProgram))
             exit(3);
 
         vertexLoc = glGetAttribLocation(shaderProgram, "vPosition");
