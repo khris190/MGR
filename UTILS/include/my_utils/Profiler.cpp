@@ -21,7 +21,8 @@ void Profiler::AddSample(Sample sample)
 
 std::string Profiler::getTimingsAsString(bool doClearSamples)
 {
-    std::string retString = "";
+    std::string retString;
+    retString.reserve(50);
 #ifdef DEBUG
     retString = "DEBUG TIMINGS!!!\n ";
 #endif
@@ -30,7 +31,7 @@ std::string Profiler::getTimingsAsString(bool doClearSamples)
     long time = 0;
     for (size_t i = 0; i < localSamples.size(); i++) {
         mxSamples.lock();
-        retString += localSamples[i].name;
+        retString = localSamples[i].name;
         retString += ": ";
         time = localSamples[i].nsTime;
         mxSamples.unlock();
