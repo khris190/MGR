@@ -9,9 +9,8 @@
 #include <cstdlib>
 #include <string>
 
-int main(int argc, char const* argv[])
+void prepareConfig(int argc, const char* argv[])
 {
-
     Config::parse(argc, argv);
     logger.setTarget(Target::STDOUT);
     logger.setLevel((Level)Config::get<Config::Argument::VERBOSE>());
@@ -22,7 +21,11 @@ int main(int argc, char const* argv[])
         logger.setFile("./" + Config::get<Config::Argument::LOG>(), true);
         logger.xorTarget(Target::LOG_FILE);
     }
+}
 
+int main(int argc, const char* argv[])
+{
+    prepareConfig(argc, argv);
     // file Exists
     struct stat buffer;
     if ((stat(Config::get<Config::Argument::INPUT>().c_str(), &buffer) != 0)) {

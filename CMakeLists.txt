@@ -33,8 +33,8 @@ file(GLOB_RECURSE SHADER_FILES "${SHADER_DIR}/*.vert" "${SHADER_DIR}/*.frag")
 
 # Copy the shader files to the build directory
 foreach(SHADER_FILE ${SHADER_FILES})
-    get_filename_component(FILENAME ${SHADER_FILE} NAME)
-    configure_file(${SHADER_FILE} "../${BINARY_DIR}/shaders/${FILENAME}" COPYONLY)
+    string(REPLACE "${SHADER_DIR}/" "" SHADER_FILE_LOCAL_PATH ${SHADER_FILE})
+    configure_file(${SHADER_FILE} "../${BINARY_DIR}/shaders/${SHADER_FILE_LOCAL_PATH}" COPYONLY)
 endforeach()
 
 
