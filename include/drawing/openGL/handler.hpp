@@ -6,7 +6,8 @@
 #include <iostream>
 #include <vector>
 #include <array>
-
+#include <GL/glcorearb.h>
+#include <stdexcept>
 #include "shaders/shaders.hpp"
 
 #include "my_utils/Logger.hpp"

@@ -1,6 +1,5 @@
+
 #include "handler.hpp"
-#include <GL/glcorearb.h>
-#include <stdexcept>
 namespace OGLhandler
 {
 

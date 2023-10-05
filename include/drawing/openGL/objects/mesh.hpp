@@ -11,6 +11,7 @@
 #include "../shaders/shaders.hpp"
 #include "my_utils/Logger.hpp"
 
+//thats retarded, was i high?
 namespace mesh
 {
     extern std::vector<GLuint> vao;
