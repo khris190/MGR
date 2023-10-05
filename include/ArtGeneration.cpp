@@ -120,7 +120,7 @@ void ArtGeneration::StartEvolution(cairo_surface_t* img)
             // }
         }
 
-        logger.LogDeb(profiler.getTimingsAsString().c_str());
+        logger.LogDeb(Profiler::getInstance()->getTimingsAsString().c_str());
         if (0 > this->_population.bests[1].first || 0 > this->_population.bests[0].first) {
             logger.LogEmerg("wtf, parent1_ or parent2_ wasnt selected");
             exit(2);
@@ -153,7 +153,7 @@ void ArtGeneration::StartEvolution(cairo_surface_t* img)
                       Config::get<Config::Argument::SCALE>());
                     OpenGLDrawer::SaveToPNG(Config::GetOutputFilePathAndFileName(savedBestScore).c_str());
                 }
-                logger.LogDeb(profiler.getTimingsAsString().c_str());
+                logger.LogDeb(Profiler::getInstance()->getTimingsAsString().c_str());
             }
             MutationsCounter++;
         }

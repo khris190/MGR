@@ -7,6 +7,7 @@ OGLhandler* OGLhandler::getInstance()
     }
     return instance_;
 }
-void OGLhandler::initGL() { }
+void OGLhandler::initOGL() { }
 
 OGLhandler::~OGLhandler() { }
+OGLhandler* OGLhandler::instance_;

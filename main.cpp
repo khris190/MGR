@@ -39,7 +39,7 @@ int main(int argc, const char* argv[])
     logger.LogInfo("StartEvolution");
     gen.StartEvolution(image);
     cairo_surface_destroy(image);
-    logger.LogDeb(profiler.getTimingsAsString().c_str());
+    logger.LogDeb(Profiler::getInstance()->getTimingsAsString().c_str());
 
     return 0;
 }

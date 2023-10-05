@@ -1,8 +1,16 @@
 #include "Profiler.hpp"
 #include <string>
 
-Profiler profiler;
+// Profiler profiler;
 Profiler::Profiler() { }
+
+Profiler* Profiler::getInstance()
+{
+    if (instance_ == nullptr) {
+        instance_ = new Profiler();
+    }
+    return instance_;
+}
 
 void Profiler::AddSample(Sample sample)
 {
@@ -88,13 +96,12 @@ void Profiler::printProfilerData(bool doClearSamples)
 Profiler::~Profiler()
 {
     clearSamples();
-    if (profiler) {
-        delete profiler;
+    if (instance_) {
+        delete instance_;
     }
 }
 
-// Initialize pointer to zero so that it can be initialized in first call to getInstance
-Profiler* Profiler::profiler = 0;
+Profiler* Profiler::instance_;
 
 PTimer::PTimer(std::string name)
 {
@@ -105,5 +112,5 @@ PTimer::PTimer(std::string name)
 PTimer::~PTimer()
 {
     sample.nsTime = std::chrono::duration<long, std::nano>(std::chrono::system_clock::now() - startTime).count();
-    profiler.AddSample(sample);
+    Profiler::getInstance()->AddSample(sample);
 }

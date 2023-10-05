@@ -25,28 +25,29 @@ struct Sample {
 
 class Profiler
 {
-private:
+protected:
     std::mutex mxSamples;
     std::vector<Sample> samples;
-    static Profiler* profiler;
+    static Profiler* instance_;
+    ~Profiler();
+    Profiler();
 
 protected:
 public:
-    ~Profiler();
-    Profiler();
+    static Profiler* getInstance();
     Profiler(Profiler& other) = delete;
     void operator=(const Profiler&) = delete;
 
     // static Profiler* getInstance();
     void AddSample(Sample sample);
-    std::string getTimingsAsString(bool doClearSamples = true);
 
+    std::string getTimingsAsString(bool doClearSamples = true);
     std::vector<Sample> getTimings(bool doClearSamples = true);
 
     void clearSamples();
     void printProfilerData(bool doClearSamples = true);
 };
-extern Profiler profiler;
+// extern Profiler profiler;
 
 #define TOKENPASTE(x, y) x##y
 #define TOKENPASTE2(x, y) TOKENPASTE(x, y)

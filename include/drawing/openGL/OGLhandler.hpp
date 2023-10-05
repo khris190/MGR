@@ -11,11 +11,12 @@ public:
      * Singletons should not be assignable.
      */
     void operator=(const OGLhandler&) = delete;
-    void initGL();
+
+    void initOGL();
     ~OGLhandler();
 
 protected:
-    Window mainWindow;
+    Window* mainWindow;
     static OGLhandler* instance_;
     OGLhandler() {};
 };
