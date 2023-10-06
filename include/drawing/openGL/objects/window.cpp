@@ -1,5 +1,6 @@
 #include "window.hpp"
 #include <GLFW/glfw3.h>
+#include <cstdlib>
 
 Window::Window(int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share)
 {
@@ -21,10 +22,25 @@ Window::Window(int width, int height, const char* title, GLFWmonitor* monitor, G
     this->width = width;
     this->height = height;
     this->window = glfwCreateWindow(width, height, title, monitor, share);
+
+    if (!this->window) {
+        glfwTerminate(); // konczy dzialanie biblioteki GLFW
+        exit(EXIT_FAILURE);
+    }
+
+    // glfwSetKeyCallback(window, keyCallback); // rejestracja funkcji zwrotnej do oblsugi klawiatury
+
+    this->makeCurrent();
 }
 
 void Window::swapBuffer() { glfwSwapBuffers(this->window); }
 void Window::makeCurrent() { glfwMakeContextCurrent(this->window); }
+void Window::cleanWindow()
+{
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Set the clear color to a light blue
+
+    glClear(GL_COLOR_BUFFER_BIT); // czyszczenie bufora koloru
+}
 
 Window::~Window()
 {

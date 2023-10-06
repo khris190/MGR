@@ -2,26 +2,30 @@
 #define OPENGLDRAWER_HPP
 
 #include "genetic/Genotype.hpp"
-#include "handler.hpp"
+// #include "handler.hpp"
 #include "objects/mesh.hpp"
 #include "my_utils/Logger.hpp"
 #include "common/DataStructures.hpp"
 #include "drawing/openGL/objects/mesh.hpp"
 #include "genetic/Genotype.hpp"
 #include <GL/glcorearb.h>
+#include "drawing/openGL/objects/mesh.hpp"
+#include "my_utils/Profiler.hpp"
 #ifdef __clang__
 #define STBIWDEF static inline
 #endif
 #define STB_IMAGE_WRITE_STATIC
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "external_utils/stb_image_write.h"
-#include "drawing/openGL/handler.hpp"
+#include "drawing/openGL/OGLhandler.hpp"
 // #include <GL/gl.h>
 #include <cuda_gl_interop.h>
 
 namespace OpenGLDrawer
 {
     extern GLuint bufferID;
+    extern OGLhandler* OGlhandler;
+
     unsigned char* GetCUDAImgDataPointer(int width, int height);
 
     void Initialize(int width, int height);
