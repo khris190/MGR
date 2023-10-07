@@ -1,25 +1,29 @@
 #ifndef OGLHANDLER_HPP
 #define OGLHANDLER_HPP
 
+#include "drawing/openGL/shaders/Triangle2.hpp"
+#include "objects/window.hpp"
+#include "shaders/Triangle.hpp"
+#include <GL/glcorearb.h>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include "objects/window.hpp"
+#include <array>
 #include <cstdlib>
 #include <iostream>
-#include <vector>
-#include <array>
-#include <GL/glcorearb.h>
 #include <stdexcept>
-#include "shaders/Triangle.hpp"
+#include <vector>
 
 // TODO this doesnt need to be a singleton
-class OGLhandler
-{
+class OGLhandler {
 public:
     Shaders::Triangle* triangleShader;
+    Shaders::Triangle2* newTriangleShader;
     Window* mainWindow;
+    GLuint fboID;
 
-    static OGLhandler* getInstance(int width = 0, int height = 0);
+    // static OGLhandler* getInstance(int width = 0, int height = 0);
+    OGLhandler(int width, int height);
+    ~OGLhandler();
     /**
      * Singletons should not be cloneable.
      */
@@ -29,11 +33,10 @@ public:
      */
     void operator=(const OGLhandler&) = delete;
     void initOGL();
-    ~OGLhandler();
+    void initFramebuffer();
 
 protected:
-    static OGLhandler* instance_;
-    OGLhandler(int width, int height);
+    // static OGLhandler* instance_;
 };
 
 #endif // OGLHANDLER_HPP

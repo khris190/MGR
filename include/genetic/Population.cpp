@@ -1,5 +1,6 @@
 #include "Population.hpp"
 #include "external_utils/BS_thread_pool_light.hpp"
+#include "my_utils/Profiler.hpp"
 
 Population::Population(int populationSize, int genotypeSize)
     : pool(Config::get<Config::Argument::THREADS>())
@@ -24,6 +25,7 @@ void Population::CreateNextGeneration(int parent1_, int parent2_, float mutation
 }
 void Population::CreateNextGeneration(float mutation_rate)
 {
+    newTimer("CreateNextGeneration");
     for (size_t i = 0; i < this->children.size(); i++) {
         if (i != this->bests[0].first && i != this->bests[1].first) {
             this->children[i].Cross(this->children[this->bests[0].first], this->children[this->bests[1].first]);
@@ -61,9 +63,9 @@ std::vector<std::pair<int, float>> Population::getBest()
 {
     std::vector<std::pair<int, float>> result;
     result.push_back(
-      std::pair<int, float>((this->scores[0] > this->scores[1]) ? 1 : 0, std::min(this->scores[0], this->scores[1])));
+        std::pair<int, float>((this->scores[0] > this->scores[1]) ? 1 : 0, std::min(this->scores[0], this->scores[1])));
     result.push_back(
-      std::pair<int, float>((this->scores[0] < this->scores[1]) ? 1 : 0, std::max(this->scores[0], this->scores[1])));
+        std::pair<int, float>((this->scores[0] < this->scores[1]) ? 1 : 0, std::max(this->scores[0], this->scores[1])));
 
     // Iterate over the remaining elements of the vector
     for (int i = 2; i < this->scores.size(); i++) {

@@ -1,17 +1,20 @@
 #include "OGLhandler.hpp"
-#include "drawing/openGL/shaders/Triangle.hpp"
+#include "common/Config.hpp"
+#include "drawing/openGL/shaders/Triangle2.hpp"
 
 void errorCallback(int error, const char* description) { std::cerr << "Error: " << description << std::endl; }
 
-OGLhandler* OGLhandler::getInstance(int width, int height)
-{
-    if (instance_ == nullptr) {
-        instance_ = new OGLhandler(width, height);
-    }
-    return instance_;
-}
 void OGLhandler::initOGL() { }
+void OGLhandler::initFramebuffer()
+{
+    glGenFramebuffers(1, &fboID);
+    // glBindFramebuffer(GL_FRAMEBUFFER, fboID);
 
+    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if (status != GL_FRAMEBUFFER_COMPLETE) {
+        throw std::runtime_error("unable to complete framebuffer");
+    }
+}
 OGLhandler::OGLhandler(int width, int height)
 {
     glfwSetErrorCallback(errorCallback); // rejestracja funkcji zwrotnej do obslugi bledow
@@ -48,8 +51,10 @@ OGLhandler::OGLhandler(int width, int height)
     std::cout << "GL_VERSION = " << glGetString(GL_VERSION) << std::endl;
     std::cout << "GLSL = " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
 
+    initFramebuffer();
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // kolor (RGBA) uzywany do czyszczenia bufora koloru
-    triangleShader = new Shaders::Triangle();
+    triangleShader = new Shaders::Triangle(mainWindow->height, mainWindow->width, Config::get<Config::Argument::SCALE>());
+    newTriangleShader = new Shaders::Triangle2();
     triangleShader->useShader();
     // setupShaders();
 }
@@ -57,6 +62,7 @@ OGLhandler::~OGLhandler()
 {
     delete mainWindow;
     delete triangleShader;
+    glDeleteFramebuffers(1, &fboID);
 }
 
-OGLhandler* OGLhandler::instance_;
+// OGLhandler* OGLhandler::instance_;

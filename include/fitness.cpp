@@ -2,9 +2,6 @@
 #include "fitness.hpp"
 // https://learn.microsoft.com/en-us/cpp/cpp/welcome-back-to-cpp-modern-cpp?view=msvc-170
 extern float calculateFitness(unsigned char* img_data, unsigned char* surface_data, int _width, int _height);
-extern float calculateFitnessGL(
-  unsigned char* img_data, unsigned char* surface_data, int _width, int _height, bool old = false);
-
 float fitness_v1_RGBA(unsigned char* pA, unsigned char* pB)
 {
     auto absR = (float)std::abs(pA[0] - pB[0]);
@@ -20,9 +17,10 @@ float fitness(cairo_surface_t* img, cairo_surface_t* surface)
     unsigned char* surface_data = cairo_image_surface_get_data(surface);
     return fitness(img, surface_data);
 
-    // int temp_offset;
-    // int offset = _width * _height;
-    // float tmp_fitness = 0, row_fitness = 0, img_fitness = 0;
+    // TODO in case of no nvidia card
+    //  int temp_offset;
+    //  int offset = _width * _height;
+    //  float tmp_fitness = 0, row_fitness = 0, img_fitness = 0;
 
     // for (size_t y = 0; y < _height; y++)
     // {
@@ -52,19 +50,5 @@ float fitness(cairo_surface_t* img, unsigned char* surface)
     _height = cairo_image_surface_get_height(img);
 
     float ret = calculateFitness(img_data, surface, _width, _height);
-    return ret;
-}
-
-float fitnessGL(cairo_surface_t* img, unsigned char* surface)
-{
-    newTimer("fitnessGL function timer");
-    unsigned char* img_data = cairo_image_surface_get_data(img);
-
-    int _width, _height;
-
-    _width = cairo_image_surface_get_width(img);
-    _height = cairo_image_surface_get_height(img);
-
-    float ret = calculateFitnessGL(img_data, surface, _width, _height);
     return ret;
 }

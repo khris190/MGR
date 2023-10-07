@@ -11,6 +11,7 @@ std::mutex mxLog;
 
 void Logger::setTarget(Target target) { this->LoggerTarget = (short)target; }
 void Logger::xorTarget(Target target) { this->LoggerTarget ^= (short)target; }
+void Logger::orTarget(Target target) { this->LoggerTarget |= (short)target; }
 
 void Logger::setLevel(Level level) { this->LoggerLevel = level; }
 
@@ -38,7 +39,7 @@ short Logger::setFile(string fileName, bool deleteFile, const std::experimental:
 }
 
 short Logger::setFile(
-  string fileName, ofstream::openmode mode, bool deleteFile, const std::experimental::source_location location)
+    string fileName, ofstream::openmode mode, bool deleteFile, const std::experimental::source_location location)
 {
     if (this->LoggingFileStream.is_open()) {
         this->LoggingFileStream.close();
