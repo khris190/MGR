@@ -6,8 +6,7 @@
 #include "common/Randoms.hpp"
 #include "my_utils/Logger.hpp"
 #include <math.h>
-class Gene
-{
+class Gene {
 public:
     myData::ShapeType type_of_shape;
     myData::float2 position;

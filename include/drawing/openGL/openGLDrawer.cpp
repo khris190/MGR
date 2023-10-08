@@ -66,7 +66,7 @@ void SaveToPNG(const char* filename)
     }
     {
         newTimer("fileWritin");
-        stbi_write_png(filename, OGlhandler->mainWindow->width, OGlhandler->mainWindow->height, 4, data.data(),
+        stbi_write_png(filename, OGlhandler->mainWindow->width, OGlhandler->mainWindow->height, 4, flippedPixels.data(),
             OGlhandler->mainWindow->width * 4);
     }
 }
@@ -75,11 +75,4 @@ inline myData::position rotate(float x, float y, float angle)
 {
     return myData::position(x * cos(angle) - y * sin(angle), x * sin(angle) + y * cos(angle));
 }
-
-void AddTriangles(Genotype& genes, float Scale)
-{
-    // TODO
-    //  mesh::AddVao(prepareTriangles(genes, Scale), OGlhandler->triangleShader->shaderProgram, GL_TRIANGLES);
-}
-
 } // namespace OpenGLDrawer

@@ -12,8 +12,7 @@
 #include <vector>
 
 // TODO move drawing functions and get an dependency injection going
-class Genotype
-{
+class Genotype {
 public:
     std::vector<Gene> genes;
 

@@ -36,8 +36,6 @@ foreach(SHADER_FILE ${SHADER_FILES})
     configure_file(${SHADER_FILE} "../${BINARY_DIR}/shaders/${SHADER_FILE_LOCAL_PATH}" COPYONLY)
 endforeach()
 
-
-
 add_subdirectory(CUDA_FITNESS)
 add_subdirectory(UTILS)
 add_subdirectory(tests)
