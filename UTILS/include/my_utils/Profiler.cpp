@@ -1,4 +1,5 @@
 #include "Profiler.hpp"
+#include <mutex>
 #include <string>
 
 // Profiler profiler;
@@ -14,17 +15,14 @@ Profiler* Profiler::getInstance()
 
 void Profiler::AddSample(Sample sample)
 {
-    // it will make stuff slower but now there is 0% probability to do a double push_back;
-    mxSamples.lock();
-    for (size_t i = 0; i < samples.size(); i++) {
-        if (sample.name == samples[i].name) {
-            samples[i].nsTime += sample.nsTime;
-            mxSamples.unlock();
+    std::scoped_lock<std::mutex> lock(mxSamples);
+    for (auto& sampleTmp : samples) {
+        if (sampleTmp.name == sample.name) {
+            sampleTmp.nsTime += sample.nsTime;
             return;
         }
     }
     samples.push_back(sample);
-    mxSamples.unlock();
 }
 
 std::string Profiler::getTimingsAsString(bool doClearSamples)
@@ -36,12 +34,10 @@ std::string Profiler::getTimingsAsString(bool doClearSamples)
 
     std::vector<Sample> localSamples = getTimings(doClearSamples);
     long time = 0;
-    for (size_t i = 0; i < localSamples.size(); i++) {
-        mxSamples.lock();
-        retString += localSamples[i].name;
+    for (auto const& localSample : localSamples) {
+        retString += localSample.name;
         retString += ": ";
-        time = localSamples[i].nsTime;
-        mxSamples.unlock();
+        time = localSample.nsTime;
         retString += std::to_string(time) + "ns.  ";
         time /= 1000000; // change to ms.
         if (time >= 1) {
@@ -65,8 +61,8 @@ std::vector<Sample> Profiler::getTimings(bool doClearSamples)
     std::vector<Sample> retSample;
 
     mxSamples.lock();
-    for (size_t i = 0; i < samples.size(); i++) {
-        retSample.push_back(Sample(samples[i].name, samples[i].nsTime));
+    for (auto const& sample : samples) {
+        retSample.emplace_back(sample);
     }
     mxSamples.unlock();
     if (doClearSamples) {
@@ -78,9 +74,8 @@ std::vector<Sample> Profiler::getTimings(bool doClearSamples)
 
 void Profiler::clearSamples()
 {
-    mxSamples.lock();
+    std::scoped_lock<std::mutex> lock(mxSamples);
     samples.clear();
-    mxSamples.unlock();
 }
 
 void Profiler::printProfilerData(bool doClearSamples)
@@ -103,7 +98,7 @@ Profiler::~Profiler()
 
 Profiler* Profiler::instance_;
 
-PTimer::PTimer(std::string name)
+PTimer::PTimer(const std::string& name)
 {
     sample.name = name;
     startTime = std::chrono::system_clock::now();

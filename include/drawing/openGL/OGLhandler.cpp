@@ -55,7 +55,7 @@ OGLhandler::OGLhandler(int width, int height)
 
     initFramebuffer();
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // kolor (RGBA) uzywany do czyszczenia bufora koloru
-    triangleShader = std::make_unique<shaders::Triangle>(mainWindow->height, mainWindow->width, Config::get<Config::Argument::SCALE>());
+    triangleShader = std::make_unique<shaders::Triangle>(mainWindow->getHeight(), mainWindow->getWidth(), Config::get<Config::Argument::SCALE>());
     newTriangleShader = std::make_shared<shaders::Triangle2>();
 }
 OGLhandler::~OGLhandler()

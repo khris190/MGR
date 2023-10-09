@@ -23,15 +23,15 @@ void draw(Genotype& populus, [[maybe_unused]] float scale)
 {
     newTimer("Draw");
     Mesh drawing;
-    drawing.AddVao(OGlhandler->newTriangleShader, populus, GL_TRIANGLES);
+    drawing.addVao(OGlhandler->newTriangleShader, populus, GL_TRIANGLES);
     OGlhandler->mainWindow->cleanWindow();
     glUseProgram(OGlhandler->newTriangleShader->shaderProgram); // wlaczenie programu cieniowania
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-    glViewport(0, 0, OGlhandler->mainWindow->width, OGlhandler->mainWindow->height);
+    glViewport(0, 0, OGlhandler->mainWindow->getWidth(), OGlhandler->mainWindow->getHeight());
     glClear(GL_DEPTH_BUFFER_BIT);
-    drawing.DrawLastVAO();
+    drawing.drawLastVAO();
     OGlhandler->mainWindow->swapBuffer();
-    drawing.Clear();
+    drawing.clear();
 }
 void clean()
 {
@@ -40,30 +40,28 @@ void clean()
 
 std::vector<unsigned char> getPixels()
 {
-    std::vector<unsigned char> data(OGlhandler->mainWindow->width * OGlhandler->mainWindow->height * 4);
-    {
-        glReadPixels(0, 0, OGlhandler->mainWindow->width, OGlhandler->mainWindow->height, GL_RGBA, GL_UNSIGNED_BYTE,
-            data.data());
-    }
+    std::vector<unsigned char> data(OGlhandler->mainWindow->getWidth() * OGlhandler->mainWindow->getHeight() * 4);
+    glReadPixels(0, 0, OGlhandler->mainWindow->getWidth(), OGlhandler->mainWindow->getHeight(), GL_RGBA, GL_UNSIGNED_BYTE,
+        data.data());
     return data;
 }
 
 void saveToPNG(const char* filename)
 {
     std::vector<unsigned char> data = getPixels();
-    std::vector<unsigned char> flippedPixels(OGlhandler->mainWindow->width * OGlhandler->mainWindow->height * 4);
+    std::vector<unsigned char> flippedPixels(OGlhandler->mainWindow->getWidth() * OGlhandler->mainWindow->getHeight() * 4);
     {
         newTimer("pixelFlippin");
-        for (int y = 0; y < OGlhandler->mainWindow->height; y++) {
-            memcpy(flippedPixels.data() + (y * OGlhandler->mainWindow->width * 4),
-                data.data() + ((OGlhandler->mainWindow->height - y - 1) * OGlhandler->mainWindow->width * 4),
-                OGlhandler->mainWindow->width * 4);
+        for (int y = 0; y < OGlhandler->mainWindow->getHeight(); y++) {
+            memcpy(flippedPixels.data() + (y * OGlhandler->mainWindow->getWidth() * 4),
+                data.data() + ((OGlhandler->mainWindow->getHeight() - y - 1) * OGlhandler->mainWindow->getWidth() * 4),
+                OGlhandler->mainWindow->getWidth() * 4);
         }
     }
     {
         newTimer("fileWritin");
-        stbi_write_png(filename, OGlhandler->mainWindow->width, OGlhandler->mainWindow->height, 4, flippedPixels.data(),
-            OGlhandler->mainWindow->width * 4);
+        stbi_write_png(filename, OGlhandler->mainWindow->getWidth(), OGlhandler->mainWindow->getHeight(), 4, flippedPixels.data(),
+            OGlhandler->mainWindow->getWidth() * 4);
     }
 }
 

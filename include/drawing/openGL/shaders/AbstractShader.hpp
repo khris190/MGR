@@ -13,15 +13,14 @@
 namespace shaders {
 class AbstractShader {
 public:
+    GLuint shaderProgram;
+    int stride;
     AbstractShader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
     virtual ~AbstractShader() = 0;
     virtual void setShaderAttributes() = 0;
     virtual int bindDataToBuffer(Genotype& genes) = 0;
-    GLuint shaderProgram;
-    void* data;
-    int stride;
 
-    void useShader()
+    void useShader() const
     {
         glUseProgram(shaderProgram);
     }

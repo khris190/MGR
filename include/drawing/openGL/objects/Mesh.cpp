@@ -3,7 +3,7 @@
 #include <memory>
 
 // TODO !!!! remove/update VAO
-bool Mesh::AddVao(std::shared_ptr<shaders::AbstractShader> shader, Genotype& genes, GLenum mode)
+bool Mesh::addVao(std::shared_ptr<shaders::AbstractShader> shader, Genotype& genes, GLenum mode)
 {
     newTimer("addVao");
     drawMode.push_back(mode);
@@ -23,7 +23,7 @@ bool Mesh::AddVao(std::shared_ptr<shaders::AbstractShader> shader, Genotype& gen
     return true;
 }
 
-void Mesh::DrawVAO(GLenum mode)
+void Mesh::drawVAO(GLenum mode)
 {
     for (size_t i = 0; i < vao.size(); i++) {
         glBindVertexArray(vao[i]);
@@ -31,7 +31,7 @@ void Mesh::DrawVAO(GLenum mode)
     }
 }
 
-void Mesh::DrawVAO()
+void Mesh::drawVAO()
 {
     for (size_t i = 0; i < vao.size(); i++) {
         glBindVertexArray(vao[i]);
@@ -39,21 +39,21 @@ void Mesh::DrawVAO()
     }
 }
 
-void Mesh::DrawLastVAO(GLenum mode)
+void Mesh::drawLastVAO(GLenum mode)
 {
     int i = vao.size() - 1;
     glBindVertexArray(vao[i]);
     glDrawArrays(mode, 0, vaoVerticies[i]);
 }
 
-void Mesh::DrawLastVAO()
+void Mesh::drawLastVAO()
 {
     int i = vao.size() - 1;
     glBindVertexArray(vao[i]);
     glDrawArrays(drawMode[i], 0, vaoVerticies[i]);
 }
 
-void Mesh::Clear()
+void Mesh::clear()
 {
     glDeleteVertexArrays(vao.size(), &vao.front());
     glDeleteBuffers(buffers.size(), &buffers.front());

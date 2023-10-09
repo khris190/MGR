@@ -1,4 +1,5 @@
 #include "AbstractShader.hpp"
+#include <stdexcept>
 
 namespace shaders {
 AbstractShader::AbstractShader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
@@ -37,14 +38,15 @@ AbstractShader::AbstractShader(const std::string& vertexShaderPath, const std::s
         glDeleteShader(fragmentShader);
         glDeleteProgram(shaderProgram);
 
-        throw("Unable to link shader");
+        throw std::runtime_error("Unable to link shader");
     }
 
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 }
 
-AbstractShader::~AbstractShader() {};
+AbstractShader::~AbstractShader() = default;
+;
 
 // TODO move it
 /*------------------------------------------------------------------------------------------

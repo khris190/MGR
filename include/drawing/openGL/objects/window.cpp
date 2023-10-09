@@ -3,6 +3,8 @@
 #include <cstdlib>
 
 Window::Window(int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share)
+    : height(height)
+    , width(width)
 {
     // TODO think about moving it
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, 1);
@@ -19,8 +21,6 @@ Window::Window(int width, int height, const char* title, GLFWmonitor* monitor, G
     glfwWindowHint(GLFW_BLUE_BITS, 8); // 8 bits for blue channel
     glfwWindowHint(GLFW_ALPHA_BITS, 8); // 8 bits for alpha channel
 
-    this->width = width;
-    this->height = height;
     this->window = glfwCreateWindow(width, height, title, monitor, share);
 
     if (!this->window) {
@@ -32,13 +32,12 @@ Window::Window(int width, int height, const char* title, GLFWmonitor* monitor, G
 
     this->makeCurrent();
 }
-
-void Window::swapBuffer() { glfwSwapBuffers(this->window); }
-void Window::makeCurrent() { glfwMakeContextCurrent(this->window); }
-void Window::cleanWindow()
+void Window::swapBuffer() const { glfwSwapBuffers(this->window); }
+void Window::makeCurrent() const { glfwMakeContextCurrent(this->window); }
+//@SuppressWarnings("squid:S125")
+void Window::cleanWindow() const
 {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Set the clear color to a light blue
-
     glClear(GL_COLOR_BUFFER_BIT); // czyszczenie bufora koloru
 }
 

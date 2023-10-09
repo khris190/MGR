@@ -23,13 +23,13 @@ class Mesh {
     GLuint colorLoc;
 
 public:
-    bool AddVao(std::shared_ptr<shaders::AbstractShader> shader, Genotype& genes, GLenum mode);
+    bool addVao(std::shared_ptr<shaders::AbstractShader> shader, Genotype& genes, GLenum mode);
 
-    void DrawVAO(GLenum mode);
-    void DrawVAO();
-    void DrawLastVAO(GLenum mode);
-    void DrawLastVAO();
-    void Clear();
+    void drawVAO(GLenum mode);
+    void drawVAO();
+    void drawLastVAO(GLenum mode);
+    void drawLastVAO();
+    void clear();
 }; // namespace mesh
 
 #endif // MESH_HPP

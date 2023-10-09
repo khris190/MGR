@@ -83,7 +83,7 @@ static std::unordered_map<Argument, std::string_view> Arguments = { { Argument::
 
 bool parse(int argc, char const* argv[]);
 
-bool is_used(Argument arg);
+bool isUsed(Argument arg);
 
 template <typename name>
 auto testTemplate() -> name;
@@ -96,10 +96,10 @@ auto get() -> typename ArgumentType<Condition>::type
 }
 
 extern std::time_t start_time;
-bool doStop(int SecondsAfterToStop = 3600);
+bool doStop();
 extern std::string out_folder_name;
-void CreateFolderForOutput();
-std::string GetOutputFilePathAndFileName(float Resemblance);
+void createFolderForOutput();
+std::string getOutputFilePathAndFileName(float Resemblance);
 
 } // namespace Config
 

@@ -36,6 +36,7 @@ void Population::createNextGeneration(float mutationRate)
 float myFitness(cairo_surface_t* img, unsigned char* surface) { return fitness(img, surface); }
 void Population::drawNFitness(cairo_surface_t* img)
 {
+    newTimer("drawNFitness");
     float scale = Config::get<Config::Argument::SCALE>();
     {
 

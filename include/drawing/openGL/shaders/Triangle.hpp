@@ -9,7 +9,7 @@ namespace shaders {
 class Triangle : public AbstractShader {
 public:
     struct VertexInput {
-        glm::vec3 vPosition; // Equivalent to layout(location = 0) in vec2 vPosition;
+        glm::vec3 vPosition; // Equivalent to layout(location = 0) in vec3 vPosition;
         glm::vec4 vColor; // Equivalent to layout(location = 1) in vec4 vColor;
 
         VertexInput(glm::vec3 position, glm::vec4 color)
@@ -22,7 +22,7 @@ public:
     };
     int height;
     int width;
-    float Scale;
+    float scale;
 
     Triangle(int height, int width, float Scale);
     Triangle(Triangle&&) = default;

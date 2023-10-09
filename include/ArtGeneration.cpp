@@ -55,7 +55,7 @@ void ArtGeneration::startEvolution(cairo_surface_t* img)
                 {
                     openGLDrawer::draw(this->population.children[this->population.bests[1].first],
                         Config::get<Config::Argument::SCALE>());
-                    openGLDrawer::saveToPNG(Config::GetOutputFilePathAndFileName(savedBestScore).c_str());
+                    openGLDrawer::saveToPNG(Config::getOutputFilePathAndFileName(savedBestScore).c_str());
                 }
                 logger.LogDeb(Profiler::getInstance()->getTimingsAsString().c_str());
             }
@@ -65,7 +65,7 @@ void ArtGeneration::startEvolution(cairo_surface_t* img)
 
     openGLDrawer::draw(
         this->population.children[this->population.bests[1].first], Config::get<Config::Argument::SCALE>());
-    openGLDrawer::saveToPNG(Config::GetOutputFilePathAndFileName(savedBestScore).c_str());
+    openGLDrawer::saveToPNG(Config::getOutputFilePathAndFileName(savedBestScore).c_str());
     openGLDrawer::clean();
 }
 

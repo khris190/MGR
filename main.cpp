@@ -13,10 +13,10 @@ void prepareConfig(int argc, const char* argv[])
 {
     Config::parse(argc, argv);
     logger.setLevel((Level)Config::get<Config::Argument::VERBOSE>());
-    if (Config::is_used(Config::Argument::VERBOSE)) {
+    if (Config::isUsed(Config::Argument::VERBOSE)) {
         logger.orTarget(Target::STDOUT);
     }
-    if (Config::is_used(Config::Argument::LOG)) {
+    if (Config::isUsed(Config::Argument::LOG)) {
         logger.setFile("./" + Config::get<Config::Argument::LOG>(), true);
         logger.xorTarget(Target::LOG_FILE);
     }
