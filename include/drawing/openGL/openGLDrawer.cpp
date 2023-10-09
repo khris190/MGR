@@ -9,23 +9,17 @@
 #include <alloca.h>
 #include <cstddef>
 #include <cstdlib>
-namespace OpenGLDrawer {
-// GLuint rboID;
+#include <memory>
+namespace openGLDrawer {
 
-// GLuint PBO;
-OGLhandler* OGlhandler;
-void Initialize(int width, int height)
+std::unique_ptr<OGLhandler> OGlhandler;
+
+void initialize(int width, int height)
 {
-    OGlhandler = new OGLhandler(width, height);
-    // glGenBuffers(1, &PBO);
-    // glBindBuffer(GL_PIXEL_PACK_BUFFER, PBO);
-
-    // glBufferData(GL_PIXEL_PACK_BUFFER, width * height * 4, nullptr, GL_STATIC_READ);
-    // glGenRenderbuffers(1, &rboID);
-    // glBindRenderbuffer(GL_RENDERBUFFER, rboID);
-    // glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA32F, width, height);
+    OGlhandler = std::make_unique<OGLhandler>(width, height);
 }
-void Draw(Genotype& populus, float scale)
+
+void draw(Genotype& populus, [[maybe_unused]] float scale)
 {
     newTimer("Draw");
     Mesh drawing;
@@ -35,12 +29,14 @@ void Draw(Genotype& populus, float scale)
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
     glViewport(0, 0, OGlhandler->mainWindow->width, OGlhandler->mainWindow->height);
     glClear(GL_DEPTH_BUFFER_BIT);
-    // TODO
     drawing.DrawLastVAO();
     OGlhandler->mainWindow->swapBuffer();
     drawing.Clear();
 }
-void clean() { delete OGlhandler; }
+void clean()
+{
+    // leave in case of need of cleanup
+}
 
 std::vector<unsigned char> getPixels()
 {
@@ -52,7 +48,7 @@ std::vector<unsigned char> getPixels()
     return data;
 }
 
-void SaveToPNG(const char* filename)
+void saveToPNG(const char* filename)
 {
     std::vector<unsigned char> data = getPixels();
     std::vector<unsigned char> flippedPixels(OGlhandler->mainWindow->width * OGlhandler->mainWindow->height * 4);
@@ -75,4 +71,4 @@ inline myData::position rotate(float x, float y, float angle)
 {
     return myData::position(x * cos(angle) - y * sin(angle), x * sin(angle) + y * cos(angle));
 }
-} // namespace OpenGLDrawer
+} // namespace openGLDrawer

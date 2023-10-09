@@ -1,6 +1,8 @@
 #include "OGLhandler.hpp"
 #include "common/Config.hpp"
+#include "drawing/openGL/shaders/Triangle.hpp"
 #include "drawing/openGL/shaders/Triangle2.hpp"
+#include <memory>
 
 void errorCallback(int error, const char* description) { std::cerr << "Error: " << description << std::endl; }
 
@@ -53,15 +55,12 @@ OGLhandler::OGLhandler(int width, int height)
 
     initFramebuffer();
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // kolor (RGBA) uzywany do czyszczenia bufora koloru
-    triangleShader = new Shaders::Triangle(mainWindow->height, mainWindow->width, Config::get<Config::Argument::SCALE>());
-    newTriangleShader = new Shaders::Triangle2();
-    triangleShader->useShader();
-    // setupShaders();
+    triangleShader = std::make_unique<shaders::Triangle>(mainWindow->height, mainWindow->width, Config::get<Config::Argument::SCALE>());
+    newTriangleShader = std::make_shared<shaders::Triangle2>();
 }
 OGLhandler::~OGLhandler()
 {
     delete mainWindow;
-    delete triangleShader;
     glDeleteFramebuffers(1, &fboID);
 }
 

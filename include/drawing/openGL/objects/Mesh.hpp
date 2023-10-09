@@ -8,13 +8,14 @@
 #include <array>
 #include <glm/glm.hpp>
 #include <iostream>
+#include <memory>
 #include <vector>
 // thats retarded, was i high?
 class Mesh {
     std::vector<GLuint> vao;
     std::vector<int> vaoVerticies;
     std::vector<GLuint> buffers; // identyfikatory obiektow VBO
-    std::vector<float[8]> vertices;
+    std::vector<std::array<float, 8>> vertices;
     std::vector<GLenum> drawMode;
 
     GLuint shaderProgram;
@@ -22,7 +23,7 @@ class Mesh {
     GLuint colorLoc;
 
 public:
-    bool AddVao(Shaders::AbstractShader* shader, Genotype& genes, GLenum mode);
+    bool AddVao(std::shared_ptr<shaders::AbstractShader> shader, Genotype& genes, GLenum mode);
 
     void DrawVAO(GLenum mode);
     void DrawVAO();

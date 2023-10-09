@@ -6,25 +6,25 @@
 #include "common/Randoms.hpp"
 #include "my_utils/Logger.hpp"
 #include <cairo/cairo.h>
+#include <cstddef>
 #include <memory.h>
 #include <stdlib.h>
 #include <tgmath.h>
 #include <vector>
 
-// TODO move drawing functions and get an dependency injection going
 class Genotype {
 public:
     std::vector<Gene> genes;
 
-    int getSize();
-    Genotype(int size_ = 64);
-    void SwapAll(float mutation_rate = 0.001f);
-    void SwapOne(float mutation_rate = 0.001f, int i = -1);
-    void Mutate(float mutation_rate = 0.001f);
-    void Wiggle(float mutation_rate = 0.001f);
-    void Cross(Genotype& parent1_, Genotype& parent2_);
-    void Draw(cairo_surface_t* img, float scale = 0.5f);
-    ~Genotype();
+    size_t getSize() const;
+    explicit Genotype(int size_ = 64);
+    void swapAll(float mutationRate = 0.001f);
+    void swapOne(float mutationRate = 0.001f, long i = -1);
+    void mutate(float mutationRate = 0.001f);
+    void wiggle(float mutationRate = 0.001f);
+    void cross(Genotype& parent1, Genotype& parent2);
+    void draw(cairo_surface_t* img, float scale = 0.5f) const;
+    ~Genotype() = default;
 };
 
 #endif // GENOTYPE_HPP

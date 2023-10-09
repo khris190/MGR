@@ -18,8 +18,8 @@ void Population::createNextGeneration(int parent1, int parent2, float mutationRa
 {
     for (size_t i = 0; i < this->children.size(); i++) {
         if (i != parent1 && i != parent2) {
-            this->children[i].Cross(this->children[parent1], this->children[parent2]);
-            this->children[i].Mutate(mutationRate);
+            this->children[i].cross(this->children[parent1], this->children[parent2]);
+            this->children[i].mutate(mutationRate);
         }
     }
 }
@@ -28,8 +28,8 @@ void Population::createNextGeneration(float mutationRate)
     newTimer(" createNextGeneration");
     for (size_t i = 0; i < this->children.size(); i++) {
         if (i != this->bests[0].first && i != this->bests[1].first) {
-            this->children[i].Cross(this->children[this->bests[0].first], this->children[this->bests[1].first]);
-            this->children[i].Mutate(mutationRate);
+            this->children[i].cross(this->children[this->bests[0].first], this->children[this->bests[1].first]);
+            this->children[i].mutate(mutationRate);
         }
     }
 }
@@ -41,9 +41,9 @@ void Population::drawNFitness(cairo_surface_t* img)
 
         std::vector<std::vector<unsigned char>> images(children.size());
         for (size_t i = 0; i < this->children.size(); i++) {
-            OpenGLDrawer::Draw(this->children[i], scale);
+            openGLDrawer::draw(this->children[i], scale);
 
-            images[i] = OpenGLDrawer::getPixels();
+            images[i] = openGLDrawer::getPixels();
             workers[i] = pool.submit(myFitness, img, images[i].data());
         }
         {

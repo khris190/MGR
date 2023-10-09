@@ -3,8 +3,9 @@
 #define TRIANGLE_HPP
 
 #include "AbstractShader.hpp"
+#include <memory>
 
-namespace Shaders {
+namespace shaders {
 class Triangle : public AbstractShader {
 public:
     struct VertexInput {
@@ -19,7 +20,8 @@ public:
         static GLuint vPositionLoc;
         static GLuint vColorLoc;
     };
-    int height, width;
+    int height;
+    int width;
     float Scale;
 
     Triangle(int height, int width, float Scale);
@@ -27,11 +29,11 @@ public:
     Triangle(const Triangle&) = default;
     Triangle& operator=(Triangle&&) = default;
     Triangle& operator=(const Triangle&) = default;
-    ~Triangle();
+    ~Triangle() override;
     void setShaderAttributes() override;
     int bindDataToBuffer(Genotype& genes) override;
 };
 
-} // namespace Shaders
+} // namespace shaders
 
 #endif // TRIANGLE_HPP

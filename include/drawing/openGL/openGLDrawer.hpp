@@ -20,26 +20,21 @@
 #include <GL/glcorearb.h>
 #include <cuda_gl_interop.h>
 
-namespace OpenGLDrawer {
+namespace openGLDrawer {
 extern GLuint bufferID;
-extern OGLhandler* OGlhandler;
+extern std::unique_ptr<OGLhandler> OGlhandler;
 
 unsigned char* GetCUDAImgDataPointer(int width, int height);
 
-void Initialize(int width, int height);
+void initialize(int width, int height);
 
-void Draw(Genotype& populus, float scale);
+void draw(Genotype& populus, float scale);
 
 void clean();
 
 std::vector<unsigned char> getPixels();
 
-void SaveToPNG(const char* filename);
-
-void AddTriangles(Genotype& populus, float Scale = 0.2f);
-
-std::vector<float> prepareTriangles(Genotype& genes, float Scale);
-std::vector<Shaders::Triangle2::VertexInput> prepareTriangles2(Genotype& genes);
-} // namespace OpenGLDrawer
+void saveToPNG(const char* filename);
+} // namespace openGLDrawer
 
 #endif // OPENGLDRAWER_HPP

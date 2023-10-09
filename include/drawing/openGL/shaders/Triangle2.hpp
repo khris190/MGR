@@ -5,7 +5,7 @@
 #include "AbstractShader.hpp"
 #include <glm/gtc/type_ptr.hpp>
 
-namespace Shaders {
+namespace shaders {
 class Triangle2 : public AbstractShader {
 
 public:
@@ -41,6 +41,6 @@ public:
     int bindDataToBuffer(Genotype& genes) override;
 };
 
-} // namespace Shaders
+} // namespace shaders
 
 #endif // TRIANGLE_HPP

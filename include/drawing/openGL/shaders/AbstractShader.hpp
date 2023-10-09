@@ -10,7 +10,7 @@
 #include <sstream>
 #include <string>
 
-namespace Shaders {
+namespace shaders {
 class AbstractShader {
 public:
     AbstractShader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
@@ -32,6 +32,6 @@ private:
     void printShaderInfoLog(GLuint shader);
     bool compileShader(const std::string& shaderPath, GLenum shaderType, GLuint& shaderID);
 };
-} // namespace Shaders
+} // namespace shaders
 
 #endif // ABSTRACTSHADER_HPP

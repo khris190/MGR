@@ -1,8 +1,9 @@
 #include "fullscreenFBO.hpp"
+#include <array>
 
-namespace Shaders {
+namespace shaders {
 
-fullscreenFBO::fullscreenFBO(GLuint fboID)
+FullscreenFBO::FullscreenFBO(GLuint fboID)
     : AbstractShader("shaders/fullscreenFBO/fullscreenFBO.vert", "shaders/fullscreenFBO/fullscreenFBO.frag")
 {
     glActiveTexture(GL_TEXTURE0); // Choose a texture unit (GL_TEXTURE0, GL_TEXTURE1, etc.)
@@ -10,21 +11,21 @@ fullscreenFBO::fullscreenFBO(GLuint fboID)
     glUniform1i(glGetUniformLocation(this->shaderProgram, "fboTexture"), 0); // Set the uniform for the FBO texture
 }
 
-fullscreenFBO::~fullscreenFBO()
+FullscreenFBO::~FullscreenFBO() = default;
+
+void FullscreenFBO::setShaderAttributes()
 {
+    // empty
 }
 
-void fullscreenFBO::setShaderAttributes()
-{
-}
-
-int fullscreenFBO::bindDataToBuffer(Genotype& genes)
+int FullscreenFBO::bindDataToBuffer(Genotype& genes)
 {
     this->useShader();
-    GLuint fullscreenQuadVAO, fullscreenQuadVBO;
+    GLuint fullscreenQuadVAO;
+    GLuint fullscreenQuadVBO;
 
     // Vertices for a fullscreen quad (two triangles)
-    float quadVertices[] = {
+    std::array<float, 12> quadVertices = {
         // Positions
         -1.0f, 1.0f,
         -1.0f, -1.0f,
@@ -44,10 +45,10 @@ int fullscreenFBO::bindDataToBuffer(Genotype& genes)
     glBindBuffer(GL_ARRAY_BUFFER, fullscreenQuadVBO);
 
     // Copy the vertex data to the VBO
-    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices.data(), GL_STATIC_DRAW);
 
     // Set the vertex attribute pointers
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), nullptr);
     glEnableVertexAttribArray(0);
     // Draw the quad
     glDrawArrays(GL_TRIANGLES, 0, 6); // Assuming you have a quad setup as two triangles
@@ -59,4 +60,4 @@ int fullscreenFBO::bindDataToBuffer(Genotype& genes)
     return 1;
 }
 
-} // namespace Shaders
+} // namespace shaders

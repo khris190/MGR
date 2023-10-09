@@ -6,7 +6,7 @@ inline myData::position rotate(float x, float y, float angle)
     return myData::position(x * cos(angle) - y * sin(angle), x * sin(angle) + y * cos(angle));
 }
 // TODO fix if works
-namespace Shaders {
+namespace shaders {
 GLuint Triangle::VertexInput::vPositionLoc = 0;
 GLuint Triangle::VertexInput::vColorLoc = 0;
 Triangle::Triangle(int height, int width, float Scale)
@@ -89,4 +89,4 @@ int Triangle::bindDataToBuffer(Genotype& genes)
     return vInputs.size();
 }
 
-} // namespace Shaders
+} // namespace shaders

@@ -13,22 +13,22 @@ public:
     float rotation;
     myData::float2 scale;
     myData::color_RGBA color;
-    void Randomize();
-    void Mutate(float mutation_rate = 0.001f);
-    void Wiggle(float mutation_rate = 0.001f);
+    void randomize();
+    void mutate(float mutationRate = 0.001f);
+    void wiggle(float mutationRate = 0.001f);
 
-    void RandomizeCenter();
+    void randomizeCenter();
 
 private:
-    void MutateType(float mutation_rate = 0.001f);
-    void MutateColor(float mutation_rate = 0.001f);
-    void MutatePos(float mutation_rate = 0.001f);
-    void MutateRot(float mutation_rate = 0.001f);
-    void MutateSize(float mutation_rate = 0.001f);
-    void WiggleColor(float mutation_rate = 0.001f);
-    void WigglePos(float mutation_rate = 0.001f);
-    void WiggleRot(float mutation_rate = 0.001f);
-    void WiggleSize(float mutation_rate = 0.001f);
+    void mutateType(float mutationRate = 0.001f);
+    void mutateColor(float mutationRate = 0.001f);
+    void mutatePos(float mutationRate = 0.001f);
+    void mutateRot(float mutationRate = 0.001f);
+    void mutateSize(float mutationRate = 0.001f);
+    void wiggleColor(float mutationRate = 0.001f);
+    void wigglePos(float mutationRate = 0.001f);
+    void wiggleRot(float mutationRate = 0.001f);
+    void wiggleSize(float mutationRate = 0.001f);
 
     myData::ShapeType RandomiezeType();
 };

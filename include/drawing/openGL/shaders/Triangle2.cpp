@@ -3,7 +3,7 @@
 #include <cstddef>
 
 // TODO fix if works
-namespace Shaders {
+namespace shaders {
 
 // TODO?
 GLuint Triangle2::VertexInput::vPositionLoc = 0;
@@ -114,4 +114,4 @@ Triangle2::~Triangle2()
     glDeleteProgram(shaderProgram); // usuniecie programu cieniowania
 }
 
-} // namespace Shaders
+} // namespace shaders

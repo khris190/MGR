@@ -1,8 +1,9 @@
 #include "Mesh.hpp"
 #include "my_utils/Profiler.hpp"
+#include <memory>
 
 // TODO !!!! remove/update VAO
-bool Mesh::AddVao(Shaders::AbstractShader* shader, Genotype& genes, GLenum mode)
+bool Mesh::AddVao(std::shared_ptr<shaders::AbstractShader> shader, Genotype& genes, GLenum mode)
 {
     newTimer("addVao");
     drawMode.push_back(mode);

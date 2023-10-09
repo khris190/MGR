@@ -9,7 +9,7 @@
 
 void ArtGeneration::draw(cairo_surface_t* img, size_t index)
 {
-    this->population.children[index].Draw(img, Config::get<Config::Argument::SCALE>());
+    this->population.children[index].draw(img, Config::get<Config::Argument::SCALE>());
 }
 
 void ArtGeneration::startEvolution(cairo_surface_t* img)
@@ -24,7 +24,7 @@ void ArtGeneration::startEvolution(cairo_surface_t* img)
     int width = cairo_image_surface_get_width(img);
     int height = cairo_image_surface_get_height(img);
 
-    OpenGLDrawer::Initialize(width, height);
+    openGLDrawer::initialize(width, height);
     BS::thread_pool_light pool(coreCount);
     do {
         newTimer("Evolution: ");
@@ -53,9 +53,9 @@ void ArtGeneration::startEvolution(cairo_surface_t* img)
             savedBestScore = bestScore;
             if (mutationsCounter % 50 == 0) {
                 {
-                    OpenGLDrawer::Draw(this->population.children[this->population.bests[1].first],
+                    openGLDrawer::draw(this->population.children[this->population.bests[1].first],
                         Config::get<Config::Argument::SCALE>());
-                    OpenGLDrawer::SaveToPNG(Config::GetOutputFilePathAndFileName(savedBestScore).c_str());
+                    openGLDrawer::saveToPNG(Config::GetOutputFilePathAndFileName(savedBestScore).c_str());
                 }
                 logger.LogDeb(Profiler::getInstance()->getTimingsAsString().c_str());
             }
@@ -63,10 +63,10 @@ void ArtGeneration::startEvolution(cairo_surface_t* img)
         }
     } while (bestScore < Config::get<Config::Argument::RESEMBLENCE>() && !Config::doStop());
 
-    OpenGLDrawer::Draw(
+    openGLDrawer::draw(
         this->population.children[this->population.bests[1].first], Config::get<Config::Argument::SCALE>());
-    OpenGLDrawer::SaveToPNG(Config::GetOutputFilePathAndFileName(savedBestScore).c_str());
-    OpenGLDrawer::clean();
+    openGLDrawer::saveToPNG(Config::GetOutputFilePathAndFileName(savedBestScore).c_str());
+    openGLDrawer::clean();
 }
 
 ArtGeneration::ArtGeneration(int childrenSize, int genotypeSize)

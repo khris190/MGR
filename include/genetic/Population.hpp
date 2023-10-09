@@ -26,8 +26,8 @@ public:
 
     void Cross(Genotype& parent1_, Genotype& parent2_);
     std::vector<Genotype> children;
-    void createNextGeneration(int parent1_, int parent2_, float mutation_rate = 0.005f);
-    void createNextGeneration(float mutation_rate = 0.005f);
+    void createNextGeneration(int parent1_, int parent2_, float mutationRate = 0.005f);
+    void createNextGeneration(float mutationRate = 0.005f);
     void drawNFitness(cairo_surface_t* img);
 
     std::vector<std::pair<int, float>> getBest();

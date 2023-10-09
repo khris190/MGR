@@ -1,6 +1,6 @@
 #include "AbstractShader.hpp"
 
-namespace Shaders {
+namespace shaders {
 AbstractShader::AbstractShader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
 {
     shaderProgram = glCreateProgram(); // utworzenie identyfikatora programu cieniowania
@@ -149,4 +149,4 @@ bool AbstractShader::compileShader(const std::string& shaderPath, GLenum shaderT
 
     return result;
 }
-} // namespace Shaders
+} // namespace shaders
