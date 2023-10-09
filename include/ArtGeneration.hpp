@@ -13,20 +13,18 @@
 #include <stdlib.h>
 #include <thread>
 
-class ArtGeneration
-{
+class ArtGeneration {
 private:
-    Population _population;
-    int parent1_, parent2_;
+    Population population;
+    int parent1;
+    int parent2;
 
-    void Draw(cairo_surface_t* pImg, size_t index);
-    static void AsyncFitness(cairo_surface_t* img, Population population, volatile int* best_indexes,
-      volatile float* best_scores, int start, int stop, int _width, int _height);
+    void draw(cairo_surface_t* pImg, size_t index);
 
 public:
     ArtGeneration(int childrenSize = 50, int genotypeSize = 64);
-    void StartEvolution(cairo_surface_t* pImg);
-    ~ArtGeneration();
+    void startEvolution(cairo_surface_t* pImg);
+    ~ArtGeneration() = default;
 };
 
 #endif // ARTGENERATION_HPP

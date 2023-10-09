@@ -36,21 +36,21 @@ int main(int argc, const char* argv[])
     logger.LogInfo("cairo_image_surface_create_from_png");
     cairo_surface_t* image = cairo_image_surface_create_from_png(Config::get<Config::Argument::INPUT>().c_str());
 
-    int _width = cairo_image_surface_get_width(image);
-    int _height = cairo_image_surface_get_height(image);
-    unsigned char* img_data = cairo_image_surface_get_data(image);
+    int width = cairo_image_surface_get_width(image);
+    int height = cairo_image_surface_get_height(image);
+    unsigned char const* imgData = cairo_image_surface_get_data(image);
 
-    std::vector<unsigned char> flippedPixels(_width * _height * 4);
-    for (int y = 0; y < _height; y++) {
-        memcpy(flippedPixels.data() + (y * _width * 4),
-            img_data + ((_height - y - 1) * _width * 4),
-            _width * 4);
+    std::vector<unsigned char> flippedPixels(width * height * 4);
+    for (int y = 0; y < height; y++) {
+        memcpy(flippedPixels.data() + (y * width * 4),
+            imgData + ((height - y - 1) * width * 4),
+            width * 4);
     }
     int stride = cairo_image_surface_get_stride(image);
-    image = cairo_image_surface_create_for_data(flippedPixels.data(), CAIRO_FORMAT_ARGB32, _width, _height, stride);
+    image = cairo_image_surface_create_for_data(flippedPixels.data(), CAIRO_FORMAT_ARGB32, width, height, stride);
 
     logger.LogInfo("StartEvolution");
-    gen.StartEvolution(image);
+    gen.startEvolution(image);
     cairo_surface_destroy(image);
     logger.LogDeb(Profiler::getInstance()->getTimingsAsString().c_str());
 
