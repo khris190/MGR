@@ -8,37 +8,35 @@ Population::Population(int populationSize, int genotypeSize)
     this->scores.reserve(populationSize);
     this->children.reserve(populationSize);
     for (size_t i = 0; i < populationSize; i++) {
-        this->children.push_back(Genotype(genotypeSize));
+        this->children.emplace_back(genotypeSize);
         this->scores.push_back(0.f);
     }
     workers = std::vector<std::future<float>>(children.size());
 }
 
-void Population::CreateNextGeneration(int parent1_, int parent2_, float mutation_rate)
+void Population::createNextGeneration(int parent1, int parent2, float mutationRate)
 {
     for (size_t i = 0; i < this->children.size(); i++) {
-        if (i != parent1_ && i != parent2_) {
-            this->children[i].Cross(this->children[parent1_], this->children[parent2_]);
-            this->children[i].Mutate(mutation_rate);
+        if (i != parent1 && i != parent2) {
+            this->children[i].Cross(this->children[parent1], this->children[parent2]);
+            this->children[i].Mutate(mutationRate);
         }
     }
 }
-void Population::CreateNextGeneration(float mutation_rate)
+void Population::createNextGeneration(float mutationRate)
 {
-    newTimer("CreateNextGeneration");
+    newTimer(" createNextGeneration");
     for (size_t i = 0; i < this->children.size(); i++) {
         if (i != this->bests[0].first && i != this->bests[1].first) {
             this->children[i].Cross(this->children[this->bests[0].first], this->children[this->bests[1].first]);
-            this->children[i].Mutate(mutation_rate);
+            this->children[i].Mutate(mutationRate);
         }
     }
 }
-float MyFitness(cairo_surface_t* img, unsigned char* surface) { return fitness(img, surface); }
-void Population::DrawNFitness(cairo_surface_t* img)
+float myFitness(cairo_surface_t* img, unsigned char* surface) { return fitness(img, surface); }
+void Population::drawNFitness(cairo_surface_t* img)
 {
     float scale = Config::get<Config::Argument::SCALE>();
-    int width = cairo_image_surface_get_width(img);
-    int height = cairo_image_surface_get_height(img);
     {
 
         std::vector<std::vector<unsigned char>> images(children.size());
@@ -46,9 +44,7 @@ void Population::DrawNFitness(cairo_surface_t* img)
             OpenGLDrawer::Draw(this->children[i], scale);
 
             images[i] = OpenGLDrawer::getPixels();
-            workers[i] = pool.submit(MyFitness, img, images[i].data());
-            // u_char* cudaSurface = OpenGLDrawer::GetCUDAImgDataPointer(width, height);
-            // this->scores[i] = fitnessGL(img, cudaSurface);
+            workers[i] = pool.submit(myFitness, img, images[i].data());
         }
         {
             for (size_t i = 0; i < this->children.size(); i++) {
@@ -82,5 +78,3 @@ std::vector<std::pair<int, float>> Population::getBest()
 
     return result;
 }
-
-Population::~Population() { }

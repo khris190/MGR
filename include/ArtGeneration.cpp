@@ -29,14 +29,14 @@ void ArtGeneration::startEvolution(cairo_surface_t* img)
     do {
         newTimer("Evolution: ");
 #pragma region calculate best
-        this->population.DrawNFitness(img);
+        this->population.drawNFitness(img);
 
         logger.LogDeb(Profiler::getInstance()->getTimingsAsString().c_str());
         if (0 > this->population.bests[1].first || 0 > this->population.bests[0].first) {
             logger.LogEmerg("wtf, parent1_ or parent2_ wasnt selected");
             exit(2);
         }
-        this->population.CreateNextGeneration(Config::get<Config::Argument::MUTATION>());
+        this->population.createNextGeneration(Config::get<Config::Argument::MUTATION>());
         bestScore = this->population.bests[1].second;
         if (lastScore == bestScore) {
             noChangesCounter++;
