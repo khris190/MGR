@@ -17,8 +17,8 @@ public:
             , vColor(color)
         {
         }
-        static GLuint vPositionLoc;
-        static GLuint vColorLoc;
+        inline static GLuint vPositionLoc = 0;
+        inline static GLuint vColorLoc = 0;
     };
     int height;
     int width;

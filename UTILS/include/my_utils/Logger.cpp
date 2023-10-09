@@ -2,6 +2,7 @@
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
+#include <mutex>
 
 using std::chrono::system_clock;
 
@@ -15,11 +16,11 @@ void Logger::orTarget(Target target) { this->LoggerTarget |= (short)target; }
 
 void Logger::setLevel(Level level) { this->LoggerLevel = level; }
 
-Level Logger::getLevel() { return this->LoggerLevel; }
+Level Logger::getLevel() const { return this->LoggerLevel; }
 
-string Logger::levelToString(Level level) { return levelMap[level]; }
+string Logger::levelToString(Level level) const { return levelMap[level]; }
 
-short Logger::setFile(string fileName, bool deleteFile, const std::experimental::source_location location)
+short Logger::setFile(const string& fileName, bool deleteFile, const std::experimental::source_location location)
 {
     if (this->LoggingFileStream.is_open()) {
         this->LoggingFileStream.close();
@@ -39,7 +40,7 @@ short Logger::setFile(string fileName, bool deleteFile, const std::experimental:
 }
 
 short Logger::setFile(
-    string fileName, ofstream::openmode mode, bool deleteFile, const std::experimental::source_location location)
+    const string& fileName, ofstream::openmode mode, bool deleteFile, const std::experimental::source_location location)
 {
     if (this->LoggingFileStream.is_open()) {
         this->LoggingFileStream.close();
@@ -92,24 +93,21 @@ void Logger::write(Level level, const char* message, const std::experimental::so
     // printf makes printing a bit faster
     // Logger to stdout if it's one of our targets
     if ((this->LoggerTarget & (short)Target::STDOUT)) {
-        mxLog.lock();
+        std::scoped_lock<std::mutex> lock(mxLog);
         fprintf(stdout, "%s", loggerMessageString);
-        mxLog.unlock();
     }
 
     // Logger to stderr if it's one of our targets
     if ((this->LoggerTarget & (short)Target::STDERR)) {
-        mxLog.lock();
+        std::scoped_lock<std::mutex> lock(mxLog);
         fprintf(stderr, "%s", loggerMessageString);
-        mxLog.unlock();
     }
 
     // Logger to a file if it's one of our targets and we've set a LoggerFile
     if ((this->LoggerTarget & (short)Target::LOG_FILE) && this->LoggerFile != "") {
-        mxLog.lock();
+        std::scoped_lock<std::mutex> lock(mxLog);
         this->LoggingFileStream << loggerMessageString;
         this->LoggingFileStream.flush();
-        mxLog.unlock();
     }
 }
 
@@ -119,8 +117,7 @@ char* Logger::getLoggerfunctionInfo(Level level, const std::experimental::source
     size_t fullSize = 0;
     // Append the current date and time if enabled
     if (this->timestampEnabled) {
-        std::time_t time = system_clock::to_time_t(system_clock::now());
-        if (this->lastTime < time) {
+        if (std::time_t time = system_clock::to_time_t(system_clock::now()); this->lastTime < time) {
             this->lastTime = time;
             struct tm* timeStruct = std::localtime(&time);
             strftime(&this->timeStr[1], 200, "%d/%b/%Y %H:%M:%S", timeStruct);

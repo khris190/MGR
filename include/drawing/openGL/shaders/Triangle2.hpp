@@ -24,11 +24,11 @@ public:
             , vColor(color)
         {
         }
-        static GLuint vPositionLoc;
-        static GLuint vZPosLoc;
-        static GLuint trianglePosLoc;
-        static GLuint rotationLoc;
-        static GLuint vColorLoc;
+        inline static GLuint vPositionLoc = 0;
+        inline static GLuint vZPosLoc = 0;
+        inline static GLuint trianglePosLoc = 0;
+        inline static GLuint rotationLoc = 0;
+        inline static GLuint vColorLoc = 0;
     };
 
     Triangle2();
@@ -36,7 +36,7 @@ public:
     Triangle2(const Triangle2&) = default;
     Triangle2& operator=(Triangle2&&) = default;
     Triangle2& operator=(const Triangle2&) = default;
-    ~Triangle2();
+    ~Triangle2() override;
     void setShaderAttributes() override;
     int bindDataToBuffer(Genotype& genes) override;
 };

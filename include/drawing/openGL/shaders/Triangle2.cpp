@@ -2,15 +2,8 @@
 #include "common/Config.hpp"
 #include <cstddef>
 
-// TODO fix if works
 namespace shaders {
 
-// TODO?
-GLuint Triangle2::VertexInput::vPositionLoc = 0;
-GLuint Triangle2::VertexInput::vZPosLoc = 0;
-GLuint Triangle2::VertexInput::trianglePosLoc = 0;
-GLuint Triangle2::VertexInput::rotationLoc = 0;
-GLuint Triangle2::VertexInput::vColorLoc = 0;
 Triangle2::Triangle2()
     : AbstractShader("shaders/triangle_v2/shader.vert", "shaders/triangle_v2/shader.frag")
 {

@@ -104,14 +104,14 @@ public:
      *
      * \return	Level	The current Logger level
      */
-    Level getLevel();
+    Level getLevel() const;
 
     /* Convert the Level enum to a string.
      *
      * \param	Level	The level to convert
      * \return	string	The converted level
      */
-    string levelToString(Level level);
+    string levelToString(Level level) const;
 
 #pragma endregion Target and level
 
@@ -120,10 +120,10 @@ public:
      *
      * \param	string	The file to which we will Logger
      */
-    short setFile(string fileName, bool deleteFile = false,
+    short setFile(const string& fileName, bool deleteFile = false,
         const std::experimental::source_location location = std::experimental::source_location::current());
 
-    short setFile(string fileName, ofstream::openmode mode, bool deleteFile = false,
+    short setFile(const string& fileName, ofstream::openmode mode, bool deleteFile = false,
         const std::experimental::source_location location = std::experimental::source_location::current());
 #pragma endregion setFile
 
@@ -146,7 +146,7 @@ public:
     {
         this->write(Level::DEB, message, location);
     }
-    void LogDeb(std::string message,
+    void LogDeb(std::string const& message,
         const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::DEB, message.c_str(), location);
@@ -160,7 +160,7 @@ public:
     {
         this->write(Level::INFO, message, location);
     }
-    void LogInfo(std::string message,
+    void LogInfo(std::string const& message,
         const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::INFO, message.c_str(), location);
@@ -174,7 +174,7 @@ public:
     {
         this->write(Level::NOTICE, message, location);
     }
-    void LogNotice(std::string message,
+    void LogNotice(std::string const& message,
         const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::NOTICE, message.c_str(), location);
@@ -188,7 +188,7 @@ public:
     {
         this->write(Level::WARNING, message, location);
     }
-    void LogWar(std::string message,
+    void LogWar(std::string const& message,
         const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::WARNING, message.c_str(), location);
@@ -203,7 +203,7 @@ public:
         this->write(Level::ERR, message, location);
     }
 
-    void LogErr(std::string message,
+    void LogErr(std::string const& message,
         const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::ERR, message.c_str(), location);
@@ -217,7 +217,7 @@ public:
     {
         this->write(Level::CRIT, message, location);
     }
-    void LogCrit(std::string message,
+    void LogCrit(std::string const& message,
         const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::CRIT, message.c_str(), location);
@@ -231,7 +231,7 @@ public:
     {
         this->write(Level::ALERT, message, location);
     }
-    void LogAlert(std::string message,
+    void LogAlert(std::string const& message,
         const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::ALERT, message.c_str(), location);
@@ -245,7 +245,7 @@ public:
     {
         this->write(Level::EMERG, message, location);
     }
-    void LogEmerg(std::string message,
+    void LogEmerg(std::string const& message,
         const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::EMERG, message.c_str(), location);

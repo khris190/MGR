@@ -8,8 +8,6 @@ inline myData::position rotate(float x, float y, float angle)
 }
 
 namespace shaders {
-GLuint Triangle::VertexInput::vPositionLoc = 0;
-GLuint Triangle::VertexInput::vColorLoc = 0;
 Triangle::Triangle(int height, int width, float scale)
     : AbstractShader("shaders/triangle/shader.vert", "shaders/triangle/shader.frag")
     , height(height)
