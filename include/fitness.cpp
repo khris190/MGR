@@ -2,20 +2,19 @@
 #include "fitness.hpp"
 // https://learn.microsoft.com/en-us/cpp/cpp/welcome-back-to-cpp-modern-cpp?view=msvc-170
 extern float calculateFitness(unsigned char* img_data, unsigned char* surface_data, int _width, int _height);
-float fitness_v1_RGBA(unsigned char* pA, unsigned char* pB)
+float fitness_v1_RGBA(const unsigned char* pA, const unsigned char* pB)
 {
     auto absR = (float)std::abs(pA[0] - pB[0]);
     auto absG = (float)std::abs(pA[1] - pB[1]);
     auto absB = (float)std::abs(pA[2] - pB[2]);
     auto absA = (float)std::abs(pA[3] - pB[3]);
     auto val2 = (absR + absG + absB) + absA;
-    return (float)(255.f - val2 / 4.f) / 255.f;
+    return (255.f - val2 / 4.f) / 255.f;
 }
 
 float fitness(cairo_surface_t* img, cairo_surface_t* surface)
 {
-    unsigned char* surface_data = cairo_image_surface_get_data(surface);
-    return fitness(img, surface_data);
+    return fitness(img, cairo_image_surface_get_data(surface));
 
     // TODO in case of no nvidia card
     //  int temp_offset;
@@ -42,13 +41,11 @@ float fitness(cairo_surface_t* img, cairo_surface_t* surface)
 
 float fitness(cairo_surface_t* img, unsigned char* surface)
 {
-    unsigned char* img_data = cairo_image_surface_get_data(img);
+    unsigned char* imgData = cairo_image_surface_get_data(img);
 
-    int _width, _height;
+    int width = cairo_image_surface_get_width(img);
+    int height = cairo_image_surface_get_height(img);
 
-    _width = cairo_image_surface_get_width(img);
-    _height = cairo_image_surface_get_height(img);
-
-    float ret = calculateFitness(img_data, surface, _width, _height);
+    float ret = calculateFitness(imgData, surface, width, height);
     return ret;
 }

@@ -1,15 +1,8 @@
 #ifndef PROFILER_HPP
 #define PROFILER_HPP
 
-#include <chrono>
-#include <ctime>
-#include <fcntl.h>
-#include <iostream>
 #include <mutex>
 #include <string>
-#include <sys/mman.h>
-#include <sys/time.h>
-#include <unistd.h>
 #include <vector>
 struct Sample {
     long nsTime;

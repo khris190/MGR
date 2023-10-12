@@ -30,7 +30,7 @@ OGLhandler::OGLhandler(int width, int height)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glfwSwapInterval(0); // v-sync on
 
-    // inicjacja GLEW
+    // inicjacja GLEW requres window
     glewExperimental = GL_TRUE;
     GLenum err = glewInit();
     if (err != GLEW_OK) {
@@ -62,6 +62,8 @@ OGLhandler::~OGLhandler()
 {
     delete mainWindow;
     glDeleteFramebuffers(1, &fboID);
+
+    glfwTerminate(); // konczy dzialanie biblioteki GLFW
 }
 
 // OGLhandler* OGLhandler::instance_;

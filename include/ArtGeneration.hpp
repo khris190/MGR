@@ -2,16 +2,7 @@
 #define ARTGENERATION_HPP
 
 #include "common/Config.hpp"
-#include "external_utils/BS_thread_pool_light.hpp"
-#include "fitness.hpp"
-#include "genetic/Genotype.hpp"
 #include "genetic/Population.hpp"
-#include "my_utils/Logger.hpp"
-#include "my_utils/Profiler.hpp"
-#include <cairo/cairo.h>
-#include <stdexcept>
-#include <stdlib.h>
-#include <thread>
 
 class ArtGeneration {
 private:

@@ -35,6 +35,7 @@ void draw(Genotype& populus, [[maybe_unused]] float scale)
 }
 void clean()
 {
+    delete OGlhandler.release();
     // leave in case of need of cleanup
 }
 

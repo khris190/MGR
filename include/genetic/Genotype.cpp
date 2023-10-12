@@ -1,7 +1,19 @@
 #include "Genotype.hpp"
+#include "common/DataStructures.hpp"
+#include "common/Randoms.hpp"
+#include "genetic/Gene.hpp"
+#include "my_utils/Logger.hpp"
+#include "my_utils/Profiler.hpp"
+#include <algorithm>
 #include <array>
+#include <cairo/cairo.h>
+#include <cmath>
 #include <cstddef>
+#include <memory>
 #include <stdexcept>
+#include <stdlib.h>
+#include <tgmath.h>
+#include <vector>
 
 size_t Genotype::getSize() const { return genes.size(); }
 

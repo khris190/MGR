@@ -11,7 +11,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_compile_definitions(VERSION="${VERSION}")
 add_compile_definitions(PROJECT_NAME="${PROJECT_NAME}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 ")
+set(CMAKE_GENERATOR_PLATFORM x64)
+set(CMAKE_SYSTEM_PROCESSOR x86_64)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m64 -std=c++17")
 
 set(CMAKE_CXX_FLAGS_DEBUG "-g -D DEBUG")
 
@@ -36,6 +38,10 @@ foreach(SHADER_FILE ${SHADER_FILES})
     configure_file(${SHADER_FILE} "../${BINARY_DIR}/shaders/${SHADER_FILE_LOCAL_PATH}" COPYONLY)
 endforeach()
 
+# find_program(IWYU_EXE NAMES include-what-you-use REQUIRED)
+# set(CMAKE_C_INCLUDE_WHAT_YOU_USE ${IWYU_EXE})
+# set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE ${IWYU_EXE})
+
 add_subdirectory(CUDA_FITNESS)
 add_subdirectory(UTILS)
 add_subdirectory(tests)
@@ -49,16 +55,16 @@ find_package(glfw3 3.3 REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 find_package(GLEW REQUIRED)
+find_package(Boost COMPONENTS )
 
-# im not sure why CUDA_CUDA_LIBRARY doesnt work and CMAKE_CUDA_IMPLICIT_LINK_DIRECTORIES works
 find_library(CUDART_LIBRARY cudart ${CMAKE_CUDA_IMPLICIT_LINK_DIRECTORIES})
 
-SET(LIBS ${LIBS} -lcairo -lX11 ${GLEW_LIBRARIES} CUDA_FITNESS MY_UTILS glfw OpenGL::GL -lGL -lGLU -lglut -lGL -lpthread -lXrandr -lXi -ldl -lcuda ${CUDART_LIBRARY} ${CUDA_CUDA_LIBRARY} ${OPENGL_LIBRARIES})
+SET(LIBS ${LIBS} -lcairo ${Boost_LIBRARIES} -lX11 ${GLEW_LIBRARIES} CUDA_FITNESS MY_UTILS glfw OpenGL::GL -lGL -lGLU -lglut -lGL -lpthread -lXrandr -lXi -ldl -lcuda ${CUDART_LIBRARY} ${CUDA_CUDA_LIBRARY} ${OPENGL_LIBRARIES})
 
 add_executable(${PROJECT_NAME} main.cpp ${SOURCES} )
 
-target_include_directories(GenerativeArt PUBLIC ${PNG_INCLUDE_DIR} ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES} ${GLUT_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS})
-target_include_directories(GenerativeArt PRIVATE ${CUDA_FITNESS_INCLUDE} ${MY_UTILS_INCLUDE} ${DOCTEST_INCLUDE_DIR} ${INCLUDE_DIR} )
+target_include_directories(GenerativeArt PUBLIC ${PNG_INCLUDE_DIR} ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES} ${GLUT_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+target_include_directories(GenerativeArt PRIVATE ${CUDA_FITNESS_INCLUDE} ${MY_UTILS_INCLUDE} ${DOCTEST_INCLUDE_DIR} ${INCLUDE_DIR}  )
 target_include_directories(GenerativeArt INTERFACE ${HEADER_ONLY_INCLUDE})
 add_dependencies(GenerativeArt CUDA_FITNESS MY_UTILS)
 target_link_libraries(GenerativeArt ${LIBS})

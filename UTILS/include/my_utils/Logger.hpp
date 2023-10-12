@@ -1,22 +1,11 @@
 #ifndef LOGGER_HPP
 #define LOGGER_HPP
 
-#include <chrono>
-#include <cstdlib>
-#include <cstring>
-#include <ctime>
+#include "Profiler.hpp"
 #include <experimental/source_location>
 #include <fstream>
-#include <iomanip>
 #include <iostream>
 #include <map>
-#include <memory>
-#include <mutex>
-#include <source_location>
-#include <stdio.h>
-#include <string>
-
-#include "Profiler.hpp"
 
 #ifdef DEBUG
 #define DEFAULT_ENABLE_FILE_INFO true;

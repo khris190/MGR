@@ -1,6 +1,11 @@
 #include "Profiler.hpp"
-#include <mutex>
-#include <string>
+#include <chrono>
+#include <ctime>
+#include <fcntl.h>
+#include <iostream>
+#include <sys/mman.h>
+#include <sys/time.h>
+#include <unistd.h>
 
 // Profiler profiler;
 Profiler::Profiler() { }

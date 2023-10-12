@@ -2,14 +2,8 @@
 #define GENOTYPE_HPP
 
 #include "Gene.hpp"
-#include "common/DataStructures.hpp"
-#include "common/Randoms.hpp"
-#include "my_utils/Logger.hpp"
 #include <cairo/cairo.h>
-#include <cstddef>
-#include <memory.h>
-#include <stdlib.h>
-#include <tgmath.h>
+#include <stddef.h>
 #include <vector>
 
 class Genotype {

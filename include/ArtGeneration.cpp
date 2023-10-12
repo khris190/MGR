@@ -1,11 +1,17 @@
 #include "ArtGeneration.hpp"
 #include "common/Config.hpp"
 #include "drawing/openGL/openGLDrawer.hpp"
-#include "fitness.hpp"
+#include "external_utils/BS_thread_pool_light.hpp"
+#include "genetic/Genotype.hpp"
 #include "genetic/Population.hpp"
+#include "my_utils/Logger.hpp"
 #include "my_utils/Profiler.hpp"
-#include <cstdio>
-#include <exception>
+#include <cairo/cairo.h>
+#include <stdlib.h>
+#include <string>
+#include <time.h>
+#include <utility>
+#include <vector>
 
 void ArtGeneration::draw(cairo_surface_t* img, size_t index)
 {
@@ -52,12 +58,9 @@ void ArtGeneration::startEvolution(cairo_surface_t* img)
         if (bestScore >= savedBestScore) {
             savedBestScore = bestScore;
             if (mutationsCounter % 50 == 0) {
-                {
-                    openGLDrawer::draw(this->population.children[this->population.bests[1].first],
-                        Config::get<Config::Argument::SCALE>());
-                    openGLDrawer::saveToPNG(Config::getOutputFilePathAndFileName(savedBestScore).c_str());
-                }
-                logger.LogDeb(Profiler::getInstance()->getTimingsAsString().c_str());
+                openGLDrawer::draw(this->population.children[this->population.bests[1].first],
+                    Config::get<Config::Argument::SCALE>());
+                openGLDrawer::saveToPNG(Config::getOutputFilePathAndFileName(savedBestScore).c_str());
             }
             mutationsCounter++;
         }
