@@ -38,22 +38,17 @@ void Population::drawNFitness(cairo_surface_t* img)
 {
     newTimer("drawNFitness");
     float scale = Config::get<Config::Argument::SCALE>();
-    {
+    std::vector<std::vector<unsigned char>> images(children.size());
+    for (size_t i = 0; i < this->children.size(); i++) {
+        openGLDrawer::draw(this->children[i], scale);
 
-        std::vector<std::vector<unsigned char>> images(children.size());
-        for (size_t i = 0; i < this->children.size(); i++) {
-            openGLDrawer::draw(this->children[i], scale);
-
-            images[i] = openGLDrawer::getPixels();
-            workers[i] = pool.submit(myFitness, img, images[i].data());
-        }
-        {
-            for (size_t i = 0; i < this->children.size(); i++) {
-                this->scores[i] = workers[i].get();
-            }
-        }
-        this->bests = getBest();
+        images[i] = openGLDrawer::getPixels();
+        workers[i] = pool.submit(myFitness, img, images[i].data());
     }
+    for (size_t i = 0; i < this->children.size(); i++) {
+        this->scores[i] = workers[i].get();
+    }
+    this->bests = getBest();
 }
 
 std::vector<std::pair<int, float>> Population::getBest()

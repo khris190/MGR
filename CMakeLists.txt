@@ -63,11 +63,11 @@ SET(LIBS ${LIBS} -lcairo ${Boost_LIBRARIES} -lX11 ${GLEW_LIBRARIES} CUDA_FITNESS
 
 add_executable(${PROJECT_NAME} main.cpp ${SOURCES} )
 
-target_include_directories(GenerativeArt PUBLIC ${PNG_INCLUDE_DIR} ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES} ${GLUT_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
-target_include_directories(GenerativeArt PRIVATE ${CUDA_FITNESS_INCLUDE} ${MY_UTILS_INCLUDE} ${DOCTEST_INCLUDE_DIR} ${INCLUDE_DIR}  )
-target_include_directories(GenerativeArt INTERFACE ${HEADER_ONLY_INCLUDE})
-add_dependencies(GenerativeArt CUDA_FITNESS MY_UTILS)
-target_link_libraries(GenerativeArt ${LIBS})
+target_include_directories(${PROJECT_NAME} PUBLIC ${PNG_INCLUDE_DIR} ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES} ${GLUT_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+target_include_directories(${PROJECT_NAME} PRIVATE ${CUDA_FITNESS_INCLUDE} ${MY_UTILS_INCLUDE} ${DOCTEST_INCLUDE_DIR} ${INCLUDE_DIR}  )
+target_include_directories(${PROJECT_NAME} INTERFACE ${HEADER_ONLY_INCLUDE})
+add_dependencies(${PROJECT_NAME} CUDA_FITNESS MY_UTILS)
+target_link_libraries(${PROJECT_NAME} ${LIBS})
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_VERBOSE_MAKEFILE ON)

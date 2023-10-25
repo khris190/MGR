@@ -39,12 +39,22 @@ enum class Level : short { DEB = 1,
     EMERG = 8 };
 
 // String representations of Logger levels
-static map<Level, const char*> levelMap = { { Level::DEB, "DEBUG" }, { Level::INFO, "INFO" },
-    { Level::NOTICE, "NOTICE" }, { Level::WARNING, "WARNING" }, { Level::ERR, "ERROR" }, { Level::CRIT, "CRITICAL" },
-    { Level::ALERT, "ALERT" }, { Level::EMERG, "EMERGENCY" } };
+static const map<Level, const char*> levelMap = {
+    { Level::DEB, "DEBUG" },
+    { Level::INFO, "INFO" },
+    { Level::NOTICE, "NOTICE" },
+    { Level::WARNING, "WARNING" },
+    { Level::ERR, "ERROR" },
+    { Level::CRIT, "CRITICAL" },
+    { Level::ALERT, "ALERT" },
+    { Level::EMERG, "EMERGENCY" } //
+};
 
 // TODO fix file being created even if im not logging to file
 class Logger {
+private:
+    std::mutex mxLog;
+
 public:
     // write() uses these variables to determine which messages should be written where.
     Level LoggerLevel = DEFAULT_LOG_LEVEL;
@@ -130,12 +140,12 @@ public:
      *
      * \param	string	The message to write
      */
-    void LogDeb(const char* message,
+    void inline logDeb(const char* message,
         const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::DEB, message, location);
     }
-    void LogDeb(std::string const& message,
+    void inline logDeb(std::string const& message,
         const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::DEB, message.c_str(), location);
@@ -144,12 +154,12 @@ public:
      *
      * \param	string	The message to write
      */
-    void LogInfo(const char* message,
+    void inline logInfo(const char* message,
         const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::INFO, message, location);
     }
-    void LogInfo(std::string const& message,
+    void inline logInfo(std::string const& message,
         const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::INFO, message.c_str(), location);
@@ -158,12 +168,12 @@ public:
      *
      * \param	string	The message to write
      */
-    void LogNotice(const char* message,
+    void inline logNotice(const char* message,
         const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::NOTICE, message, location);
     }
-    void LogNotice(std::string const& message,
+    void inline logNotice(std::string const& message,
         const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::NOTICE, message.c_str(), location);
@@ -172,12 +182,12 @@ public:
      *
      * \param	string	The message to write
      */
-    void LogWar(const char* message,
+    void inline logWar(const char* message,
         const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::WARNING, message, location);
     }
-    void LogWar(std::string const& message,
+    void inline logWar(std::string const& message,
         const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::WARNING, message.c_str(), location);
@@ -186,13 +196,13 @@ public:
      *
      * \param	string	The message to write
      */
-    void LogErr(const char* message,
+    void inline logErr(const char* message,
         const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::ERR, message, location);
     }
 
-    void LogErr(std::string const& message,
+    void inline logErr(std::string const& message,
         const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::ERR, message.c_str(), location);
@@ -201,12 +211,12 @@ public:
      *
      * \param	string	The message to write
      */
-    void LogCrit(const char* message,
+    void inline logCrit(const char* message,
         const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::CRIT, message, location);
     }
-    void LogCrit(std::string const& message,
+    void inline logCrit(std::string const& message,
         const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::CRIT, message.c_str(), location);
@@ -215,12 +225,12 @@ public:
      *
      * \param	string	The message to write
      */
-    void LogAlert(const char* message,
+    void inline logAlert(const char* message,
         const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::ALERT, message, location);
     }
-    void LogAlert(std::string const& message,
+    void inline logAlert(std::string const& message,
         const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::ALERT, message.c_str(), location);
@@ -229,12 +239,12 @@ public:
      *
      * \param	string	The message to write
      */
-    void LogEmerg(const char* message,
+    void inline logEmerg(const char* message,
         const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::EMERG, message, location);
     }
-    void LogEmerg(std::string const& message,
+    void inline logEmerg(std::string const& message,
         const std::experimental::source_location location = std::experimental::source_location::current())
     {
         this->write(Level::EMERG, message.c_str(), location);

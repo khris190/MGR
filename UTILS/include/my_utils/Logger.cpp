@@ -14,7 +14,6 @@ using std::chrono::system_clock;
 
 // TODO use string_view?
 Logger logger;
-std::mutex mxLog;
 
 void Logger::setTarget(Target target) { this->LoggerTarget = (short)target; }
 void Logger::xorTarget(Target target) { this->LoggerTarget ^= (short)target; }
@@ -24,7 +23,7 @@ void Logger::setLevel(Level level) { this->LoggerLevel = level; }
 
 Level Logger::getLevel() const { return this->LoggerLevel; }
 
-string Logger::levelToString(Level level) const { return levelMap[level]; }
+string Logger::levelToString(Level level) const { return levelMap.at(level); }
 
 short Logger::setFile(const string& fileName, bool deleteFile, const std::experimental::source_location location)
 {
@@ -54,7 +53,7 @@ short Logger::setFile(
     if (deleteFile) {
         remove(fileName.c_str());
     }
-    this->LoggingFileStream.open(fileName, ofstream::app);
+    this->LoggingFileStream.open(fileName, mode);
     if (!this->LoggingFileStream.is_open()) {
         // Logger the failure and return an error code
         this->write(Level::ERR, ("Failed to open Logger file '" + fileName + "'").c_str(), location);
@@ -125,8 +124,8 @@ char* Logger::getLoggerfunctionInfo(Level level, const std::experimental::source
     if (this->timestampEnabled) {
         if (std::time_t time = system_clock::to_time_t(system_clock::now()); this->lastTime < time) {
             this->lastTime = time;
-            struct tm* timeStruct = std::localtime(&time);
-            strftime(&this->timeStr[1], 200, "%d/%b/%Y %H:%M:%S", timeStruct);
+            struct tm const* timeStruct = std::localtime(&time);
+            strftime(&this->timeStr[1], 199, "%d/%b/%Y %H:%M:%S", timeStruct);
         }
         offset = cpyChar(timeString + offset, this->timeStr);
         offset += cpyChar(timeString + offset, "] \0");
@@ -134,7 +133,7 @@ char* Logger::getLoggerfunctionInfo(Level level, const std::experimental::source
     }
 
     if (this->levelEnabled) {
-        offset = cpyChar(levelString, levelMap[level]);
+        offset = cpyChar(levelString, levelMap.at(level));
         offset += cpyChar(levelString + offset, " \0");
         fullSize += offset;
     }

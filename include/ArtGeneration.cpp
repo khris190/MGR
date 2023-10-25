@@ -37,9 +37,9 @@ void ArtGeneration::startEvolution(cairo_surface_t* img)
 #pragma region calculate best
         this->population.drawNFitness(img);
 
-        logger.LogDeb(Profiler::getInstance()->getTimingsAsString().c_str());
+        logger.logDeb(Profiler::getInstance()->getTimingsAsString().c_str());
         if (0 > this->population.bests[1].first || 0 > this->population.bests[0].first) {
-            logger.LogEmerg("wtf, parent1_ or parent2_ wasnt selected");
+            logger.logEmerg("wtf, parent1_ or parent2_ wasnt selected");
             exit(2);
         }
         this->population.createNextGeneration(Config::get<Config::Argument::MUTATION>());
@@ -51,7 +51,7 @@ void ArtGeneration::startEvolution(cairo_surface_t* img)
         }
 
         lastScore = bestScore;
-        logger.LogInfo(
+        logger.logInfo(
             ("Score: " + std::to_string(bestScore) + "\nDifference: " + std::to_string(bestScore - savedBestScore))
                 .c_str());
 

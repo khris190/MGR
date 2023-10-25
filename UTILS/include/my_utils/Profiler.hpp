@@ -44,7 +44,7 @@ public:
 #define TOKENPASTE(x, y) x##y
 #define TOKENPASTE2(x, y) TOKENPASTE(x, y)
 // use for acurate creation to block end timing cant be used in return scope //TODO deal with that problem
-#define newTimer(name) PTimer TOKENPASTE2(Timer_, __LINE__) = PTimer(name)
+#define newTimer(name) PTimer TOKENPASTE2(Timer_, __COUNTER__) = PTimer(name)
 // use by throwing newTimer({string name}) into code block, it will measure to the end of a block
 class PTimer {
 private:

@@ -29,12 +29,12 @@ int main(int argc, const char* argv[])
         prepareConfig(argc, argv);
         // file Exists
         if (!std::filesystem::exists(Config::get<Config::Argument::INPUT>())) {
-            logger.LogErr("no input file: " + std::filesystem::absolute(Config::get<Config::Argument::INPUT>()).string());
+            logger.logErr("no input file: " + std::filesystem::absolute(Config::get<Config::Argument::INPUT>()).string());
             return 2;
         }
-        logger.LogInfo("Starting");
+        logger.logInfo("Starting");
         ArtGeneration gen(Config::get<Config::Argument::POPULATION>(), Config::get<Config::Argument::SHAPE_AMOUNT>());
-        logger.LogInfo("cairo_image_surface_create_from_png");
+        logger.logInfo("cairo_image_surface_create_from_png");
         cairo_surface_t* image = cairo_image_surface_create_from_png(Config::get<Config::Argument::INPUT>().c_str());
 
         int width = cairo_image_surface_get_width(image);
@@ -51,10 +51,10 @@ int main(int argc, const char* argv[])
         cairo_surface_destroy(image);
         image = cairo_image_surface_create_for_data(flippedPixels.data(), CAIRO_FORMAT_ARGB32, width, height, stride);
 
-        logger.LogInfo("StartEvolution");
+        logger.logInfo("StartEvolution");
         gen.startEvolution(image);
         cairo_surface_destroy(image);
-        logger.LogDeb(Profiler::getInstance()->getTimingsAsString().c_str());
+        logger.logDeb(Profiler::getInstance()->getTimingsAsString().c_str());
     }
 
     return 0;
