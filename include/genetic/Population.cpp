@@ -1,6 +1,7 @@
 #include "Population.hpp"
 #include "external_utils/BS_thread_pool_light.hpp"
 #include "my_utils/Profiler.hpp"
+float myFitness(cairo_surface_t* img, unsigned char* surface) { return fitness(img, surface); }
 
 Population::Population(int populationSize, int genotypeSize)
     : pool(Config::get<Config::Argument::THREADS>())
@@ -33,7 +34,6 @@ void Population::createNextGeneration(float mutationRate)
         }
     }
 }
-float myFitness(cairo_surface_t* img, unsigned char* surface) { return fitness(img, surface); }
 void Population::drawNFitness(cairo_surface_t* img)
 {
     newTimer("drawNFitness");

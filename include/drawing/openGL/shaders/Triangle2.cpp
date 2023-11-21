@@ -11,11 +11,11 @@ Triangle2::Triangle2()
     auto scale = Config::get<Config::Argument::SCALE>();
     int vertexColorLocation = glGetUniformLocation(shaderProgram, "scaleMatrix");
     stride = sizeof(VertexInput);
-    VertexInput::vPositionLoc = glGetAttribLocation(shaderProgram, "vPosition");
-    VertexInput::vZPosLoc = glGetAttribLocation(shaderProgram, "vZPos");
-    VertexInput::trianglePosLoc = glGetAttribLocation(shaderProgram, "trianglePos");
-    VertexInput::rotationLoc = glGetAttribLocation(shaderProgram, "rotation");
-    VertexInput::vColorLoc = glGetAttribLocation(shaderProgram, "vColor");
+    VertexInput::fPositionLoc = glGetAttribLocation(shaderProgram, "fPosition");
+    VertexInput::fZPosLoc = glGetAttribLocation(shaderProgram, "fZPos");
+    VertexInput::v2fTrianglePosLoc = glGetAttribLocation(shaderProgram, "v2fTrianglePos");
+    VertexInput::fRotationLoc = glGetAttribLocation(shaderProgram, "fRotation");
+    VertexInput::v4fColorLoc = glGetAttribLocation(shaderProgram, "v4fColor");
     glUseProgram(shaderProgram);
     glUniformMatrix2fv(
         vertexColorLocation,
@@ -32,30 +32,30 @@ Triangle2::Triangle2()
 
 void Triangle2::setShaderAttributes()
 {
-    glEnableVertexAttribArray(VertexInput::vPositionLoc);
+    glEnableVertexAttribArray(VertexInput::fPositionLoc);
     glVertexAttribPointer(
-        VertexInput::vPositionLoc, 1, GL_FLOAT, GL_FALSE, stride,
-        (void*)(offsetof(VertexInput, vPosition)) //
+        VertexInput::fPositionLoc, 1, GL_FLOAT, GL_FALSE, stride,
+        (void*)(offsetof(VertexInput, fPosition)) //
     );
-    glEnableVertexAttribArray(VertexInput::vZPosLoc);
+    glEnableVertexAttribArray(VertexInput::fZPosLoc);
     glVertexAttribPointer(
-        VertexInput::vZPosLoc, 1, GL_FLOAT, GL_FALSE, stride,
-        (void*)(offsetof(VertexInput, vZPos)) //
+        VertexInput::fZPosLoc, 1, GL_FLOAT, GL_FALSE, stride,
+        (void*)(offsetof(VertexInput, fZPos)) //
     );
-    glEnableVertexAttribArray(VertexInput::trianglePosLoc);
+    glEnableVertexAttribArray(VertexInput::v2fTrianglePosLoc);
     glVertexAttribPointer(
-        VertexInput::trianglePosLoc, glm::vec2::length(), GL_FLOAT, GL_FALSE, stride,
-        (void*)(offsetof(VertexInput, trianglePos)) //
+        VertexInput::v2fTrianglePosLoc, glm::vec2::length(), GL_FLOAT, GL_FALSE, stride,
+        (void*)(offsetof(VertexInput, v2fTrianglePos)) //
     );
-    glEnableVertexAttribArray(VertexInput::rotationLoc);
+    glEnableVertexAttribArray(VertexInput::fRotationLoc);
     glVertexAttribPointer(
-        VertexInput::rotationLoc, 1, GL_FLOAT, GL_FALSE, stride,
-        (void*)(offsetof(VertexInput, rotation)) //
+        VertexInput::fRotationLoc, 1, GL_FLOAT, GL_FALSE, stride,
+        (void*)(offsetof(VertexInput, fRotation)) //
     );
-    glEnableVertexAttribArray(VertexInput::vColorLoc);
+    glEnableVertexAttribArray(VertexInput::v4fColorLoc);
     glVertexAttribPointer(
-        VertexInput::vColorLoc, glm::vec4::length(), GL_FLOAT, GL_FALSE, stride,
-        (void*)(offsetof(VertexInput, vColor)) //
+        VertexInput::v4fColorLoc, glm::vec4::length(), GL_FLOAT, GL_FALSE, stride,
+        (void*)(offsetof(VertexInput, v4fColor)) //
     );
 }
 int Triangle2::bindDataToBuffer(Genotype& genes)

@@ -8,7 +8,7 @@
 #include <math.h>
 class Gene {
 public:
-    myData::ShapeType type_of_shape;
+    [[deprecated("there are no shaders for other types of shapes, the only is myData::triangle")]] myData::ShapeType type_of_shape;
     myData::float2 position;
     float rotation;
     myData::float2 scale;
