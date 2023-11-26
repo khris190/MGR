@@ -1,17 +1,16 @@
-#ifndef MUTATOR_TEST
-#define MUTATOR_TEST
-#include <cmath>
-#include <cstddef>
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#include "../../include/common/DataStructures.hpp"
 #include "genetic/mutators/NormalMutator.hpp"
 #include "genetic/mutators/UniformMutator.hpp"
-#include <iostream>
+#include <gtest/gtest.h>
 
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#include "../doctest.h"
-
-TEST_CASE(("tooManyCutoffs") * doctest::test_suite("NORMALTEST"))
+// Demonstrate some basic assertions.
+TEST(HelloTest, BasicAssertions)
+{
+    // Expect two strings not to be equal.
+    EXPECT_STRNE("hello", "world");
+    // Expect equality.
+    EXPECT_EQ(7 * 6, 42);
+}
+TEST(NORMALTEST, tooManyCutoffs)
 {
     const int bucketAmount = 100;
     int buckets[bucketAmount];
@@ -29,13 +28,13 @@ TEST_CASE(("tooManyCutoffs") * doctest::test_suite("NORMALTEST"))
     for (size_t i = 0; i < bucketAmount; i++) {
         std::cout << i << ":" << buckets[i] << std::endl;
         if (i < bucketAmount / 2) {
-            CHECK(buckets[i] <= 1.2 * buckets[i + 1] + 5);
+            EXPECT_TRUE(buckets[i] <= 1.2 * buckets[i + 1] + 5);
         } else {
-            CHECK(buckets[i] <= 1.2 * buckets[i - 1] + 5);
+            EXPECT_TRUE(buckets[i] <= 1.2 * buckets[i - 1] + 5);
         }
     }
 }
-TEST_CASE(("distribution") * doctest::test_suite("UNIFORMTEST"))
+TEST(UNIFORMTEST, distribution)
 {
     const int bucketAmount = 10;
     int buckets[bucketAmount];
@@ -55,11 +54,9 @@ TEST_CASE(("distribution") * doctest::test_suite("UNIFORMTEST"))
     for (size_t i = 0; i < bucketAmount; i++) {
         std::cout << i << ":" << buckets[i] / (iter / bucketAmount) << std::endl;
         if (i == 0) {
-            CHECK(std::round(buckets[i] / (iter / bucketAmount)) == std::round(buckets[bucketAmount - 1] / (iter / bucketAmount)));
+            EXPECT_TRUE(std::round(buckets[i] / (iter / bucketAmount)) == std::round(buckets[bucketAmount - 1] / (iter / bucketAmount)));
         } else if (i < bucketAmount - 2) {
-            CHECK(std::round(buckets[i] / (iter / bucketAmount)) == std::round(buckets[i + 1] / (iter / bucketAmount)));
+            EXPECT_TRUE(std::round(buckets[i] / (iter / bucketAmount)) == std::round(buckets[i + 1] / (iter / bucketAmount)));
         }
     }
 }
-
-#endif

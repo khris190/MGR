@@ -2,11 +2,10 @@
 #define NORMALMUTATOR_HPP
 
 #include "AbstractMutator.hpp"
-#include "common/Randoms.hpp"
 #include <random>
 
 class NormalMutator : public AbstactMutator {
-    std::default_random_engine generator;
+    std::mt19937 generator;
     std::normal_distribution<float> distribution = std::normal_distribution<float>(0.0, 0.1);
 
 public:
