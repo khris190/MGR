@@ -4,18 +4,20 @@
 #include "common/Config.hpp"
 #include "common/DataStructures.hpp"
 #include "common/Randoms.hpp"
+#include "mutators/AbstractMutator.hpp"
+#include "mutators/UniformMutator.hpp"
 #include "my_utils/Logger.hpp"
 #include <math.h>
+#include <memory>
 class Gene {
 public:
-    [[deprecated("there are no shaders for other types of shapes, the only is myData::triangle")]] myData::ShapeType type_of_shape;
+    Gene() = default;
     myData::float2 position;
     float rotation;
     myData::float2 scale;
     myData::color_RGBA color;
     void randomize();
     void mutate(float mutationRate = 0.001f);
-    void wiggle(float mutationRate = 0.001f);
 
     void randomizeCenter();
 
@@ -26,11 +28,12 @@ private:
     void mutateRot(float mutationRate = 0.001f);
     void mutateSize(float mutationRate = 0.001f);
     void wiggleColor(float mutationRate = 0.001f);
-    void wigglePos(float mutationRate = 0.001f);
-    void wiggleRot(float mutationRate = 0.001f);
-    void wiggleSize(float mutationRate = 0.001f);
 
     myData::ShapeType RandomiezeType();
+
+protected:
+    static std::unique_ptr<AbstactMutator> mutator;
+    ;
 };
 
 #endif // GENE_HPP

@@ -66,34 +66,32 @@ int Triangle2::bindDataToBuffer(Genotype& genes)
     vInputs.reserve(max * 3);
     int i = 0;
     for (auto gene : genes.genes) {
-        if (gene.type_of_shape == myData::ShapeType::triangle) {
-            glm::vec4 color = { gene.color.r, gene.color.g, gene.color.b, gene.color.a };
-            float distance = 1.f / max;
+        glm::vec4 color = { gene.color.r, gene.color.g, gene.color.b, gene.color.a };
+        float distance = 1.f / max;
 
-            vInputs.emplace_back(
-                0,
-                distance * i - 1.f,
-                glm::vec2(gene.position.x, gene.position.y),
-                0,
-                color //
-            );
+        vInputs.emplace_back(
+            0,
+            distance * i - 1.f,
+            glm::vec2(gene.position.x, gene.position.y),
+            0,
+            color //
+        );
 
-            vInputs.emplace_back(
-                gene.scale.x,
-                distance * i - 1.f,
-                glm::vec2(gene.position.x, gene.position.y),
-                gene.rotation * 3.14 * 2,
-                color //
-            );
+        vInputs.emplace_back(
+            gene.scale.x,
+            distance * i - 1.f,
+            glm::vec2(gene.position.x, gene.position.y),
+            gene.rotation * 3.14 * 2,
+            color //
+        );
 
-            vInputs.emplace_back(
-                gene.scale.y,
-                distance * i - 1.f,
-                glm::vec2(gene.position.x, gene.position.y),
-                gene.rotation * 3.14 * 2 + 3.14 / 2,
-                color //
-            );
-        }
+        vInputs.emplace_back(
+            gene.scale.y,
+            distance * i - 1.f,
+            glm::vec2(gene.position.x, gene.position.y),
+            gene.rotation * 3.14 * 2 + 3.14 / 2,
+            color //
+        );
         i++;
     }
 

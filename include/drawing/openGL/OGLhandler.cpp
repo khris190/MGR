@@ -4,7 +4,7 @@
 #include "drawing/openGL/shaders/Triangle2.hpp"
 #include <memory>
 
-void errorCallback(int error, const char* description) { std::cerr << "Error: " << description << std::endl; }
+void errorCallback(int error, const char* description) { std::cerr << error << " Error: " << description << std::endl; }
 
 void OGLhandler::initOGL() { }
 void OGLhandler::initFramebuffer()

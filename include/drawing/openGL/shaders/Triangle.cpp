@@ -44,43 +44,41 @@ int Triangle::bindDataToBuffer(Genotype& genes)
     size_t max = genes.genes.size();
     vInputs.reserve(max * 6);
     for (auto const& gene : genes.genes) {
-        if (gene.type_of_shape == myData::ShapeType::triangle) {
-            glm::vec4 color = { gene.color.r, gene.color.g, gene.color.b, gene.color.a };
-            float x = (gene.position.x * static_cast<float>(this->width));
-            float y = (gene.position.y * static_cast<float>(this->height));
+        glm::vec4 color = { gene.color.r, gene.color.g, gene.color.b, gene.color.a };
+        float x = (gene.position.x * static_cast<float>(this->width));
+        float y = (gene.position.y * static_cast<float>(this->height));
 
-            float scaleX = gene.scale.x * scale * static_cast<float>(this->width);
-            float scaleY = gene.scale.y * scale * static_cast<float>(this->height);
-            auto rotation = static_cast<float>(gene.rotation * 3.14);
-            myData::position p1, p2;
-            if (rotation != 0) {
-                p1 = rotate(0, scaleY, rotation * 2);
-                p2 = rotate(scaleX, 0, rotation * 2);
-            }
-            p1.move(x, y);
-            p2.move(x, y);
-            float distance = 1.f / static_cast<float>(max);
-
-            // rescale to -1 : 1
-            x = x / (float)(this->width) * 2 - 1;
-            y = y / (float)(this->height) * 2 - 1;
-            p2.x = p2.x / (float)(this->width) * 2 - 1;
-            p2.y = p2.y / (float)(this->height) * 2 - 1;
-            p1.x = p1.x / (float)(this->width) * 2 - 1;
-            p1.y = p1.y / (float)(this->height) * 2 - 1;
-            vInputs.emplace_back(
-                glm::vec3(x, y, distance * static_cast<float>(i) - 1.f),
-                color //
-            );
-            vInputs.emplace_back(
-                glm::vec3(p1.x, p1.y, distance * static_cast<float>(i) - 1.f),
-                color //
-            );
-            vInputs.emplace_back(
-                glm::vec3(p2.x, p2.y, distance * static_cast<float>(i) - 1.f),
-                color //
-            );
+        float scaleX = gene.scale.x * scale * static_cast<float>(this->width);
+        float scaleY = gene.scale.y * scale * static_cast<float>(this->height);
+        auto rotation = static_cast<float>(gene.rotation * 3.14);
+        myData::position p1, p2;
+        if (rotation != 0) {
+            p1 = rotate(0, scaleY, rotation * 2);
+            p2 = rotate(scaleX, 0, rotation * 2);
         }
+        p1.move(x, y);
+        p2.move(x, y);
+        float distance = 1.f / static_cast<float>(max);
+
+        // rescale to -1 : 1
+        x = x / (float)(this->width) * 2 - 1;
+        y = y / (float)(this->height) * 2 - 1;
+        p2.x = p2.x / (float)(this->width) * 2 - 1;
+        p2.y = p2.y / (float)(this->height) * 2 - 1;
+        p1.x = p1.x / (float)(this->width) * 2 - 1;
+        p1.y = p1.y / (float)(this->height) * 2 - 1;
+        vInputs.emplace_back(
+            glm::vec3(x, y, distance * static_cast<float>(i) - 1.f),
+            color //
+        );
+        vInputs.emplace_back(
+            glm::vec3(p1.x, p1.y, distance * static_cast<float>(i) - 1.f),
+            color //
+        );
+        vInputs.emplace_back(
+            glm::vec3(p2.x, p2.y, distance * static_cast<float>(i) - 1.f),
+            color //
+        );
         i++;
     }
     glBufferData(GL_ARRAY_BUFFER, stride * vInputs.size(), vInputs.data(), GL_STATIC_DRAW);

@@ -19,7 +19,7 @@
 //         float rotation = gene_arr[i].rotation * 3.14;
 
 //         // kwadrat
-//         if (gene_arr[i].type_of_shape == myData::ShapeType::rectangle) {
+//         if (gene_arr[i].type_of_shape == myData::ShapeType::RECTANGLE) {
 //             cr = cairo_create(img);
 //             cairo_set_source_rgba(cr, color[0], color[1], color[2], color[3]);
 //             myData::position_2D p1, p2, p3, p4;
@@ -40,7 +40,7 @@
 //             cairo_line_to(cr, p3.x, p3.y);
 //             cairo_close_path(cr);
 //             cairo_fill(cr);
-//         } else if (gene_arr[i].type_of_shape == myData::ShapeType::ellipse) {
+//         } else if (gene_arr[i].type_of_shape == myData::ShapeType::ELLIPSE) {
 //             cr = cairo_create(img);
 //             cairo_set_source_rgba(cr, color[0], color[1], color[2], color[3]);
 //             cairo_translate(cr, x, y);
@@ -48,7 +48,7 @@
 //             cairo_scale(cr, scaleX, scaleY);
 //             cairo_arc(cr, 0, 0, 1, 0, 2 * 3.14);
 //             cairo_fill(cr);
-//         } else if (gene_arr[i].type_of_shape == myData::ShapeType::triangle) {
+//         } else if (gene_arr[i].type_of_shape == myData::ShapeType::TRIANGLE) {
 //             cr = cairo_create(img);
 //             cairo_set_source_rgba(cr, color[0], color[1], color[2], color[3]);
 //             myData::position_2D p1, p2;

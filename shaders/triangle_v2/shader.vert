@@ -13,11 +13,13 @@ out vec4 vertexColor;
 
 void main()
 {
-    mat2 fRotationMatrix = mat2(
+    mat2 RotationMatrix = mat2(
         cos(fRotation), -sin(fRotation), //
         sin(fRotation), cos(fRotation) //
     );
+    vec2 ScreenspaceTrianglePos = ((v2fTrianglePos * 2.0f) - 1.0f);
+    vec2 PointOffset = ((vec2(fPosition, 0.f) * RotationMatrix) * scaleMatrix);
     // out
-    gl_Position = vec4(((v2fTrianglePos * 2.0f) - 1.0f) + ((vec2(fPosition, 0.f) * fRotationMatrix) * scaleMatrix), fZPos, 1.f);
+    gl_Position = vec4(ScreenspaceTrianglePos + PointOffset, fZPos, 1.f);
     vertexColor = v4fColor;
 }

@@ -1,5 +1,10 @@
 #include "Gene.hpp"
+#include "genetic/mutators/NormalMutator.hpp"
+#include "genetic/mutators/UniformMutator.hpp"
+#include <memory>
 
+std::unique_ptr<AbstactMutator> Gene::mutator = std::make_unique<NormalMutator>();
+// WHY THE FUCK IS THIS HERE???
 myData::ShapeType randomieType()
 {
     unsigned char out;
@@ -13,98 +18,40 @@ myData::ShapeType randomieType()
 
 void Gene::randomize()
 {
-    type_of_shape = randomieType();
     position = myData::float2(fRand(), fRand());
     rotation = fRand();
     scale = myData::float2(fRand(), fRand());
     color = myData::color_RGBA(fRand(), fRand(), fRand(), fRand());
 }
-
-void Gene::randomizeCenter()
-{
-    type_of_shape = randomieType();
-    position = myData::float2(0.5f, 0.5f);
-    rotation = fRand();
-    scale = myData::float2(fRand(), fRand());
-    color = myData::color_RGBA(fRand(), fRand(), fRand(), fRand());
-}
-
 void Gene::mutate(float mutationRate)
 {
-    // if (Config::enabled_shape_types_amount > 1) {
-    //     MutateType( mutationRate);
-    // }
     mutateColor(mutationRate);
     mutatePos(mutationRate);
     mutateRot(mutationRate);
     mutateSize(mutationRate);
 }
-void Gene::mutateType(float mutationRate)
-{
 
-    if (fRand() <= mutationRate / 2) {
-        type_of_shape = randomieType();
-    }
-}
 void Gene::mutateColor(float mutationRate)
 {
     if (fRand() <= mutationRate) {
-        color = myData::color_RGBA(fRand(), fRand(), fRand(), fRand());
+        Gene::mutator->mutate(color);
     }
 }
 void Gene::mutatePos(float mutationRate)
 {
     if (fRand() <= mutationRate) {
-        position = myData::float2(fRand(), fRand());
+        Gene::mutator->mutate(position);
     }
 }
 void Gene::mutateRot(float mutationRate)
 {
     if (fRand() <= mutationRate) {
-        rotation = fRand();
+        Gene::mutator->mutate(rotation);
     }
 }
 void Gene::mutateSize(float mutationRate)
 {
     if (fRand() <= mutationRate) {
-        scale = myData::float2(fRand(), fRand());
-    }
-}
-
-void Gene::wiggle(float mutationRate)
-{
-    wiggleColor(mutationRate);
-    wigglePos(mutationRate);
-    wiggleRot(mutationRate);
-    wiggleSize(mutationRate);
-}
-
-void Gene::wiggleColor(float mutationRate)
-{
-    if (fRand() <= mutationRate) {
-        color.r += (fRand() - color.r) / 50;
-        color.g += (fRand() - color.g) / 50;
-        color.b += (fRand() - color.b) / 50;
-        color.a += (fRand() - color.a) / 50;
-    }
-}
-void Gene::wigglePos(float mutationRate)
-{
-    if (fRand() <= mutationRate) {
-        position.x += (fRand() - position.x) / 100;
-        position.y += (fRand() - position.y) / 100;
-    }
-}
-void Gene::wiggleRot(float mutationRate)
-{
-    if (fRand() <= mutationRate) {
-        rotation += (fRand() - rotation) / 50;
-    }
-}
-void Gene::wiggleSize(float mutationRate)
-{
-    if (fRand() <= mutationRate) {
-        scale.x += (fRand() - scale.x) / 50;
-        scale.y += (fRand() - scale.y) / 50;
+        Gene::mutator->mutate(scale);
     }
 }

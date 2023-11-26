@@ -84,6 +84,7 @@ file(GLOB TEST_EXECS
 foreach(TEST_EXEC ${TEST_EXECS})
     string(REGEX REPLACE "^.*/" "" TEST_NAME ${TEST_EXEC} )
     
-    add_test(${TEST_NAME} ${TEST_EXEC})
+    set(CMAKE_CTEST_ARGUMENTS "--verbose")
+    add_test(${TEST_NAME} ${TEST_EXEC} ["--verbose"])
 
 endforeach(TEST_EXEC ${TEST_EXECS})

@@ -60,12 +60,6 @@ void Genotype::mutate(float mutationRate)
 
     // SwapOne( mutationRate);
 }
-void Genotype::wiggle(float mutationRate)
-{
-    for (auto& gene : genes) {
-        gene.wiggle(mutationRate);
-    }
-}
 
 void Genotype::cross(Genotype& parent1, Genotype& parent2)
 {
@@ -110,57 +104,22 @@ void Genotype::draw(cairo_surface_t* img, float scale) const
         float scaleY = gene.scale.y * static_cast<float>(height) * scale;
         auto rotation = static_cast<float>(gene.rotation * 3.14);
 
-        // kwadrat
-        if (gene.type_of_shape == myData::rectangle) {
-            cr = cairo_create(img);
-            cairo_set_source_rgba(cr, color[0], color[1], color[2], color[3]);
-            myData::position p1;
-            myData::position p2;
-            myData::position p3;
-            myData::position p4;
-            if (rotation != 0) {
-                p1 = rotate(scaleX, scaleY, rotation);
-                p2 = rotate(-scaleX, scaleY, rotation);
-                p3 = rotate(scaleX, -scaleY, rotation);
-                p4 = rotate(-scaleX, -scaleY, rotation);
-            }
-            p1.move(static_cast<float>(x), static_cast<float>(y));
-            p2.move(static_cast<float>(x), static_cast<float>(y));
-            p3.move(static_cast<float>(x), static_cast<float>(y));
-            p4.move(static_cast<float>(x), static_cast<float>(y));
-
-            cairo_move_to(cr, p1.x, p1.y);
-            cairo_line_to(cr, p2.x, p2.y);
-            cairo_line_to(cr, p4.x, p4.y);
-            cairo_line_to(cr, p3.x, p3.y);
-            cairo_close_path(cr);
-            cairo_fill(cr);
-        } else if (gene.type_of_shape == myData::ellipse) {
-            cr = cairo_create(img);
-            cairo_set_source_rgba(cr, color[0], color[1], color[2], color[3]);
-            cairo_translate(cr, x, y);
-            cairo_rotate(cr, rotation * 3.14);
-            cairo_scale(cr, scaleX, scaleY);
-            cairo_arc(cr, 0, 0, 1, 0, 2 * 3.14);
-            cairo_fill(cr);
-        } else if (gene.type_of_shape == myData::triangle) {
-            cr = cairo_create(img);
-            cairo_set_source_rgba(cr, color[0], color[1], color[2], color[3]);
-            myData::position p1;
-            myData::position p2;
-            if (rotation != 0) {
-                p1 = rotate(scaleX, scaleY, rotation * 2);
-                p2 = rotate(-scaleX, scaleY, rotation * 2);
-            }
-            p1.move(static_cast<float>(x), static_cast<float>(y));
-            p2.move(static_cast<float>(x), static_cast<float>(y));
-
-            cairo_move_to(cr, x, y);
-            cairo_line_to(cr, p1.x, p1.y);
-            cairo_line_to(cr, p2.x, p2.y);
-            cairo_close_path(cr);
-            cairo_fill(cr);
+        cr = cairo_create(img);
+        cairo_set_source_rgba(cr, color[0], color[1], color[2], color[3]);
+        myData::position p1;
+        myData::position p2;
+        if (rotation != 0) {
+            p1 = rotate(scaleX, scaleY, rotation * 2);
+            p2 = rotate(-scaleX, scaleY, rotation * 2);
         }
+        p1.move(static_cast<float>(x), static_cast<float>(y));
+        p2.move(static_cast<float>(x), static_cast<float>(y));
+
+        cairo_move_to(cr, x, y);
+        cairo_line_to(cr, p1.x, p1.y);
+        cairo_line_to(cr, p2.x, p2.y);
+        cairo_close_path(cr);
+        cairo_fill(cr);
 
         cairo_destroy(cr);
     }
