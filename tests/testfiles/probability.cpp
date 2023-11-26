@@ -2,14 +2,6 @@
 #include "genetic/mutators/UniformMutator.hpp"
 #include <gtest/gtest.h>
 
-// Demonstrate some basic assertions.
-TEST(HelloTest, BasicAssertions)
-{
-    // Expect two strings not to be equal.
-    EXPECT_STRNE("hello", "world");
-    // Expect equality.
-    EXPECT_EQ(7 * 6, 42);
-}
 TEST(NORMALTEST, tooManyCutoffs)
 {
     const int bucketAmount = 100;
@@ -37,26 +29,25 @@ TEST(NORMALTEST, tooManyCutoffs)
 TEST(UNIFORMTEST, distribution)
 {
     const int bucketAmount = 10;
+    const int expected = 10000;
     int buckets[bucketAmount];
     for (size_t i = 0; i < bucketAmount; i++) {
         buckets[i] = 0;
     }
     UniformMutator mutator;
     float testVar = 0.5;
-    const size_t iter = 100000;
+    const size_t iter = expected * bucketAmount;
     for (size_t i = 0; i < iter; i++) {
         mutator.mutate(testVar);
-        buckets[(int)std::round(testVar * (bucketAmount - 1))]++;
+        buckets[(int)std::round(testVar * bucketAmount - 0.5)]++;
     }
     for (size_t i = 0; i < bucketAmount; i++) {
         std::cout << i << ":" << buckets[i] << std::endl;
     }
     for (size_t i = 0; i < bucketAmount; i++) {
-        std::cout << i << ":" << buckets[i] / (iter / bucketAmount) << std::endl;
-        if (i == 0) {
-            EXPECT_TRUE(std::round(buckets[i] / (iter / bucketAmount)) == std::round(buckets[bucketAmount - 1] / (iter / bucketAmount)));
-        } else if (i < bucketAmount - 2) {
-            EXPECT_TRUE(std::round(buckets[i] / (iter / bucketAmount)) == std::round(buckets[i + 1] / (iter / bucketAmount)));
+        std::cout << i << ":" << buckets[i] / expected << std::endl;
+        if (i < bucketAmount - 1) {
+            EXPECT_TRUE(std::round((float)buckets[i] / expected) == std::round((float)buckets[i + 1] / expected));
         }
     }
 }

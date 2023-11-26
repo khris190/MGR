@@ -108,24 +108,20 @@ set(TESTS_DIR "tests/testfiles")
 file(GLOB TEST_SOURCES
     ${TESTS_DIR}/*
 )
+message(CMAKE_CTEST_ARGUMENTS: ${CMAKE_CTEST_ARGUMENTS})
 foreach(TEST_SOURCE ${TEST_SOURCES})
     # string(REGEX REPLACE "^.*/" "" TEST_NAME ${TEST_SOURCE} )
     string(REGEX REPLACE ".+/(.+)\\..+" "\\1" TEST_NAME ${TEST_SOURCE})
-
-    message(TESTNAME: ${TEST_NAME})
-    message(TEST_SOURCE: ${TEST_SOURCE})
     add_executable(
         ${TEST_NAME} ${TEST_SOURCE}  ${SOURCES}
-      )
-      target_include_directories(${TEST_NAME} PUBLIC ${PNG_INCLUDE_DIR} ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES} ${GLUT_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+    )
+    target_include_directories(${TEST_NAME} PUBLIC ${PNG_INCLUDE_DIR} ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES} ${GLUT_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
     target_include_directories(${TEST_NAME} PRIVATE ${CUDA_FITNESS_INCLUDE} ${MY_UTILS_INCLUDE} ${DOCTEST_INCLUDE_DIR} ${INCLUDE_DIR}  )
     target_include_directories(${TEST_NAME} INTERFACE ${HEADER_ONLY_INCLUDE})
-      target_link_libraries(
+    target_link_libraries(
         ${TEST_NAME} GTest::gtest_main ${LIBS}
-      )
-      include(GoogleTest)
-      gtest_discover_tests( ${TEST_NAME})   
-       set_target_properties(${TEST_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/tests)
-
-
+    )
+    include(GoogleTest)   
+    add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
+    set_target_properties(${TEST_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/tests)
 endforeach(TEST_SOURCE ${TEST_SOURCES})
