@@ -5,7 +5,7 @@
 TEST(NORMALTEST, tooManyCutoffs)
 {
     const int bucketAmount = 100;
-    int buckets[bucketAmount];
+    std::array<int, bucketAmount> buckets;
     for (size_t i = 0; i < bucketAmount; i++) {
         buckets[i] = 0;
     }
@@ -30,7 +30,7 @@ TEST(UNIFORMTEST, distribution)
 {
     const int bucketAmount = 10;
     const int expected = 10000;
-    int buckets[bucketAmount];
+    std::array<int, bucketAmount> buckets;
     for (size_t i = 0; i < bucketAmount; i++) {
         buckets[i] = 0;
     }

@@ -1,13 +1,8 @@
 #ifndef GENE_HPP
 #define GENE_HPP
 
-#include "common/Config.hpp"
 #include "common/DataStructures.hpp"
-#include "common/Randoms.hpp"
 #include "mutators/AbstractMutator.hpp"
-#include "mutators/UniformMutator.hpp"
-#include "my_utils/Logger.hpp"
-#include <math.h>
 #include <memory>
 class Gene {
 public:

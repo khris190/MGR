@@ -1,4 +1,6 @@
 #include "Config.hpp"
+#include <bitset>
+#include <fstream>
 #include <string>
 
 #ifndef VERSION

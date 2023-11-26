@@ -1,9 +1,12 @@
 #include "Gene.hpp"
+#include "common/Config.hpp"
+#include "common/Randoms.hpp"
 #include "genetic/mutators/NormalMutator.hpp"
 #include "genetic/mutators/UniformMutator.hpp"
+#include "mutators/UniformMutator.hpp"
 #include <memory>
 
-std::unique_ptr<AbstactMutator> Gene::mutator = std::make_unique<NormalMutator>();
+std::unique_ptr<AbstactMutator> Gene::mutator = std::make_unique<UniformMutator>();
 // WHY THE FUCK IS THIS HERE???
 myData::ShapeType randomieType()
 {

@@ -1,5 +1,6 @@
 #include "Triangle.hpp"
 #include "common/DataStructures.hpp"
+#include "my_utils/Profiler.hpp"
 #include <cstddef>
 #include <exception>
 inline myData::position rotate(float x, float y, float angle)
