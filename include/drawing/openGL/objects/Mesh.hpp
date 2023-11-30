@@ -23,6 +23,7 @@ class Mesh {
     GLuint colorLoc;
 
 public:
+    ~Mesh();
     bool addVao(std::shared_ptr<shaders::AbstractShader> shader, Genotype& genes, GLenum mode);
 
     void drawVAO(GLenum mode);

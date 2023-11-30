@@ -2,6 +2,11 @@
 #include "my_utils/Profiler.hpp"
 #include <memory>
 
+Mesh::~Mesh()
+{
+    this->clear();
+}
+
 // TODO !!!! remove/update VAO
 bool Mesh::addVao(std::shared_ptr<shaders::AbstractShader> shader, Genotype& genes, GLenum mode)
 {

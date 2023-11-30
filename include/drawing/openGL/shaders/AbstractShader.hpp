@@ -4,10 +4,7 @@
 #include "genetic/Genotype.hpp"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <fstream>
 #include <glm/glm.hpp>
-#include <iostream>
-#include <sstream>
 #include <string>
 
 namespace shaders {

@@ -58,16 +58,15 @@ void ArtGeneration::startEvolution(cairo_surface_t* img)
         if (bestScore >= savedBestScore) {
             savedBestScore = bestScore;
             if (mutationsCounter % 50 == 0) {
-                openGLDrawer::draw(this->population.children[this->population.bests[1].first],
-                    Config::get<Config::Argument::SCALE>());
+                openGLDrawer::drawSecond(this->population.children[this->population.bests[1].first]);
                 openGLDrawer::saveToPNG(Config::getOutputFilePathAndFileName(savedBestScore).c_str());
             }
             mutationsCounter++;
         }
     } while (bestScore < Config::get<Config::Argument::RESEMBLENCE>() && !Config::doStop());
 
-    openGLDrawer::draw(
-        this->population.children[this->population.bests[1].first], Config::get<Config::Argument::SCALE>());
+    openGLDrawer::drawSecond(
+        this->population.children[this->population.bests[1].first]);
     openGLDrawer::saveToPNG(Config::getOutputFilePathAndFileName(savedBestScore).c_str());
     openGLDrawer::clean();
 }

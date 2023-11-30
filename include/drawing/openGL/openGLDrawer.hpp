@@ -14,9 +14,6 @@
 #include "drawing/openGL/shaders/Triangle2.hpp"
 #include "external_utils/stb_image_write.h"
 #include "genetic/Genotype.hpp"
-#include "my_utils/Logger.hpp"
-#include "my_utils/Profiler.hpp"
-#include "objects/Mesh.hpp"
 #include <GL/glcorearb.h>
 #include <cuda_gl_interop.h>
 
@@ -29,6 +26,7 @@ unsigned char* GetCUDAImgDataPointer(int width, int height);
 void initialize(int width, int height);
 
 void draw(Genotype& populus, float scale);
+void drawSecond(Genotype& populus);
 
 void clean();
 

@@ -24,7 +24,7 @@ Triangle2::Triangle2()
         true,
         glm::value_ptr(
             glm::mat2(
-                scale, 0, //
+                scale, 0,
                 0, scale //
                 ) //
             ) //
@@ -61,7 +61,7 @@ void Triangle2::setShaderAttributes()
 }
 int Triangle2::bindDataToBuffer(Genotype& genes)
 {
-    newTimer("prepareTriangles GPU");
+    newTimer("Triangle2::bindDataToBuffer");
     int max = genes.genes.size();
     std::vector<VertexInput> vInputs = std::vector<VertexInput>();
     vInputs.reserve(max * 3);
@@ -95,6 +95,7 @@ int Triangle2::bindDataToBuffer(Genotype& genes)
         );
         i++;
     }
+    newTimer("Triangle2::bindDataToBuffer glBufferData");
 
     glBufferData(GL_ARRAY_BUFFER, stride * vInputs.size(), vInputs.data(), GL_DYNAMIC_DRAW); // slow
     this->setShaderAttributes();

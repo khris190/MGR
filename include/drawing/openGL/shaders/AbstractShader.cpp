@@ -1,5 +1,8 @@
 #include "AbstractShader.hpp"
 #include <stdexcept>
+#include <iostream>
+#include <sstream>
+#include <fstream>
 
 namespace shaders {
 AbstractShader::AbstractShader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath)

@@ -1,22 +1,14 @@
 #include "OGLhandler.hpp"
-#include "common/Config.hpp"
-#include "drawing/openGL/shaders/Triangle.hpp"
 #include "drawing/openGL/shaders/Triangle2.hpp"
+#include <cstdlib>
+#include <iostream>
 #include <memory>
+#include <stdexcept>
 
 void errorCallback(int error, const char* description) { std::cerr << error << " Error: " << description << std::endl; }
 
 void OGLhandler::initOGL() { }
-void OGLhandler::initFramebuffer()
-{
-    glGenFramebuffers(1, &fboID);
-    // glBindFramebuffer(GL_FRAMEBUFFER, fboID);
 
-    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-    if (status != GL_FRAMEBUFFER_COMPLETE) {
-        throw std::runtime_error("unable to complete framebuffer");
-    }
-}
 OGLhandler::OGLhandler(int width, int height)
 {
     glfwSetErrorCallback(errorCallback); // rejestracja funkcji zwrotnej do obslugi bledow
@@ -24,44 +16,34 @@ OGLhandler::OGLhandler(int width, int height)
     if (!glfwInit()) // inicjacja biblioteki GLFW
         exit(EXIT_FAILURE);
 
-    this->mainWindow = new Window(width, height, "test");
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glfwSwapInterval(0); // v-sync on
-
-    // inicjacja GLEW requres window
     glewExperimental = GL_TRUE;
+    this->mainWindow = new Window(width, height, "test");
     GLenum err = glewInit();
     if (err != GLEW_OK) {
         std::cerr << "Blad: " << glewGetErrorString(err) << std::endl;
         exit(1);
     }
-
     if (!__GLEW_VERSION_4_6) {
         std::cerr << "Brak obslugi OpenGL 4.6\n";
         exit(2);
     }
+    this->mainWindow->loadExtensions();
+    newTriangleShader = std::make_shared<shaders::Triangle2>();
+    this->drawerWindow = new Window(width * 2, height * 2, "test2");
+    this->drawerWindow->loadExtensions();
 
-    if (glewIsExtensionSupported("GL_ARB_blend_func_extended")) {
-        glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_ONE);
-    }
-
+    newTriangleShader2 = std::make_shared<shaders::Triangle2>();
     std::cout << "GLEW = " << glewGetString(GLEW_VERSION) << std::endl;
     std::cout << "GL_VENDOR = " << glGetString(GL_VENDOR) << std::endl;
     std::cout << "GL_RENDERER = " << glGetString(GL_RENDERER) << std::endl;
     std::cout << "GL_VERSION = " << glGetString(GL_VERSION) << std::endl;
     std::cout << "GLSL = " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
-
-    initFramebuffer();
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // kolor (RGBA) uzywany do czyszczenia bufora koloru
-    triangleShader = std::make_unique<shaders::Triangle>(mainWindow->getHeight(), mainWindow->getWidth(), Config::get<Config::Argument::SCALE>());
-    newTriangleShader = std::make_shared<shaders::Triangle2>();
 }
 OGLhandler::~OGLhandler()
 {
     delete mainWindow;
-    glDeleteFramebuffers(1, &fboID);
+    delete drawerWindow;
+    // glDeleteFramebuffers(1, &fboID);
 
     glfwTerminate(); // konczy dzialanie biblioteki GLFW
 }
