@@ -15,7 +15,7 @@ enum class Argument : short {
     VERBOSE = 1,
     PRINT_VALS = 2,
     INPUT = 3,
-    OUTPUT = 4,
+    // OUTPUT = 4,
     THREADS = 5,
     POPULATION = 6,
     SHAPE_AMOUNT = 7,
@@ -43,10 +43,10 @@ template <>
 struct ArgumentType<Argument::INPUT> {
     using type = std::string;
 };
-template <>
-struct ArgumentType<Argument::OUTPUT> {
-    using type = std::string;
-};
+// template <>
+// struct ArgumentType<Argument::OUTPUT> {
+//     using type = std::string;
+// };
 template <>
 struct ArgumentType<Argument::LOG> {
     using type = std::string;
@@ -69,7 +69,7 @@ struct ArgumentType<Argument::SHAPE_TYPES> {
 };
 
 static std::unordered_map<Argument, std::string_view> Arguments = { { Argument::VERBOSE, "-V" },
-    { Argument::PRINT_VALS, "-p" }, { Argument::INPUT, "-i" }, { Argument::OUTPUT, "-o" },
+    { Argument::PRINT_VALS, "-p" }, { Argument::INPUT, "-i" },
     { Argument::THREADS, "-t" }, { Argument::POPULATION, "-p" }, { Argument::SHAPE_AMOUNT, "-s" },
     { Argument::SHAPE_TYPES, "-S" }, { Argument::RESEMBLENCE, "-r" }, { Argument::HOURS, "--hours" },
     { Argument::SCALE, "--scale" }, { Argument::MUTATION, "-m" }, { Argument::LOG, "-L" } };

@@ -28,6 +28,7 @@ int main(int argc, const char* argv[])
     {
         prepareConfig(argc, argv);
         // file Exists
+
         if (!std::filesystem::exists(Config::get<Config::Argument::INPUT>())) {
             logger.logErr("no input file: " + std::filesystem::absolute(Config::get<Config::Argument::INPUT>()).string());
             return 2;

@@ -2,15 +2,12 @@
 #define MESH_HPP
 
 #include "drawing/openGL/shaders/AbstractShader.hpp"
-#include "my_utils/Logger.hpp"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <array>
 #include <glm/glm.hpp>
-#include <iostream>
 #include <memory>
 #include <vector>
-// thats retarded, was i high?
 class Mesh {
     std::vector<GLuint> vao;
     std::vector<int> vaoVerticies;
