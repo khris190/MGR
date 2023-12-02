@@ -14,16 +14,16 @@
       "request": "launch",
       // Resolved by CMake Tools:
       "program": "${command:cmake.launchTargetPath}",
-      // "args": ["-v", "5"],
+      // "args": ["-v", "5"], p 640 s 10000 glBufferData 230ms  p 64 s 100000 glBufferData 120ms
       "args": [
         "-V",
         "1",
         "-t",
         "16",
         "-p",
-        "256",
+        "640",
         "-s",
-        "100",
+        "10000",
         "-S",
         "0b100",
         "-r",
