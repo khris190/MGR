@@ -1,12 +1,14 @@
 #ifndef PROFILER_HPP
 #define PROFILER_HPP
 
+#include <cstddef>
 #include <mutex>
 #include <string>
 #include <vector>
 struct Sample {
     long nsTime;
     std::string name;
+    size_t count = 1;
     Sample() = default;
     explicit Sample(std::string const& name)
         : name(name)

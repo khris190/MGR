@@ -3,6 +3,7 @@
 #include <ctime>
 #include <fcntl.h>
 #include <iostream>
+#include <string>
 #include <sys/mman.h>
 #include <sys/time.h>
 #include <unistd.h>
@@ -24,6 +25,7 @@ void Profiler::AddSample(Sample sample)
     for (auto& sampleTmp : samples) {
         if (sampleTmp.name == sample.name) {
             sampleTmp.nsTime += sample.nsTime;
+            sampleTmp.count++;
             return;
         }
     }
@@ -40,8 +42,7 @@ std::string Profiler::getTimingsAsString(bool doClearSamples)
     std::vector<Sample> localSamples = getTimings(doClearSamples);
     long time = 0;
     for (auto const& localSample : localSamples) {
-        retString += localSample.name;
-        retString += ": ";
+        retString += localSample.name + " (" + std::to_string(localSample.count) + "): ";
         time = localSample.nsTime;
         retString += std::to_string(time) + "ns.  ";
         time /= 1000000; // change to ms.
