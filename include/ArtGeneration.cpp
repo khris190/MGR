@@ -7,6 +7,7 @@
 #include "my_utils/Logger.hpp"
 #include "my_utils/Profiler.hpp"
 #include <cairo/cairo.h>
+#include <cstdlib>
 #include <stdlib.h>
 #include <string>
 #include <time.h>
@@ -61,7 +62,6 @@ void ArtGeneration::startEvolution(cairo_surface_t* img)
                 openGLDrawer::drawSecond(this->population.children[this->population.bests[1].first]);
                 openGLDrawer::saveToPNG(Config::getOutputFilePathAndFileName(savedBestScore).c_str());
                 logger.logDeb(Profiler::getInstance()->getTimingsAsString().c_str());
-                logger.logDeb("test");
             }
             mutationsCounter++;
         }
