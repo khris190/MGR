@@ -1,12 +1,11 @@
 #include "openGLDrawer.hpp"
 #include "cuda_runtime_api.h"
 #include "drawing/openGL/objects/Mesh.hpp"
-#include "drawing/openGL/shaders/fullscreenFBO.hpp"
-#include "driver_types.h"
 #include "my_utils/Profiler.hpp"
 #include <GL/gl.h>
 #include <GL/glext.h>
 #include <alloca.h>
+#include <cstdint>
 #include <iostream>
 #include <memory>
 #include "my_utils/Profiler.hpp"
@@ -36,7 +35,6 @@ void draw(Genotype& populus, [[maybe_unused]] float scale)
 void clean()
 {
     delete OGlhandler.release();
-    // leave in case of need of cleanup
 }
 
 std::vector<unsigned char> getPixels()
@@ -53,15 +51,11 @@ void drawSecond(Genotype& populus)
     newTimer("drawSecond");
     OGlhandler->drawerVBO->bind();
     Mesh drawing;
-    // OGlhandler->drawerVBO->makeCurrent();
     drawing.addVao(OGlhandler->newTriangleShader, populus, GL_TRIANGLES);
-    // OGlhandler->drawerVBO->cleanWindow();
     OGlhandler->drawerVBO->bind();
     glUseProgram(OGlhandler->newTriangleShader->shaderProgram); // wlaczenie programu cieniowania
-    // OGlhandler->drawerVBO->bindFramebuffer();
     glViewport(0, 0, OGlhandler->drawerVBO->getWidth(), OGlhandler->drawerVBO->getHeight());
     drawing.drawLastVAO();
-    // OGlhandler->drawerVBO->swapBuffer();
     glBindFramebuffer(GL_FRAMEBUFFER, 0); // Unbind framebuffer
 }
 std::vector<unsigned char> getPixelsSecond()
@@ -80,6 +74,10 @@ void saveToPNG(const char* filename)
     newTimer("saveToPNG");
     std::vector<unsigned char> data = OGlhandler->drawerVBO->getPixels();
     OGlhandler->mainWindow->makeCurrent();
+    if (INT32_MAX < OGlhandler->drawerVBO->getWidth() * OGlhandler->drawerVBO->getHeight() * 4) {
+        std::cerr << "IMG INT OVERFLOWW BY: " << OGlhandler->drawerVBO->getWidth() * OGlhandler->drawerVBO->getHeight() * 4 - INT32_MAX << "BYTES" << std::endl;
+        exit(10);
+    }
     std::vector<unsigned char> flippedPixels(OGlhandler->drawerVBO->getWidth() * OGlhandler->drawerVBO->getHeight() * 4);
 
     for (int y = 0; y < OGlhandler->drawerVBO->getHeight(); y++) {

@@ -1,6 +1,7 @@
 #ifndef VBO_HPP
 #define VBO_HPP
 #include <GL/glew.h>
+#include <cstddef>
 #include <sys/types.h>
 #include <vector>
 // #include <GLFW/glfw3.h>
@@ -13,8 +14,8 @@ public:
     VBO& operator=(VBO&&) = delete;
     VBO& operator=(const VBO&) = delete;
     ~VBO();
-    int getHeight() const { return height; }
-    int getWidth() const { return width; }
+    size_t getHeight() const { return height; }
+    size_t getWidth() const { return width; }
     void bind() const;
     std::vector<unsigned char> getPixels() const;
 
@@ -23,7 +24,7 @@ private:
     GLuint resolveVboId;
     GLuint textureId;
     GLuint resolveTextureId;
-    uint width, height;
+    size_t width, height;
 };
 
 #endif // VBO_HPP
