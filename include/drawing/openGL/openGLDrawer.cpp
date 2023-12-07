@@ -7,6 +7,7 @@
 #include <GL/gl.h>
 #include <GL/glext.h>
 #include <alloca.h>
+#include <iostream>
 #include <memory>
 #include "my_utils/Profiler.hpp"
 #include "objects/Mesh.hpp"
@@ -46,39 +47,48 @@ std::vector<unsigned char> getPixels()
         data.data());
     return data;
 }
+
+void drawSecond(Genotype& populus)
+{
+
+    OGlhandler->drawerVBO->bind();
+    Mesh drawing;
+    // OGlhandler->drawerVBO->makeCurrent();
+    drawing.addVao(OGlhandler->newTriangleShader, populus, GL_TRIANGLES);
+    // OGlhandler->drawerVBO->cleanWindow();
+    OGlhandler->drawerVBO->bind();
+    glUseProgram(OGlhandler->newTriangleShader->shaderProgram); // wlaczenie programu cieniowania
+    // OGlhandler->drawerVBO->bindFramebuffer();
+    glViewport(0, 0, OGlhandler->drawerVBO->getWidth(), OGlhandler->drawerVBO->getHeight());
+    drawing.drawLastVAO();
+    // OGlhandler->drawerVBO->swapBuffer();
+    glBindFramebuffer(GL_FRAMEBUFFER, 0); // Unbind framebuffer
+}
 std::vector<unsigned char> getPixelsSecond()
 {
     newTimer("getPixels");
-    std::vector<unsigned char> data(OGlhandler->drawerWindow->getWidth() * OGlhandler->drawerWindow->getHeight() * 4);
-    glReadPixels(0, 0, OGlhandler->drawerWindow->getWidth(), OGlhandler->drawerWindow->getHeight(), GL_RGBA, GL_UNSIGNED_BYTE,
+    OGlhandler->drawerVBO->bind();
+    std::vector<unsigned char>
+        data(OGlhandler->drawerVBO->getWidth() * OGlhandler->drawerVBO->getHeight() * 4);
+    glReadPixels(0, 0, OGlhandler->drawerVBO->getWidth(), OGlhandler->drawerVBO->getHeight(), GL_RGBA, GL_UNSIGNED_BYTE,
         data.data());
+    glBindFramebuffer(GL_FRAMEBUFFER, 0); // Unbind framebuffer
     return data;
-}
-void drawSecond(Genotype& populus)
-{
-    Mesh drawing;
-    OGlhandler->drawerWindow->makeCurrent();
-    drawing.addVao(OGlhandler->newTriangleShader, populus, GL_TRIANGLES);
-    OGlhandler->drawerWindow->cleanWindow();
-    glUseProgram(OGlhandler->newTriangleShader->shaderProgram); // wlaczenie programu cieniowania
-    OGlhandler->drawerWindow->bindFramebuffer();
-    glViewport(0, 0, OGlhandler->drawerWindow->getWidth(), OGlhandler->drawerWindow->getHeight());
-    drawing.drawLastVAO();
-    OGlhandler->drawerWindow->swapBuffer();
 }
 void saveToPNG(const char* filename)
 {
+    newTimer("saveToPNG");
     std::vector<unsigned char> data = getPixelsSecond();
     OGlhandler->mainWindow->makeCurrent();
-    std::vector<unsigned char> flippedPixels(OGlhandler->drawerWindow->getWidth() * OGlhandler->drawerWindow->getHeight() * 4);
+    std::vector<unsigned char> flippedPixels(OGlhandler->drawerVBO->getWidth() * OGlhandler->drawerVBO->getHeight() * 4);
 
-    for (int y = 0; y < OGlhandler->drawerWindow->getHeight(); y++) {
-        memcpy(flippedPixels.data() + (y * OGlhandler->drawerWindow->getWidth() * 4),
-            data.data() + ((OGlhandler->drawerWindow->getHeight() - y - 1) * OGlhandler->drawerWindow->getWidth() * 4),
-            OGlhandler->drawerWindow->getWidth() * 4);
+    for (int y = 0; y < OGlhandler->drawerVBO->getHeight(); y++) {
+        memcpy(flippedPixels.data() + (y * OGlhandler->drawerVBO->getWidth() * 4),
+            data.data() + ((OGlhandler->drawerVBO->getHeight() - y - 1) * OGlhandler->drawerVBO->getWidth() * 4),
+            OGlhandler->drawerVBO->getWidth() * 4);
     }
-    stbi_write_png(filename, OGlhandler->drawerWindow->getWidth(), OGlhandler->drawerWindow->getHeight(), 4, flippedPixels.data(),
-        OGlhandler->drawerWindow->getWidth() * 4);
+    stbi_write_png(filename, OGlhandler->drawerVBO->getWidth(), OGlhandler->drawerVBO->getHeight(), 4, flippedPixels.data(),
+        OGlhandler->drawerVBO->getWidth() * 4);
 }
 
 inline myData::position rotate(float x, float y, float angle)

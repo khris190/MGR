@@ -1,3 +1,6 @@
+#ifndef WINDOW_HPP
+#define WINDOW_HPP
+
 #include <GLFW/glfw3.h>
 
 class Window {
@@ -12,9 +15,12 @@ public:
 
     int getHeight() const { return height; }
     int getWidth() const { return width; }
+    GLFWwindow* getWindow() { return window; }
 
 private:
     GLFWwindow* window;
     int height;
     int width;
 };
+
+#endif // WINDOW_HPP

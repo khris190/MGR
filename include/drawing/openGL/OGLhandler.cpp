@@ -3,7 +3,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <memory>
-#include <stdexcept>
+// #include "context/Context.hpp"
 
 void errorCallback(int error, const char* description) { std::cerr << error << " Error: " << description << std::endl; }
 
@@ -11,6 +11,7 @@ void OGLhandler::initOGL() { }
 
 OGLhandler::OGLhandler(int width, int height)
 {
+
     glfwSetErrorCallback(errorCallback); // rejestracja funkcji zwrotnej do obslugi bledow
 
     if (!glfwInit()) // inicjacja biblioteki GLFW
@@ -29,10 +30,12 @@ OGLhandler::OGLhandler(int width, int height)
     }
     this->mainWindow->loadExtensions();
     newTriangleShader = std::make_shared<shaders::Triangle2>();
-    this->drawerWindow = new Window(width * 2, height * 2, "test2");
-    this->drawerWindow->loadExtensions();
+    // glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+    this->drawerVBO = new VBO(width * 2, height * 2);
+    // this->drawerWindow = new Window(width * 50, height * 50, "test2");
+    // this->drawerWindow->loadExtensions();
 
-    newTriangleShader2 = std::make_shared<shaders::Triangle2>();
+    // newTriangleShader2 = std::make_shared<shaders::Triangle2>();
     std::cout << "GLEW = " << glewGetString(GLEW_VERSION) << std::endl;
     std::cout << "GL_VENDOR = " << glGetString(GL_VENDOR) << std::endl;
     std::cout << "GL_RENDERER = " << glGetString(GL_RENDERER) << std::endl;
@@ -42,7 +45,8 @@ OGLhandler::OGLhandler(int width, int height)
 OGLhandler::~OGLhandler()
 {
     delete mainWindow;
-    delete drawerWindow;
+    // delete drawerWindow;
+    delete drawerVBO;
     // glDeleteFramebuffers(1, &fboID);
 
     glfwTerminate(); // konczy dzialanie biblioteki GLFW

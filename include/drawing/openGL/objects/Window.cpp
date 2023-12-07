@@ -5,14 +5,14 @@
 #include <cstdlib>
 #include <glm/glm.hpp>
 #include <iostream>
-#include "window.hpp"
+#include "Window.hpp"
 
 Window::Window(int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share)
     : height(height)
     , width(width)
 {
 
-    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, 1);
+    // glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, 1);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); // inicjacja wersji kontekstu
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 
@@ -39,8 +39,6 @@ Window::Window(int width, int height, const char* title, GLFWmonitor* monitor, G
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glfwSwapInterval(0); // v-sync on
-
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 }
 void Window::swapBuffer() const { glfwSwapBuffers(this->window); }
 void Window::bindFramebuffer() const { glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); }

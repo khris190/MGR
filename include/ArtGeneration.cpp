@@ -57,7 +57,7 @@ void ArtGeneration::startEvolution(cairo_surface_t* img)
 
         if (bestScore >= savedBestScore) {
             savedBestScore = bestScore;
-            if (mutationsCounter % 50 == 0) {
+            if (mutationsCounter % 2500 == 0) {
                 openGLDrawer::drawSecond(this->population.children[this->population.bests[1].first]);
                 openGLDrawer::saveToPNG(Config::getOutputFilePathAndFileName(savedBestScore).c_str());
             }
