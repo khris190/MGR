@@ -50,7 +50,7 @@ std::vector<unsigned char> getPixels()
 
 void drawSecond(Genotype& populus)
 {
-
+    newTimer("drawSecond");
     OGlhandler->drawerVBO->bind();
     Mesh drawing;
     // OGlhandler->drawerVBO->makeCurrent();
@@ -78,7 +78,7 @@ std::vector<unsigned char> getPixelsSecond()
 void saveToPNG(const char* filename)
 {
     newTimer("saveToPNG");
-    std::vector<unsigned char> data = getPixelsSecond();
+    std::vector<unsigned char> data = OGlhandler->drawerVBO->getPixels();
     OGlhandler->mainWindow->makeCurrent();
     std::vector<unsigned char> flippedPixels(OGlhandler->drawerVBO->getWidth() * OGlhandler->drawerVBO->getHeight() * 4);
 
@@ -87,6 +87,8 @@ void saveToPNG(const char* filename)
             data.data() + ((OGlhandler->drawerVBO->getHeight() - y - 1) * OGlhandler->drawerVBO->getWidth() * 4),
             OGlhandler->drawerVBO->getWidth() * 4);
     }
+    newTimer("file savin");
+    // TODO this is slow AF
     stbi_write_png(filename, OGlhandler->drawerVBO->getWidth(), OGlhandler->drawerVBO->getHeight(), 4, flippedPixels.data(),
         OGlhandler->drawerVBO->getWidth() * 4);
 }

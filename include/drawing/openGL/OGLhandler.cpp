@@ -31,7 +31,7 @@ OGLhandler::OGLhandler(int width, int height)
     this->mainWindow->loadExtensions();
     newTriangleShader = std::make_shared<shaders::Triangle2>();
     // glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-    this->drawerVBO = new VBO(width * 2, height * 2);
+    this->drawerVBO = new VBO(width * 24, height * 24);
     // this->drawerWindow = new Window(width * 50, height * 50, "test2");
     // this->drawerWindow->loadExtensions();
 
