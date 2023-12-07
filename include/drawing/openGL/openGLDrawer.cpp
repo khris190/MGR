@@ -52,7 +52,8 @@ void drawSecond(Genotype& populus)
     OGlhandler->drawerVBO->bind();
     Mesh drawing;
     drawing.addVao(OGlhandler->newTriangleShader, populus, GL_TRIANGLES);
-    OGlhandler->drawerVBO->bind();
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Set the clear color to a light blue
+    glClear(GL_COLOR_BUFFER_BIT); // czyszczenie bufora koloru
     glUseProgram(OGlhandler->newTriangleShader->shaderProgram); // wlaczenie programu cieniowania
     glViewport(0, 0, OGlhandler->drawerVBO->getWidth(), OGlhandler->drawerVBO->getHeight());
     drawing.drawLastVAO();

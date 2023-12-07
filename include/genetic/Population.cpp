@@ -26,7 +26,7 @@ void Population::createNextGeneration(int parent1, int parent2, float mutationRa
 }
 void Population::createNextGeneration(float mutationRate)
 {
-    newTimer(" createNextGeneration");
+    newTimer("createNextGeneration");
     for (size_t i = 0; i < this->children.size(); i++) {
         if (i != this->bests[0].first && i != this->bests[1].first) {
             this->children[i].cross(this->children[this->bests[0].first], this->children[this->bests[1].first]);
