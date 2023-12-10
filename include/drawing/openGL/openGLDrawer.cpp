@@ -1,5 +1,4 @@
 #include "openGLDrawer.hpp"
-#include "cuda_runtime_api.h"
 #include "drawing/openGL/objects/Mesh.hpp"
 #include "my_utils/Profiler.hpp"
 #include <GL/gl.h>
@@ -87,7 +86,6 @@ void saveToPNG(const char* filename)
             OGlhandler->drawerVBO->getWidth() * 4);
     }
     newTimer("file savin");
-    // TODO this is slow AF
     stbi_write_png(filename, OGlhandler->drawerVBO->getWidth(), OGlhandler->drawerVBO->getHeight(), 4, flippedPixels.data(),
         OGlhandler->drawerVBO->getWidth() * 4);
 }

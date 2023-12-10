@@ -1,22 +1,10 @@
 #include "Gene.hpp"
-#include "common/Config.hpp"
 #include "common/Randoms.hpp"
 #include "genetic/mutators/NormalMutator.hpp"
 #include "genetic/mutators/UniformMutator.hpp"
 #include <memory>
 
 std::unique_ptr<AbstactMutator> Gene::mutator = std::make_unique<NormalMutator>();
-// WHY THE FUCK IS THIS HERE???
-myData::ShapeType randomieType()
-{
-    unsigned char out;
-    // reroll while we get stuff that is not turned on
-    do {
-        out = (1 << rand() % Config::get<Config::Argument::SHAPE_AMOUNT>());
-    } while ((out & Config::get<Config::Argument::SHAPE_TYPES>()) == 0);
-
-    return (myData::ShapeType)out;
-}
 
 void Gene::randomize()
 {
