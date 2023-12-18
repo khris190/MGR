@@ -11,8 +11,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_compile_definitions(VERSION="${VERSION}")
 add_compile_definitions(PROJECT_NAME="${PROJECT_NAME}")
-# set(CMAKE_GENERATOR_PLATFORM x64)
-# set(CMAKE_SYSTEM_PROCESSOR x86_64)
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 
 set(CMAKE_CXX_FLAGS_DEBUG "-g -D DEBUG")
@@ -38,10 +37,6 @@ foreach(SHADER_FILE ${SHADER_FILES})
     configure_file(${SHADER_FILE} "../${BINARY_DIR}/shaders/${SHADER_FILE_LOCAL_PATH}" COPYONLY)
 endforeach()
 
-# find_program(IWYU_EXE NAMES include-what-you-use REQUIRED)
-# set(CMAKE_C_INCLUDE_WHAT_YOU_USE ${IWYU_EXE})
-# set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE ${IWYU_EXE})
-
 add_subdirectory(CUDA_FITNESS)
 add_subdirectory(UTILS)
 
@@ -64,11 +59,8 @@ FetchContent_Declare(
   googletest
   URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.zip
 )
-# For Windows: Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
-
-
 
 
 SET(LIBS ${LIBS} -lcairo ${Boost_LIBRARIES} -lX11 ${GLEW_LIBRARIES} CUDA_FITNESS MY_UTILS glfw OpenGL::GL -lGL -lGLU -lglut -lGL -lpthread -lXrandr -lXi -ldl -lcuda ${CUDART_LIBRARY} ${CUDA_CUDA_LIBRARY} ${OPENGL_LIBRARIES})
@@ -87,27 +79,16 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 SET (EXECUTABLE_OUTPUT_PATH ../${BINARY_DIR})
 SET (CMAKE_RUNTIME_OUTPUT_DIRECTORY ../${BINARY_DIR})
 
-# enable_testing()
-
-# file(GLOB TEST_EXECS
-#     ${TESTS_DIR}/*
-# )
-# set()
-# foreach(TEST_EXEC ${TEST_EXECS})
-#     string(REGEX REPLACE "^.*/" "" TEST_NAME ${TEST_EXEC} )
-    
-#     set(CMAKE_CTEST_ARGUMENTS "--verbose")
-#     add_test(${TEST_NAME} ${TEST_EXEC} ["--verbose"])
-
-# endforeach(TEST_EXEC ${TEST_EXECS})
-
-
 enable_testing()
 
-set(TESTS_DIR "tests/testfiles")
+set(TESTS_DIR "tests")
 file(GLOB TEST_SOURCES
-    ${TESTS_DIR}/*
+    ${TESTS_DIR}/*.cpp
+    ${TESTS_DIR}/**/*.cpp
+    ${TESTS_DIR}/*.c
+    ${TESTS_DIR}/**/*.c
 )
+message(tests ${TEST_SOURCES})
 message(CMAKE_CTEST_ARGUMENTS: ${CMAKE_CTEST_ARGUMENTS})
 foreach(TEST_SOURCE ${TEST_SOURCES})
     # string(REGEX REPLACE "^.*/" "" TEST_NAME ${TEST_SOURCE} )
@@ -118,6 +99,7 @@ foreach(TEST_SOURCE ${TEST_SOURCES})
     target_include_directories(${TEST_NAME} PUBLIC ${PNG_INCLUDE_DIR} ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES} ${GLUT_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
     target_include_directories(${TEST_NAME} PRIVATE ${CUDA_FITNESS_INCLUDE} ${MY_UTILS_INCLUDE} ${DOCTEST_INCLUDE_DIR} ${INCLUDE_DIR}  )
     target_include_directories(${TEST_NAME} INTERFACE ${HEADER_ONLY_INCLUDE})
+    
     target_link_libraries(
         ${TEST_NAME} GTest::gtest_main ${LIBS}
     )

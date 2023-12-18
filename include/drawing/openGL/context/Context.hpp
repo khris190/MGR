@@ -1,10 +1,10 @@
 #ifndef CONTEXT_HPP
 #define CONTEXT_HPP
+#include "drawing/openGL/shaders/AbstractShader.hpp"
 #include <GLFW/glfw3.h>
 #include <cstdint>
 #include <vector>
 #include "../objects/Window.hpp"
-#include "drawing/openGL/shaders/AbstractShader.hpp"
 
 class Context {
 public:

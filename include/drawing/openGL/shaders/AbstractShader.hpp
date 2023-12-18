@@ -25,7 +25,7 @@ public:
 private:
     void printProgramInfoLog(GLuint program);
     std::string loadShaderSource(const std::string& shaderPath);
-    void printShaderInfoLog(GLuint shader);
+    void printShaderInfoLog(GLuint shader) const;
     bool compileShader(const std::string& shaderPath, GLenum shaderType, GLuint& shaderID);
 };
 } // namespace shaders

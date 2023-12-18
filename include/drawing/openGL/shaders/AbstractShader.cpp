@@ -1,8 +1,10 @@
 #include "AbstractShader.hpp"
+#include <array>
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <vector>
 
 namespace shaders {
 AbstractShader::AbstractShader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
@@ -97,11 +99,8 @@ std::string AbstractShader::loadShaderSource(const std::string& shaderPath)
 
     return shaderStream.str();
 }
-/*------------------------------------------------------------------------------------------
-** funkcja wyswietla zawartosc logu shadera
-** shader - identyfikator shadera
-**------------------------------------------------------------------------------------------*/
-void AbstractShader::printShaderInfoLog(GLuint shader)
+
+void AbstractShader::printShaderInfoLog(GLuint shader) const
 {
     int infologLength = 0;
 
@@ -109,22 +108,14 @@ void AbstractShader::printShaderInfoLog(GLuint shader)
 
     if (infologLength > 0) {
         int charsWritten = 0;
-        char* infoLog = new char[infologLength];
+        std::vector<char> infoLog(infologLength + 1);
 
-        glGetShaderInfoLog(shader, infologLength, &charsWritten, infoLog);
+        glGetShaderInfoLog(shader, infologLength, &charsWritten, infoLog.data());
 
-        std::cerr << infoLog << std::endl;
-
-        delete[] infoLog;
+        std::cerr << infoLog.data() << std::endl;
     }
 }
-/*------------------------------------------------------------------------------------------
-** funkcja tworzaca okreslony rodzaj shadera
-** shaderPath - nazwa pliku z kodem zrodlowym shadera
-** shaderType - typ tworzonego shadera
-** shader - referencja na identyfikator tworzonego w funkcji shadera
-** funkcja zwraca true jesli powiedzie sie tworzenie shadera
-**------------------------------------------------------------------------------------------*/
+
 bool AbstractShader::compileShader(const std::string& shaderPath, GLenum shaderType, GLuint& shaderID)
 {
     bool result = true;
