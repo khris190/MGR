@@ -1,5 +1,5 @@
 #include "AbstractShader.hpp"
-#include <array>
+#include <cstdlib>
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
@@ -15,7 +15,8 @@ AbstractShader::AbstractShader(const std::string& vertexShaderPath, const std::s
     if (!compileShader(vertexShaderPath, GL_VERTEX_SHADER, vertexShader)) {
         glDeleteProgram(shaderProgram);
 
-        throw("Unable to compile vertex shader");
+        std::cerr << "Unable to compile vertex shader (" << vertexShaderPath << ")\n";
+        exit(EXIT_FAILURE);
     }
 
     GLuint fragmentShader;
@@ -23,7 +24,8 @@ AbstractShader::AbstractShader(const std::string& vertexShaderPath, const std::s
         glDeleteShader(vertexShader);
         glDeleteProgram(shaderProgram);
 
-        throw("Unable to compile fragment shader");
+        std::cerr << "Unable to compile fragment shader (" << fragmentShaderPath << ")\n";
+        exit(EXIT_FAILURE);
     }
 
     glAttachShader(shaderProgram, vertexShader); // dolaczenie shadera wierzcholkow
@@ -34,16 +36,14 @@ AbstractShader::AbstractShader(const std::string& vertexShaderPath, const std::s
     GLint linkStatus;
     glGetProgramiv(shaderProgram, GL_LINK_STATUS, &linkStatus);
     if (linkStatus == 0) {
-        std::cerr << "Blad przy linkowaniu programu cieniowania (" << vertexShaderPath << ", " << fragmentShaderPath
-                  << ")\n";
 
         printProgramInfoLog(shaderProgram); // wyswietlenie logu linkowania
 
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);
         glDeleteProgram(shaderProgram);
-
-        throw std::runtime_error("Unable to link shader");
+        std::cerr << "Unable to link shader (" << vertexShaderPath << ", " << fragmentShaderPath << ")\n";
+        exit(EXIT_FAILURE);
     }
 
     glDeleteShader(vertexShader);
@@ -51,9 +51,7 @@ AbstractShader::AbstractShader(const std::string& vertexShaderPath, const std::s
 }
 
 AbstractShader::~AbstractShader() = default;
-;
 
-// TODO move it
 /*------------------------------------------------------------------------------------------
 ** funkcja wyswietla zawartosc logu programu cieniowania
 ** program - identyfikator programu cieniowania
@@ -66,13 +64,11 @@ void AbstractShader::printProgramInfoLog(GLuint program)
 
     if (infologLength > 0) {
         int charsWritten = 0;
-        char* infoLog = new char[infologLength];
+        std::vector<char> infoLog(infologLength + 1);
 
-        glGetProgramInfoLog(program, infologLength, &charsWritten, infoLog);
+        glGetProgramInfoLog(program, infologLength, &charsWritten, infoLog.data());
 
-        std::cerr << infoLog << std::endl;
-
-        delete[] infoLog;
+        std::cerr << infoLog.data() << std::endl;
     }
 }
 
@@ -119,21 +115,21 @@ void AbstractShader::printShaderInfoLog(GLuint shader) const
 bool AbstractShader::compileShader(const std::string& shaderPath, GLenum shaderType, GLuint& shaderID)
 {
     bool result = true;
-    shaderID = glCreateShader(shaderType); // utworzenie identyfikatora shadera
+    shaderID = glCreateShader(shaderType);
 
-    std::string source = loadShaderSource(shaderPath); // wczytanie kodu zrodlowego shadera wierzchokow
+    std::string source = loadShaderSource(shaderPath);
 
     if (!source.empty()) {
         const char* shaderSource = source.c_str();
-        glShaderSource(shaderID, 1, &shaderSource, nullptr); // ustawienie kodu zrodlowego shadera
+        glShaderSource(shaderID, 1, &shaderSource, nullptr);
 
-        glCompileShader(shaderID); // kompilacja shadera
+        glCompileShader(shaderID);
 
         GLint compileStatus;
         glGetShaderiv(shaderID, GL_COMPILE_STATUS, &compileStatus);
         if (compileStatus == 0) {
             std::cerr << "Blad przy kompilacji: " << shaderPath << std::endl;
-            printShaderInfoLog(shaderID); // wyswietlenie logu shadera
+            printShaderInfoLog(shaderID);
 
             result = false;
             glDeleteShader(shaderID);
