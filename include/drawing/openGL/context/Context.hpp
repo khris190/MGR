@@ -1,8 +1,10 @@
 #ifndef CONTEXT_HPP
 #define CONTEXT_HPP
+#include "drawing/openGL/objects/VBO.hpp"
 #include "drawing/openGL/shaders/AbstractShader.hpp"
 #include <GLFW/glfw3.h>
 #include <cstdint>
+#include <memory>
 #include <vector>
 #include "../objects/Window.hpp"
 
@@ -24,6 +26,7 @@ protected:
 private:
     std::vector<Window> windows;
     std::vector<shaders::AbstractShader> shaders;
+    std::vector<std::shared_ptr<VBO>> vbos;
     // TODO
     //  Buffer mainBuffer;
     int64_t currentWindow = -1;

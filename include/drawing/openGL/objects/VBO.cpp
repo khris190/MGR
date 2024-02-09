@@ -8,7 +8,7 @@ VBO::VBO(uint width, uint height)
     this->width = width;
     this->height = height;
     if (INT32_MAX < this->getWidth() * this->getHeight() * 4) {
-        std::cerr << "IMG INT OVERFLOWW BY: " << this->getWidth() * this->getHeight() * 4 - INT32_MAX << " BYTES" << std::endl;
+        std::cerr << "IMG INT OVERFLOW BY: " << this->getWidth() * this->getHeight() * 4 - INT32_MAX << " BYTES" << std::endl;
         exit(10);
     }
     // Create FBO
