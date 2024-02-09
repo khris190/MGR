@@ -26,47 +26,50 @@ enum class Argument : short {
     MUTATION = 12,
     LOG = 13
 };
+template <Argument Condition>
+struct ArgumentType;
+
+template <Argument Condition, typename = void>
+struct ArgumentTraits {
+    using type = float;
+};
+
+template <Argument Condition>
+struct ArgumentTraits<
+    Condition,
+    std::enable_if_t<
+        Condition == Argument::VERBOSE
+        || Condition == Argument::THREADS
+        || Condition == Argument::POPULATION
+        || Condition == Argument::SHAPE_AMOUNT>> {
+    using type = int;
+};
+
+template <Argument Condition>
+struct ArgumentTraits<
+    Condition,
+    std::enable_if_t<
+        Condition == Argument::INPUT
+        || Condition == Argument::LOG>> {
+    using type = std::string;
+};
 
 template <Argument Condition>
 struct ArgumentType {
-    using type = float;
-};
-template <>
-struct ArgumentType<Argument::VERBOSE> {
-    using type = int;
+    using type = typename ArgumentTraits<Condition>::type;
 };
 template <>
 struct ArgumentType<Argument::PRINT_VALS> {
     using type = bool;
 };
 template <>
-struct ArgumentType<Argument::INPUT> {
-    using type = std::string;
+struct ArgumentType<Argument::SHAPE_TYPES> {
+    using type = unsigned int;
 };
 // template <>
 // struct ArgumentType<Argument::OUTPUT> {
 //     using type = std::string;
 // };
-template <>
-struct ArgumentType<Argument::LOG> {
-    using type = std::string;
-};
-template <>
-struct ArgumentType<Argument::THREADS> {
-    using type = int;
-};
-template <>
-struct ArgumentType<Argument::POPULATION> {
-    using type = int;
-};
-template <>
-struct ArgumentType<Argument::SHAPE_AMOUNT> {
-    using type = int;
-};
-template <>
-struct ArgumentType<Argument::SHAPE_TYPES> {
-    using type = unsigned int;
-};
 
 static std::unordered_map<Argument, std::string_view> Arguments = { { Argument::VERBOSE, "-V" },
     { Argument::PRINT_VALS, "-p" }, { Argument::INPUT, "-i" },
