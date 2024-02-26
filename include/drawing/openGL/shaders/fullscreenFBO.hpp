@@ -13,8 +13,10 @@ public:
     FullscreenFBO& operator=(FullscreenFBO&&) = default;
     FullscreenFBO& operator=(const FullscreenFBO&) = default;
     ~FullscreenFBO() override;
-    void setShaderAttributes() override;
     int bindDataToBuffer(Genotype& genes) override;
+
+protected:
+    void setShaderAttributes() override;
 };
 
 } // namespace shaders

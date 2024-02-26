@@ -1,12 +1,9 @@
 #include "ArtGeneration.hpp"
 #include "common/Config.hpp"
-#include "drawing/openGL/openGLDrawer.hpp"
 #include "fitness.h"
-#include "genetic/Genotype.hpp"
 #include "my_utils/Logger.hpp"
 #include "my_utils/Profiler.hpp"
 #include <cairo/cairo.h>
-#include <cstdlib>
 #include <filesystem>
 #include <string>
 

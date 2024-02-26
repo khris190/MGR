@@ -14,13 +14,15 @@ public:
     int stride;
     AbstractShader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
     virtual ~AbstractShader() = 0;
-    virtual void setShaderAttributes() = 0;
     virtual int bindDataToBuffer(Genotype& genes) = 0;
 
     void useShader() const
     {
         glUseProgram(shaderProgram);
     }
+
+protected:
+    virtual void setShaderAttributes() = 0;
 
 private:
     void printProgramInfoLog(GLuint program);

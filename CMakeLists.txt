@@ -88,8 +88,6 @@ file(GLOB TEST_SOURCES
     ${TESTS_DIR}/*.c
     ${TESTS_DIR}/**/*.c
 )
-message(tests ${TEST_SOURCES})
-message(CMAKE_CTEST_ARGUMENTS: ${CMAKE_CTEST_ARGUMENTS})
 foreach(TEST_SOURCE ${TEST_SOURCES})
     # string(REGEX REPLACE "^.*/" "" TEST_NAME ${TEST_SOURCE} )
     string(REGEX REPLACE ".+/(.+)\\..+" "\\1" TEST_NAME ${TEST_SOURCE})

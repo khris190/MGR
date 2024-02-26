@@ -30,8 +30,10 @@ public:
     Triangle& operator=(Triangle&&) = default;
     Triangle& operator=(const Triangle&) = default;
     ~Triangle() override;
-    void setShaderAttributes() override;
     int bindDataToBuffer(Genotype& genes) override;
+
+protected:
+    void setShaderAttributes() override;
 };
 
 } // namespace shaders
