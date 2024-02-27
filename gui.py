@@ -23,13 +23,13 @@ class MyWindow(Gtk.Window):
         self.add(hbox)
         
         buttonBox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL,spacing=2)
-        self.runButton = Gtk.Button("Run")
+        self.runButton = Gtk.Button(label="Run")
         self.runButton.connect("clicked", self.on_click_me_clicked)
         buttonBox.pack_start(self.runButton, True, True, 0)
         hbox.add(buttonBox)
         
         buttonBox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL,spacing=2)
-        label = Gtk.Label("Liczba trójkątów:")
+        label = Gtk.Label(label="Liczba trójkątów:")
         buttonBox.pack_start(label, True, True, 0)
         
         self.shapeAmountEntry = Gtk.Entry()
@@ -39,7 +39,7 @@ class MyWindow(Gtk.Window):
         hbox.add(buttonBox)
         
         buttonBox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL,spacing=2)
-        label = Gtk.Label("Populacja:")
+        label = Gtk.Label(label="Populacja:")
         buttonBox.pack_start(label, True, True, 0)
         
         self.populationEntry = Gtk.Entry()
@@ -49,7 +49,7 @@ class MyWindow(Gtk.Window):
         hbox.add(buttonBox)
         
         buttonBox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL,spacing=2)
-        label = Gtk.Label("Rozmiar trójkątów:")
+        label = Gtk.Label(label="Rozmiar trójkątów:")
         buttonBox.pack_start(label, True, True, 0)
         
         self.shapeSizeEntry = Gtk.Entry()
@@ -60,9 +60,9 @@ class MyWindow(Gtk.Window):
         hbox.add(buttonBox)
         
         buttonBox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL,spacing=2)
-        label = Gtk.Label("Obraz:")
+        label = Gtk.Label(label="Obraz:")
         buttonBox.pack_start(label, True, True, 0)
-        self.chooseFileButton = Gtk.Button("Wybierz plik")
+        self.chooseFileButton = Gtk.Button(label= "Wybierz plik")
         self.chooseFileButton.connect("clicked", self.choose_file_clicked)
         buttonBox.pack_start(self.chooseFileButton, True, True, 0)
         hbox.add(buttonBox)
