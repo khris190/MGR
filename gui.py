@@ -1,123 +1,67 @@
 import sys, os
+import dearpygui.dearpygui as dpg
 
-import gi
-import subprocess
-import re
 
-gi.require_version("Gtk", "3.0")
-from gi.repository import GLib, Gtk
-import numpy as np
-
-from matplotlib.backends.backend_gtk3agg import  FigureCanvasGTK3Agg
-from matplotlib.figure import Figure
-
-def Extract(lst, pos):
-    return list(list(zip(*lst))[pos])
-
-class MyWindow(Gtk.Window):
+class myWindow:
     def __init__(self):
-        super().__init__(title="Button Demo")
-        self.set_border_width(10)
+        dpg.create_context()
 
-        hbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL,spacing=5)
-        self.add(hbox)
-        
-        buttonBox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL,spacing=2)
-        self.runButton = Gtk.Button(label="Run")
-        self.runButton.connect("clicked", self.on_click_me_clicked)
-        buttonBox.pack_start(self.runButton, True, True, 0)
-        hbox.add(buttonBox)
-        
-        buttonBox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL,spacing=2)
-        label = Gtk.Label(label="Liczba trójkątów:")
-        buttonBox.pack_start(label, True, True, 0)
-        
-        self.shapeAmountEntry = Gtk.Entry()
-        self.shapeAmountEntry.set_text("20000")
-        self.shapeAmountEntry.connect("changed", self.on_text_change_int)
-        buttonBox.pack_start(self.shapeAmountEntry, True, True, 0)
-        hbox.add(buttonBox)
-        
-        buttonBox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL,spacing=2)
-        label = Gtk.Label(label="Populacja:")
-        buttonBox.pack_start(label, True, True, 0)
-        
-        self.populationEntry = Gtk.Entry()
-        self.populationEntry.set_text("64")
-        self.populationEntry.connect("changed", self.on_text_change_int)
-        buttonBox.pack_start(self.populationEntry, True, True, 0)
-        hbox.add(buttonBox)
-        
-        buttonBox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL,spacing=2)
-        label = Gtk.Label(label="Rozmiar trójkątów:")
-        buttonBox.pack_start(label, True, True, 0)
-        
-        self.shapeSizeEntry = Gtk.Entry()
-        self.shapeSizeEntry.set_text("0.05")
-        self.shapeSizeEntry.connect("changed", self.on_text_change_float)
-        buttonBox.pack_start(self.shapeSizeEntry, True, True, 0)
-    
-        hbox.add(buttonBox)
-        
-        buttonBox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL,spacing=2)
-        label = Gtk.Label(label="Obraz:")
-        buttonBox.pack_start(label, True, True, 0)
-        self.chooseFileButton = Gtk.Button(label= "Wybierz plik")
-        self.chooseFileButton.connect("clicked", self.choose_file_clicked)
-        buttonBox.pack_start(self.chooseFileButton, True, True, 0)
-        hbox.add(buttonBox)
-    
-        
-        files = os.listdir(os.path.dirname(__file__) + '/bin')
-        self.executable = 'GenerativeArt.exe'
-        if 'GenerativeArt' in files: 
-          self.executable = 'GenerativeArt'
-    
-    def choose_file_clicked(self, button):
-        self.filechooserdialog = Gtk.FileChooserDialog(title="Open...",
-            parent=None,
-            action=Gtk.FileChooserAction.OPEN)
-        self.filechooserdialog.add_buttons("_Open", Gtk.ResponseType.OK)
-        self.filechooserdialog.add_buttons("_Cancel", Gtk.ResponseType.CANCEL)
-        self.filechooserdialog.set_default_response(Gtk.ResponseType.OK)
-        response = self.filechooserdialog.run()
+        #region fonts
+        # add a font registry
+        with dpg.font_registry():
+            # first argument ids the path to the .ttf or .otf file
+            with dpg.font("AbhayaLibre-Regular.ttf", 18)  as defaultFont:
+                dpg.add_font_range_hint(dpg.mvFontRangeHint_Default)
+                dpg.add_font_range(0x0104, 0x017C)
+                dpg.bind_font(defaultFont)
+        #endregion
 
-        if response == Gtk.ResponseType.OK:
-            print("File selected: %s" % self.filechooserdialog.get_filename())
+        dpg.create_viewport(title='Custom Title', width=600, height=600, resizable=False)
+        dpg.setup_dearpygui()
 
-        self.filechooserdialog.destroy()
+        with dpg.file_dialog(directory_selector=False, show=False, cancel_callback=self.file_select_cancel_cb, callback=self.file_select_cb, id="file_dialog_id", width=500 ,height=400):
+            dpg.add_file_extension("", color=(255, 255, 255, 255))
+            dpg.add_file_extension(".png", color=(0, 255, 255, 255))
+            
+        with dpg.window(label="ArtGen", autosize=True,no_resize=True, no_collapse=True, no_close=True):
+            dpg.add_button(label="Save", callback=self.on_run_clicked)
+            dpg.add_input_text(label="string")
+            self.ShapeCount = dpg.add_slider_int(label="Liczba Tkójkątów: 1", min_value=1, max_value=48, callback=self.ShapeCountCallback, format='', default_value=1)
+            self.PopCount = dpg.add_slider_int(label="Wielkość populacji: 16", min_value=1, max_value=9, callback=self.PopCountCallback, format='', default_value=1)
+            dpg.add_slider_float(label="float", min_value=0.001, max_value=0.2)
+            dpg.add_button(label="Directory Selector", callback=lambda: dpg.show_item("file_dialog_id"))
+
+        dpg.show_viewport()
+        dpg.start_dearpygui()
+        dpg.destroy_context()
     
-    def on_text_change_int(self, entry):
-        entry_context = entry.get_style_context()
-        try:
-            int(entry.get_text())
-            entry_context.remove_class("error")
-            self.runButton.set_sensitive(True)
-        except ValueError:
-            entry_context.add_class("error")
-            self.runButton.set_sensitive(False)
-    def on_text_change_float(self, entry):
-        entry_context = entry.get_style_context()
-        try:
-            float(entry.get_text())
-            entry_context.remove_class("error")
-            self.runButton.set_sensitive(True)
-        except ValueError:
-            entry_context.add_class("error")
-            self.runButton.set_sensitive(False)
-    
-    
-    def on_click_me_clicked(self, button):
+    def on_run_clicked(self, button):
         print('"Click me" button was clicked')
         prog =  os.path.dirname(__file__) + '/' + self.executable + ' -h'
         output = os.popen( prog).read()
+    def PopCountCallback(self,sender, app_data):
+        dpg.set_item_label(self.PopCount, "Wielkość populacji: " + str(self.GetPopCountValue()))
+        
+    def GetPopCountValue(self):
+        return (dpg.get_value(self.PopCount)*16)
+    
+    def ShapeCountCallback(self,sender, app_data):
+        dpg.set_item_label(self.ShapeCount, "Liczba Tkójkątów: " + str(self.GetShapeCountValue()))
+        
+    def GetShapeCountValue(self):
+        return int(10**(dpg.get_value(self.ShapeCount)/10))
+            
+    #region file selector callbacks
+    def file_select_cb(sender, app_data):
+        print('OK was clicked.')
+        print("Sender: ", sender)
+        print("App Data: ", app_data)
 
-css = '.error { border-color: #f00; }'
-css_provider = Gtk.CssProvider()
-css_provider.load_from_data(css)
-
-win = MyWindow()
-win.set_resizable(False)
-win.connect("destroy", Gtk.main_quit)
-win.show_all()
-Gtk.main()
+    def file_select_cancel_cb(sender, app_data):
+        print('Cancel was clicked.')
+        print("Sender: ", sender)
+        print("App Data: ", app_data)
+    #endregion
+    
+        
+myWindow()
