@@ -2,6 +2,7 @@ import sys, os
 import dearpygui.dearpygui as dpg
 
 
+
 class myWindow:
     def __init__(self):
         dpg.create_context()
@@ -23,9 +24,8 @@ class myWindow:
             dpg.add_file_extension("", color=(255, 255, 255, 255))
             dpg.add_file_extension(".png", color=(0, 255, 255, 255))
             
-        with dpg.window(label="ArtGen", autosize=True,no_resize=True, no_collapse=True, no_close=True):
+        with dpg.window(label="ArtGen",no_resize=True, no_collapse=True,no_move=True, no_close=True, width=600, height=600,):
             dpg.add_button(label="Save", callback=self.on_run_clicked)
-            dpg.add_input_text(label="string")
             self.ShapeCount = dpg.add_slider_int(label="Liczba Tkójkątów: 1", min_value=1, max_value=48, callback=self.ShapeCountCallback, format='', default_value=1)
             self.PopCount = dpg.add_slider_int(label="Wielkość populacji: 16", min_value=1, max_value=9, callback=self.PopCountCallback, format='', default_value=1)
             dpg.add_slider_float(label="float", min_value=0.001, max_value=0.2)
