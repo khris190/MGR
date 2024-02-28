@@ -1,7 +1,5 @@
-import sys, os
+import os
 import dearpygui.dearpygui as dpg
-
-
 
 class myWindow:
     def __init__(self):
@@ -19,17 +17,19 @@ class myWindow:
 
         dpg.create_viewport(title='Custom Title', width=600, height=600, resizable=False)
         dpg.setup_dearpygui()
-
-        with dpg.file_dialog(directory_selector=False, show=False, cancel_callback=self.file_select_cancel_cb, callback=self.file_select_cb, id="file_dialog_id", width=500 ,height=400):
+        print(os.path.expanduser("~"))
+        self.FileSelector = dpg.file_dialog(modal=True, width=600, height=600,directory_selector=False, show=False, cancel_callback=self.file_select_cancel_cb, callback=self.file_select_cb, tag='fileSelector', default_path=os.path.expanduser("~"))
+        with self.FileSelector: 
             dpg.add_file_extension("", color=(255, 255, 255, 255))
             dpg.add_file_extension(".png", color=(0, 255, 255, 255))
-            
+        # filename = fd.askopenfilename(filetypes=[("Image", ".png")])
+
         with dpg.window(label="ArtGen",no_resize=True, no_collapse=True,no_move=True, no_close=True, width=600, height=600,):
             dpg.add_button(label="Save", callback=self.on_run_clicked)
-            self.ShapeCount = dpg.add_slider_int(label="Liczba Tkójkątów: 1", min_value=1, max_value=48, callback=self.ShapeCountCallback, format='', default_value=1)
+            self.ShapeCount = dpg.add_slider_int(label="Liczba Trójkątów: 1", min_value=3, max_value=48, callback=self.ShapeCountCallback, format='', default_value=3)
             self.PopCount = dpg.add_slider_int(label="Wielkość populacji: 16", min_value=1, max_value=9, callback=self.PopCountCallback, format='', default_value=1)
-            dpg.add_slider_float(label="float", min_value=0.001, max_value=0.2)
-            dpg.add_button(label="Directory Selector", callback=lambda: dpg.show_item("file_dialog_id"))
+            self.MutationRate = dpg.add_slider_int(label="Szansa mutacji: 0.01%", min_value=1, max_value=100, callback=self.MutationCallback, format='', default_value=1)
+            self.FileSelectorButton = dpg.add_button(label="Directory Selector", callback=lambda: dpg.show_item('fileSelector'))
 
         dpg.show_viewport()
         dpg.start_dearpygui()
@@ -39,15 +39,20 @@ class myWindow:
         print('"Click me" button was clicked')
         prog =  os.path.dirname(__file__) + '/' + self.executable + ' -h'
         output = os.popen( prog).read()
-    def PopCountCallback(self,sender, app_data):
-        dpg.set_item_label(self.PopCount, "Wielkość populacji: " + str(self.GetPopCountValue()))
         
+    def PopCountCallback(self,sender, app_data):
+        dpg.set_item_label(sender, "Wielkość populacji: " + str(self.GetPopCountValue()))
     def GetPopCountValue(self):
         return (dpg.get_value(self.PopCount)*16)
+        
+    def MutationCallback(self,sender, app_data):
+        dpg.set_item_label(sender, "Szansa mutacji: " + str("%.2f" % (self.GetMutationValue()*100) )+ "%")
+    def GetMutationValue(self):
+        return dpg.get_value(self.MutationRate)/10000
+        
     
     def ShapeCountCallback(self,sender, app_data):
-        dpg.set_item_label(self.ShapeCount, "Liczba Tkójkątów: " + str(self.GetShapeCountValue()))
-        
+        dpg.set_item_label(sender, "Liczba Tkójkątów: " + str(self.GetShapeCountValue()))
     def GetShapeCountValue(self):
         return int(10**(dpg.get_value(self.ShapeCount)/10))
             
