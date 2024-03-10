@@ -1,8 +1,7 @@
 
+#include "fitnessCu.h"
 #include "fitness.hpp"
-// https://learn.microsoft.com/en-us/cpp/cpp/welcome-back-to-cpp-modern-cpp?view=msvc-170
-extern float calculateFitness(unsigned char* img_data, unsigned char* surface_data, int _width, int _height);
-float fitness_v1_RGBA(const unsigned char* pA, const unsigned char* pB)
+float fitness_v1_RGBA(const unsigned char *pA, const unsigned char *pB)
 {
     auto absR = (float)std::abs(pA[0] - pB[0]);
     auto absG = (float)std::abs(pA[1] - pB[1]);
@@ -12,40 +11,51 @@ float fitness_v1_RGBA(const unsigned char* pA, const unsigned char* pB)
     return (255.f - val2 / 4.f) / 255.f;
 }
 
-float fitness(cairo_surface_t* img, cairo_surface_t* surface)
+float cpuFitness(unsigned char *img, unsigned char *surface, int width, int height)
 {
-    return fitness(img, cairo_image_surface_get_data(surface));
+    int temp_offset;
+    int offset = width * height;
+    float tmp_fitness = 0, row_fitness = 0, img_fitness = 0;
 
-    // TODO in case of no nvidia card
-    //  int temp_offset;
-    //  int offset = _width * _height;
-    //  float tmp_fitness = 0, row_fitness = 0, img_fitness = 0;
+    for (size_t y = 0; y < height; y++)
+    {
+        for (size_t x = 0; x < width; x++)
+        {
+            temp_offset = y * width + x;
 
-    // for (size_t y = 0; y < _height; y++)
-    // {
-    //     for (size_t x = 0; x < _width; x++)
-    //     {
-    //         temp_offset = y * _width + x;
-
-    //         tmp_fitness += fitness_v1_RGBA(img_data + temp_offset * 4, surface_data + temp_offset * 4);
-    //         row_fitness += tmp_fitness;
-    //         tmp_fitness = 0;
-    //     }
-    //     row_fitness /= _width;
-    //     img_fitness += row_fitness;
-    //     row_fitness = 0;
-    // }
-    // img_fitness /= _height;
-    // return img_fitness;
+            tmp_fitness += fitness_v1_RGBA(img + temp_offset * 4, surface + temp_offset * 4);
+            row_fitness += tmp_fitness;
+            tmp_fitness = 0;
+        }
+        row_fitness /= width;
+        img_fitness += row_fitness;
+        row_fitness = 0;
+    }
+    img_fitness /= height;
+    return img_fitness;
 }
 
-float fitness(cairo_surface_t* img, unsigned char* surface)
+float fitness(cairo_surface_t *img, cairo_surface_t *surface)
 {
-    unsigned char* imgData = cairo_image_surface_get_data(img);
+    return fitness(img, cairo_image_surface_get_data(surface));
+}
+float fitness(cairo_surface_t *img, unsigned char *surface)
+{
+
+    unsigned char *imgData = cairo_image_surface_get_data(img);
 
     int width = cairo_image_surface_get_width(img);
     int height = cairo_image_surface_get_height(img);
+    float ret;
 
-    float ret = calculateFitness(imgData, surface, width, height);
+    try
+    {
+        ret = calculateFitness(imgData, surface, width, height);
+    }
+    catch (const std::exception &e)
+    {
+        ret = cpuFitness(imgData, surface, width, height);
+    }
+
     return ret;
 }
