@@ -6,5 +6,8 @@
   },
   "editor.formatOnSave": true,
   "sonarlint.pathToCompileCommands": "${workspaceFolder}/build/compile_commands.json",
-  "python.pythonPath": "/home/krzysztof/Code/Studia/venvpy/bin/python"
+  "python.pythonPath": "/home/krzysztof/Code/Studia/venvpy/bin/python",
+  "files.associations": {
+    "source_location": "cpp"
+  }
 }

@@ -1,0 +1,10 @@
+{
+  "dependencies": [
+    "cairo",
+    "cuda",
+    "glew",
+    "glfw3",
+    "vcpkg-pkgconfig-get-modules",
+    "glm"
+  ]
+}

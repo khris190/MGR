@@ -2,13 +2,6 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "CUDA C++: Launch",
-      "type": "cuda-gdb",
-      "request": "launch",
-      "program": "${command:cmake.launchTargetPath}",
-      "args": "-V 1 -t 16 -p 256 -s 500 -S 0b100 -r 0.98 --hours 4 --scale 0.25 -L -m 0.001"
-    },
-    {
       "name": "(gdb) Launch",
       "type": "cppdbg",
       "request": "launch",
