@@ -49,7 +49,6 @@ void Population::drawNFitness(cairo_surface_t *img)
         openGLDrawer::draw(this->children[i], scale);
 
         images[i] = openGLDrawer::getPixels();
-        images[i] = openGLDrawer::getPixels();
         workers[i] = pool.submit(myFitness, img, images[i].data());
     }
     for (size_t i = 0; i < this->children.size(); i++)
