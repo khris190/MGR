@@ -72,7 +72,7 @@ namespace Config
 
         parser.add_argument("--scale")
             .nargs(1)
-            .default_value(0.2f)
+            .default_value(0.3f)
             .help("scale of shapes 1 means a shape can take the whole canvas.")
             .scan<'g', float>();
 

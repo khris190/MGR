@@ -31,7 +31,7 @@ namespace openGLDrawer
         glViewport(0, 0, OGlhandler->mainWindow->getWidth(), OGlhandler->mainWindow->getHeight());
         drawing.drawLastVAO();
         OGlhandler->mainWindow->swapBuffer();
-        }
+    }
     void clean()
     {
         delete OGlhandler.release();
