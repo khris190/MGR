@@ -9,14 +9,13 @@
 #include <GLFW/glfw3.h>
 #include <memory>
 
-class OGLhandler
-{
+class OGLhandler {
 public:
     std::shared_ptr<shaders::AbstractShader> newTriangleShader;
     std::shared_ptr<shaders::AbstractShader> newTriangleShader2;
-    Window *mainWindow;
-    Window *drawerWindow;
-    VBO *drawerVBO;
+    Window* mainWindow;
+    Window* drawerWindow;
+    VBO* drawerVBO;
 
     OGLhandler(int width, int height);
     ~OGLhandler();

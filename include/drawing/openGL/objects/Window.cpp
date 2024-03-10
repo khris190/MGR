@@ -7,8 +7,9 @@
 #include <iostream>
 #include "Window.hpp"
 
-Window::Window(int width, int height, const char *title, GLFWmonitor *monitor, GLFWwindow *share)
-    : height(height), width(width)
+Window::Window(int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share)
+    : height(height)
+    , width(width)
 {
 
     // glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, 1);
@@ -20,15 +21,14 @@ Window::Window(int width, int height, const char *title, GLFWmonitor *monitor, G
 
     glfwWindowHint(GLFW_SAMPLES, 4);
 
-    glfwWindowHint(GLFW_RED_BITS, 8);   // 8 bits for red channel
+    glfwWindowHint(GLFW_RED_BITS, 8); // 8 bits for red channel
     glfwWindowHint(GLFW_GREEN_BITS, 8); // 8 bits for green channel
-    glfwWindowHint(GLFW_BLUE_BITS, 8);  // 8 bits for blue channel
+    glfwWindowHint(GLFW_BLUE_BITS, 8); // 8 bits for blue channel
     glfwWindowHint(GLFW_ALPHA_BITS, 8); // 8 bits for alpha channel
 
     this->window = glfwCreateWindow(width, height, title, monitor, share);
 
-    if (!this->window)
-    {
+    if (!this->window) {
         glfwTerminate(); // konczy dzialanie biblioteki GLFW
         exit(EXIT_FAILURE);
     }
@@ -51,17 +51,14 @@ void Window::cleanWindow() const
 {
     glfwPollEvents();
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Set the clear color to a light blue
-    glClear(GL_COLOR_BUFFER_BIT);         // czyszczenie bufora koloru
+    glClear(GL_COLOR_BUFFER_BIT); // czyszczenie bufora koloru
 }
 
 void Window::loadExtensions() const
 {
-    if (glewIsExtensionSupported("GL_ARB_blend_func_extended"))
-    {
+    if (glewIsExtensionSupported("GL_ARB_blend_func_extended")) {
         glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_ONE);
-    }
-    else
-    {
+    } else {
         std::cerr << "Brak obslugi GL_ARB_blend_func_extended\n";
         exit(3);
     }

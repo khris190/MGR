@@ -5,9 +5,9 @@
 #include <memory>
 // #include "context/Context.hpp"
 
-void errorCallback(int error, const char *description) { std::cerr << error << " Error: " << description << std::endl; }
+void errorCallback(int error, const char* description) { std::cerr << error << " Error: " << description << std::endl; }
 
-void OGLhandler::initOGL() {}
+void OGLhandler::initOGL() { }
 
 OGLhandler::OGLhandler(int width, int height)
 {
@@ -20,13 +20,11 @@ OGLhandler::OGLhandler(int width, int height)
     glewExperimental = GL_TRUE;
     this->mainWindow = new Window(width, height, "test");
     GLenum err = glewInit();
-    if (err != GLEW_OK)
-    {
+    if (err != GLEW_OK) {
         std::cerr << "Blad: " << glewGetErrorString(err) << std::endl;
         exit(1);
     }
-    if (!__GLEW_VERSION_4_6)
-    {
+    if (!__GLEW_VERSION_4_6) {
         std::cerr << "Brak obslugi OpenGL 4.6\n";
         exit(2);
     }

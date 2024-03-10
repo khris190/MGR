@@ -2,8 +2,7 @@
 #define DRAWINGINTERFACE_HPP
 
 #include "genetic/Genotype.hpp"
-class AbstractDrawer
-{
+class AbstractDrawer {
 public:
     AbstractDrawer(Genotype& individual);
     AbstractDrawer(AbstractDrawer&&) = default;

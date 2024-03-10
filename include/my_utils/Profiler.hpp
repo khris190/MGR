@@ -6,34 +6,41 @@
 #include <string>
 #include <vector>
 struct Sample {
-  long nsTime;
-  std::string name;
-  size_t count = 1;
-  Sample() = default;
-  explicit Sample(std::string const &name) : name(name) {}
-  Sample(std::string const &name, long nsTime) : nsTime(nsTime), name(name) {}
+    long nsTime;
+    std::string name;
+    size_t count = 1;
+    Sample() = default;
+    explicit Sample(std::string const& name)
+        : name(name)
+    {
+    }
+    Sample(std::string const& name, long nsTime)
+        : nsTime(nsTime)
+        , name(name)
+    {
+    }
 };
 
 class Profiler {
 private:
-  std::mutex mxSamples;
-  std::vector<Sample> samples;
-  static Profiler *instance_;
-  ~Profiler();
-  Profiler();
+    std::mutex mxSamples;
+    std::vector<Sample> samples;
+    static Profiler* instance_;
+    ~Profiler();
+    Profiler();
 
 public:
-  static Profiler *getInstance();
-  Profiler(Profiler &other) = delete;
-  void operator=(const Profiler &) = delete;
+    static Profiler* getInstance();
+    Profiler(Profiler& other) = delete;
+    void operator=(const Profiler&) = delete;
 
-  void AddSample(Sample sample);
+    void AddSample(Sample sample);
 
-  std::string getTimingsAsString(bool doClearSamples = true);
-  std::vector<Sample> getTimings(bool doClearSamples = true);
+    std::string getTimingsAsString(bool doClearSamples = true);
+    std::vector<Sample> getTimings(bool doClearSamples = true);
 
-  void clearSamples();
-  void printProfilerData(bool doClearSamples = true);
+    void clearSamples();
+    void printProfilerData(bool doClearSamples = true);
 };
 
 #define TOKENPASTE(x, y) x##y
@@ -45,12 +52,12 @@ public:
 // the end of a block
 class PTimer {
 private:
-  Sample sample;
-  std::chrono::system_clock::time_point startTime;
+    Sample sample;
+    std::chrono::system_clock::time_point startTime;
 
 public:
-  explicit PTimer(const std::string &name);
-  ~PTimer();
+    explicit PTimer(const std::string& name);
+    ~PTimer();
 };
 
 #endif // PROFILER_HPP
