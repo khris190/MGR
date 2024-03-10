@@ -30,7 +30,9 @@ void draw(Genotype& populus, [[maybe_unused]] float scale)
     glViewport(0, 0, OGlhandler->mainWindow->getWidth(), OGlhandler->mainWindow->getHeight());
     drawing.drawLastVAO();
     OGlhandler->mainWindow->swapBuffer();
+    glBindFramebuffer(GL_FRAMEBUFFER, 0); // Unbind framebuffer
 }
+
 void clean()
 {
     delete OGlhandler.release();

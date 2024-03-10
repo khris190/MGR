@@ -40,13 +40,13 @@ bool parse(int argc, char const* argv[])
 
     parser.add_argument("-p", "--population")
         .nargs(1)
-        .default_value(256)
+        .default_value(4)
         .help("Size of population.")
         .scan<'i', int>();
 
     parser.add_argument("-s", "--shape-amount")
         .nargs(1)
-        .default_value(256)
+        .default_value(50)
         .help("Amount of generated shapes per speciman.")
         .scan<'i', int>();
 
@@ -70,7 +70,7 @@ bool parse(int argc, char const* argv[])
 
     parser.add_argument("--scale")
         .nargs(1)
-        .default_value(0.4f)
+        .default_value(4000.4f)
         .help("scale of shapes 1 means a shape can take the whole canvas.")
         .scan<'g', float>();
 
