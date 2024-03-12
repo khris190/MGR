@@ -2,8 +2,8 @@
 #include "drawing/openGL/objects/Mesh.hpp"
 #include "my_utils/Profiler.hpp"
 #include <GL/gl.h>
-#include <GL/glext.h>
-#include <alloca.h>
+// #include <GL/glext.h>
+// #include <alloca.h>
 #include <cstdint>
 #include <iostream>
 #include <memory>
@@ -21,12 +21,13 @@ void initialize(int width, int height)
 
 void draw(Genotype& populus, [[maybe_unused]] float scale)
 {
+    glfwPollEvents();
     newTimer("Draw");
     Mesh drawing;
     drawing.addVao(OGlhandler->newTriangleShader, populus, GL_TRIANGLES);
+    OGlhandler->mainWindow->bindFramebuffer();
     OGlhandler->mainWindow->cleanWindow();
     glUseProgram(OGlhandler->newTriangleShader->shaderProgram); // wlaczenie programu cieniowania
-    OGlhandler->mainWindow->bindFramebuffer();
     glViewport(0, 0, OGlhandler->mainWindow->getWidth(), OGlhandler->mainWindow->getHeight());
     drawing.drawLastVAO();
     OGlhandler->mainWindow->swapBuffer();

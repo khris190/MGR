@@ -40,13 +40,13 @@ bool parse(int argc, char const* argv[])
 
     parser.add_argument("-p", "--population")
         .nargs(1)
-        .default_value(4)
+        .default_value(32)
         .help("Size of population.")
         .scan<'i', int>();
 
     parser.add_argument("-s", "--shape-amount")
         .nargs(1)
-        .default_value(50)
+        .default_value(01)
         .help("Amount of generated shapes per speciman.")
         .scan<'i', int>();
 
@@ -58,7 +58,7 @@ bool parse(int argc, char const* argv[])
 
     parser.add_argument("-r", "--resemblance")
         .nargs(1)
-        .default_value(0.91f)
+        .default_value(0.97f)
         .help("resemblance of source image at which the program will exit.")
         .scan<'g', float>();
 
@@ -70,7 +70,7 @@ bool parse(int argc, char const* argv[])
 
     parser.add_argument("--scale")
         .nargs(1)
-        .default_value(4000.4f)
+        .default_value(0.4f)
         .help("scale of shapes 1 means a shape can take the whole canvas.")
         .scan<'g', float>();
 

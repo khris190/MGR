@@ -5,6 +5,7 @@
 #include "genetic/Population.hpp"
 #include "my_utils/Logger.hpp"
 #include "my_utils/Profiler.hpp"
+#include <GLFW/glfw3.h>
 #include <cairo/cairo.h>
 #include <cstdlib>
 #include <stdlib.h>
@@ -54,7 +55,7 @@ void ArtGeneration::startEvolution(cairo_surface_t* img)
             }
             mutationsCounter++;
         }
-    } while (bestScore < Config::get<Config::Argument::RESEMBLENCE>() && !Config::doStop());
+    } while (bestScore < Config::get<Config::Argument::RESEMBLENCE>() && !Config::doStop() && !glfwWindowShouldClose(openGLDrawer::OGlhandler->mainWindow->getWindow()));
 
     openGLDrawer::drawSecond(
         this->population.children[this->population.bests[1].first]);
