@@ -48,14 +48,15 @@ float fitness(cairo_surface_t *img, unsigned char *surface)
     int height = cairo_image_surface_get_height(img);
     float ret;
 
-    try
-    {
-        ret = calculateFitness(imgData, surface, width, height);
-    }
-    catch (const std::exception &e)
-    {
-        ret = cpuFitness(imgData, surface, width, height);
-    }
+    ret = cpuFitness(imgData, surface, width, height);
+    // try
+    // {
+    //     ret = calculateFitness(imgData, surface, width, height);
+    // }
+    // catch (const std::exception &e)
+    // {
+    //     ret = cpuFitness(imgData, surface, width, height);
+    // }
 
     return ret;
 }

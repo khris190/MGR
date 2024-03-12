@@ -78,33 +78,28 @@ float calculateFitnessGL(unsigned char *img_data, unsigned char *surface_data, i
     size_t amount = (size - rest) / offset;
     size_t threadAmount = sqrt(amount) + 1;
 
+    calculateFitnessFromArray<<<threadAmount, threadAmount>>>(offset, (float *)surface_data, size);
+    cudaError_t ce = cudaGetLastError();
+    if (ce != cudaSuccess)
     {
-        // newTimer("calculateFitnessFromArray");
-        calculateFitnessFromArray<<<threadAmount, threadAmount>>>(offset, (float *)surface_data, size);
-        cudaError_t ce = cudaGetLastError();
-        if (ce != cudaSuccess)
-        {
-            throw std::runtime_error(cudaGetErrorString(ce));
-        }
-        cudaDeviceSynchronize();
+        throw std::runtime_error(cudaGetErrorString(ce));
     }
+    cudaDeviceSynchronize();
 
     double result = 0;
     float tmp_fitness = 0;
     {
+        for (int i = 0; i < amount; i++)
         {
-            for (int i = 0; i < amount; i++)
-            {
-                memcpy(&tmp_fitness, (void *)(surface_data + 4 * i * offset), sizeof(float));
-                result += tmp_fitness;
-            }
-            for (size_t i = 0; i < rest; i++)
-            {
-                memcpy(&tmp_fitness, (void *)(surface_data + amount * offset * 4 + i * 4), sizeof(float));
-                result += tmp_fitness;
-            }
-            result /= size;
+            tmp_fitness = *(float *)(surface_data + 4 * i * offset);
+            result += tmp_fitness;
         }
+        for (size_t i = 0; i < rest; i++)
+        {
+            memcpy(&tmp_fitness, (void *)(surface_data + amount * offset * 4 + i * 4), sizeof(float));
+            result += tmp_fitness;
+        }
+        result /= size;
     }
     return (result);
 }
