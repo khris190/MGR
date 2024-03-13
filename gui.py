@@ -1,8 +1,7 @@
 import os
 import dearpygui.dearpygui as dpg
+from tkinter import filedialog as fd
 
-# import xdialog
-# print(xdialog.open_file("Select image", filetypes=[("Images", "*.png")], multiple=False))
 
 print(os.name)
 class myWindow:
@@ -20,18 +19,13 @@ class myWindow:
         #endregion
 
         dpg.create_viewport(title='Custom Title', width=600, height=600, resizable=False)
-        print(os.path.expanduser("~"))
-        self.FileSelector = dpg.file_dialog(modal=True, width=600, height=600,directory_selector=False, show=False, cancel_callback=self.file_select_cancel_cb, callback=self.file_select_cb, tag='fileSelector', default_path=os.path.expanduser("~"))
-        with self.FileSelector: 
-            dpg.add_file_extension("", color=(255, 255, 255, 255))
-            dpg.add_file_extension(".png", color=(0, 255, 255, 255))
-        # filename = fd.askopenfilename(filetypes=[("Image", ".png")])
         with dpg.window(label="ArtGen",no_resize=True, no_collapse=True,no_move=True, no_close=True, width=600, height=600,):
-            dpg.add_button(label="Save", callback=self.on_run_clicked)
-            self.ShapeCount = dpg.add_slider_float(label="Liczba Trójkątów: 10", min_value=0.8, max_value=3.8, callback=self.ShapeCountCallback, format='', default_value=0.3)
+            self.runButton = dpg.add_button(label="Uruchom", callback=self.on_run_clicked, enabled=False)
+            self.ShapeCount = dpg.add_slider_float(label="Liczba Trójkątów: 10", min_value=0.8, max_value=3.8, callback=self.ShapeCountCallback, format='', default_value=0.8)
             self.PopCount = dpg.add_slider_int(label="Wielkość populacji: 16", min_value=1, max_value=9, callback=self.PopCountCallback, format='', default_value=1)
             self.MutationRate = dpg.add_slider_int(label="Szansa mutacji: 0.01%", min_value=1, max_value=100, callback=self.MutationCallback, format='', default_value=1)
-            self.FileSelectorButton = dpg.add_button(label="Directory Selector", callback=lambda: dpg.show_item('fileSelector'))
+            self.TriangleSize = dpg.add_slider_int(label="Rozmiar Trójkątów: 0.10", min_value=1, max_value=100, callback=self.SizeCallback, format='', default_value=10)
+            self.FileSelectorButton = dpg.add_button(label="Directory Selector", callback=self.fileSelectorCallback)
             self.FileSelectorText = dpg.add_text(label="Directory Selector", default_value="hello", pos=[-100, -100]) #start offscreen
 
         dpg.setup_dearpygui()
@@ -40,10 +34,12 @@ class myWindow:
         dpg.destroy_context()
     
     def on_run_clicked(self, button):
-        print('"Click me" button was clicked')
-        print( dpg.get_item_pos(self.FileSelectorButton))
-        prog =  os.path.dirname(__file__) + '/' + self.executable + ' -h'
-        output = os.popen( prog).read()
+        print(os.path.dirname(__file__))
+        prog =  f'"{os.path.dirname(__file__)}/GenerativeArt.exe" --scale {"%.2f" % (self.GetSizeValue())} -t 16 -i "{self.selectedFilename}" -p {self.GetPopCountValue()} -s {self.GetShapeCountValue()} -m {self.GetMutationValue()} --hours 0.15'
+        print(prog)
+        dpg.disable_item(self.runButton)
+        os.popen(prog).read()
+        dpg.enable_item(self.runButton)
         
     def PopCountCallback(self,sender, app_data):
         
@@ -55,32 +51,25 @@ class myWindow:
         dpg.set_item_label(sender, "Szansa mutacji: " + str("%.2f" % (self.GetMutationValue()*100) )+ "%")
     def GetMutationValue(self):
         return dpg.get_value(self.MutationRate)/10000
-        
+    def SizeCallback(self,sender, app_data):
+        dpg.set_item_label(sender, "Rozmiar Trójkątów: " + str("%.2f" % (self.GetSizeValue())))
+    def GetSizeValue(self):
+        return dpg.get_value(self.TriangleSize)/100   
     
     def ShapeCountCallback(self,sender, app_data):
         dpg.set_item_label(sender, "Liczba Tkójkątów: " + str(self.GetShapeCountValue()))
     def GetShapeCountValue(self):
         return int(20**(dpg.get_value(self.ShapeCount)))
-            
-    #region file selector callbacks
-    def file_select_cb(self, sender, app_data):
-        #file_path_name/file_name/current_path/current_filter/min_size/max_size/selections
-        print(app_data)
-        print(app_data['file_path_name'])
-        print(app_data['selections'])
-        # tile_name == '.png' znaczy brak selekcji z jakiegoś powodu po zaznaczeniu pliku selekcja nie jest pod tym względem poprawna
-        FileSelectorButtonPos = dpg.get_item_pos(self.FileSelectorButton)
-        FileSelectorButtonPos[0] += 150
-        dpg.set_item_pos(self.FileSelectorText, FileSelectorButtonPos)
-        for x in app_data['selections']:
-            dpg.set_value(self.FileSelectorText, str(app_data['selections'][x]))
-        
-        
-    def file_select_cancel_cb(sender, app_data):
-        print('Cancel was clicked.')
-        print("Sender: ", sender)
-        print("App Data: ", app_data)
-    #endregion
+    def fileSelectorCallback(self):
+        self.filename = fd.askopenfilename(filetypes=(('Images', '*.png'),('All files', '*.*')))
+        if  isinstance(self.filename, str):
+            dpg.enable_item(self.runButton)
+            self.selectedFilename = self.filename
+            FileSelectorButtonPos = dpg.get_item_pos(self.FileSelectorButton)
+            FileSelectorButtonPos[0] += 150
+            dpg.set_item_pos(self.FileSelectorText, FileSelectorButtonPos)
+            dpg.set_value(self.FileSelectorText, self.selectedFilename)
+    
     
         
 myWindow()
