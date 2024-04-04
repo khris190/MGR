@@ -54,6 +54,5 @@ int main(int argc, const char* argv[])
         cairo_surface_destroy(image);
         logger.logDeb(Profiler::getInstance()->getTimingsAsString().c_str());
     }
-
     return 0;
 }
